@@ -24,17 +24,17 @@ Use the **Demo mode** page or `POST /demo-run`. The accepted identifiers are `no
 
 ## 4. Run and export a bounded experiment suite
 
-The experiment runner runs Greedy and Exact on all small cases, then runs QAOA with the real local simulator. It is capped at five scenarios and small QAOA settings to keep local resource use bounded:
+The experiment runner compares Greedy, SciPy/HiGHS MILP, Exact, and measured QAOA using the same objective. The default `baseline` suite preserves the original five small scenarios. The separate `round2` suite adds a transport-cost trade-off, a demand spike, and a synthetic two-bank/two-hospital case. Both suites keep QAOA within the 16-variable local simulator limit and run the requested number of independent QAOA seeds; classical methods run once per scenario:
 
 ```bash
 .venv/bin/python -m experiments.run_experiments \
-  --scenarios 5 --seed 7 --p 1 --shots 128 \
+  --suite round2 --scenarios 6 --repetitions 5 --seed 7 --p 1 --shots 128 \
   --optimizer COBYLA --max-iterations 15 \
   --penalty-weight 10000 --max-exact-states 50000 \
   --run-id reproducible-run
 ```
 
-The raw run goes to `experiments/results/reproducible-run.json`; its matching configuration, including full scenario inputs, is written to `experiments/configurations/reproducible-run.json`. Analyze the raw run without editing it:
+The raw run goes to `experiments/results/reproducible-run.json`; its matching configuration, including full scenario inputs, per-run seeds, and source hashes is written to `experiments/configurations/reproducible-run.json`. Analyze the raw run without editing it:
 
 The runner refuses to reuse a run ID when either output file already exists. This protects prior measurements and their settings from accidental replacement; choose a new `--run-id` for each run.
 
@@ -48,9 +48,9 @@ The separate `optimization.run_benchmark` command remains available for a single
 
 ## 5. Interpret the seed and preserve provenance
 
-The seed initializes the classical optimizer's starting angles and the local simulator's measurement sampling. It supports repeatable runs in a fixed software and hardware environment. Optimizer behavior, numerical libraries, Qiskit/Aer versions, and platform differences can still change results. A seed is not a guarantee of bit-for-bit reproducibility across environments.
+Each QAOA seed initializes the classical optimizer's starting angles and the local simulator's measurement sampling. With base seed 7 and five repetitions, the run uses seeds 7 through 11. This supports repeatable runs in a fixed software and hardware environment. Optimizer behavior, numerical libraries, Qiskit/Aer versions, and platform differences can still change results. A seed is not a guarantee of bit-for-bit reproducibility across environments.
 
-Keep the exported JSON and configuration together with the code revision and the exact command or API request. The experiment runner records Python, platform, NumPy, SciPy, Qiskit, and Qiskit Aer versions, full scenario inputs, solver settings, weights, penalties, invocation arguments, and SHA-256 hashes for the runner and bundled scenario files. API benchmark requests save the requested experiment settings, but operators should separately preserve environment versions when reproducing API-only runs.
+Keep the exported JSON and configuration together with the code revision and the exact command or API request. The experiment runner records Python, platform, NumPy, SciPy, Qiskit, and Qiskit Aer versions, full scenario inputs, solver settings, weights, penalties, invocation arguments, and SHA-256 hashes for the runner, solver modules, and bundled scenario files. API benchmark requests save the requested experiment settings, but operators should separately preserve environment versions when reproducing API-only runs.
 
 ## 6. Reporting boundaries
 

@@ -1,0 +1,5734 @@
+{
+  "configuration": {
+    "created_at_utc": "2026-10-14T19:19:36.890236+00:00",
+    "invocation": {
+      "module": "experiments.run_experiments",
+      "arguments": [
+        "--suite",
+        "round2",
+        "--scenarios",
+        "6",
+        "--repetitions",
+        "5",
+        "--seed",
+        "7",
+        "--p",
+        "1",
+        "--shots",
+        "128",
+        "--optimizer",
+        "COBYLA",
+        "--max-iterations",
+        "15",
+        "--penalty-weight",
+        "10000",
+        "--max-exact-states",
+        "50000",
+        "--run-id",
+        "round2-20261015-r2"
+      ]
+    },
+    "source_files_sha256": {
+      "data\\blood_banks.json": "fc8e7aa92f9b924677bfe628b0878524c08fe252f270955c47818cf6426a963e",
+      "data\\hospitals.json": "d2760e1d3a838f7addd342bd54f2a8415f8a92d4b63b5fe58ebbc9ad8ceab15c",
+      "data\\routes.json": "47a11218b2e9771d024611a2702d74006afa76b146ad09482cdd2e110a49b9b1",
+      "data\\compatibility.json": "cfcd1644d7fddd924a08bbab8272e5ab4c5c81a498f9a73018040d524654d9c6",
+      "backend\\scenario_factory.py": "6468c3a9fe19e48b2153882598aaee81bbc75e8079fbc92e03398e7aefe29cea",
+      "experiments\\analyze_results.py": "0c86dcd73efcac2e6a7ca6f5c258663248cb3f6b1d0e1b8fe35c3ba49779be14",
+      "optimization\\models.py": "9ad0e6bc5b47728974c116a135927bbd557573a4a1022e8ebb6466c1aea03343",
+      "optimization\\objective.py": "54e00fc0ec79df9dea6ac855e82ce63c9f7ab74fa628564854e5b526554f0f28",
+      "optimization\\constraints.py": "0659bb75ba67bdd72c3c68014886bc9f919c9876fb8625a33581c45de8277ee0",
+      "optimization\\greedy.py": "d407add92593ef9a9e89e016dd1a7ea7d06de9d220c13b6bd644e081346466ef",
+      "optimization\\milp.py": "6937ae3c96d676e7275b9e6cd3a30672095cdb0946e6b22f5d8271273bdece42",
+      "optimization\\exact.py": "19677b392351996b8f1ba8bc4b328bd492d089aaeb0cd1a2d7bee9e20fc9ad73",
+      "optimization\\decoder.py": "f4b317b1171295b19a12ee6eaa444d945ab6ef8d637b66a39f66f3294430da0b",
+      "quantum\\qubo.py": "1773d96c85442a43f15e03745f7947edfc3b08ede437be38a1a714260a276693",
+      "quantum\\ising.py": "0791594228c8689630f8e5132b54a29bd95da80f3d2c79f24950339c07b52cce",
+      "quantum\\qaoa_solver.py": "8c26f7d7eb9e515232ec166539c65954c62023ac6bd1219de6494ee19f86db26",
+      "experiments\\run_experiments.py": "6ce41969ec930f67d5377f00299610e1df4954c8b484d6a405e3a782e4605846"
+    },
+    "suite": "round2",
+    "scenario_source": "six-case Round 2 suite with a synthetic 2-bank/2-hospital case",
+    "scenario_sizes": {
+      "normal_reference": {
+        "blood_banks": 1,
+        "hospitals": 1,
+        "blood_groups": 1,
+        "allocation_decision_variables": 1,
+        "routes": 1,
+        "inventory_units": 12,
+        "demand_units": 4
+      },
+      "inventory_shortage": {
+        "blood_banks": 1,
+        "hospitals": 1,
+        "blood_groups": 1,
+        "allocation_decision_variables": 1,
+        "routes": 1,
+        "inventory_units": 2,
+        "demand_units": 6
+      },
+      "transport_cost_tradeoff": {
+        "blood_banks": 1,
+        "hospitals": 1,
+        "blood_groups": 1,
+        "allocation_decision_variables": 1,
+        "routes": 1,
+        "inventory_units": 1,
+        "demand_units": 1
+      },
+      "emergency_demand_spike": {
+        "blood_banks": 1,
+        "hospitals": 1,
+        "blood_groups": 1,
+        "allocation_decision_variables": 1,
+        "routes": 1,
+        "inventory_units": 12,
+        "demand_units": 16
+      },
+      "transport_disruption": {
+        "blood_banks": 1,
+        "hospitals": 1,
+        "blood_groups": 1,
+        "allocation_decision_variables": 0,
+        "routes": 1,
+        "inventory_units": 5,
+        "demand_units": 4
+      },
+      "multi_facility_tradeoff": {
+        "blood_banks": 2,
+        "hospitals": 2,
+        "blood_groups": 1,
+        "allocation_decision_variables": 4,
+        "routes": 4,
+        "inventory_units": 3,
+        "demand_units": 4
+      }
+    },
+    "scenarios": {
+      "normal_reference": {
+        "synthetic": true,
+        "blood_groups": [
+          "O"
+        ],
+        "blood_banks": [
+          {
+            "id": "bank_a",
+            "name": "Bank A",
+            "location_id": "LOC_BANK_A",
+            "inventory": {
+              "O": 12
+            }
+          }
+        ],
+        "hospitals": [
+          {
+            "id": "hospital_1",
+            "name": "Hospital 1",
+            "location_id": "LOC_HOSPITAL_1",
+            "demand": {
+              "O": 4
+            },
+            "urgency": {
+              "O": {
+                "category": "high",
+                "priority_weight": 3.0
+              }
+            }
+          }
+        ],
+        "routes": [
+          {
+            "source": "bank_a",
+            "destination": "hospital_1",
+            "travel_time_minutes": 18.0,
+            "distance_km": 0.0,
+            "transport_cost": 4.5,
+            "status": "available"
+          }
+        ],
+        "compatibility": [
+          {
+            "donor_group": "O",
+            "recipient_group": "O",
+            "allowed": true
+          }
+        ]
+      },
+      "inventory_shortage": {
+        "synthetic": true,
+        "blood_groups": [
+          "O"
+        ],
+        "blood_banks": [
+          {
+            "id": "bank_a",
+            "name": "Bank A",
+            "location_id": "LOC_BANK_A",
+            "inventory": {
+              "O": 2
+            }
+          }
+        ],
+        "hospitals": [
+          {
+            "id": "hospital_1",
+            "name": "Hospital 1",
+            "location_id": "LOC_HOSPITAL_1",
+            "demand": {
+              "O": 6
+            },
+            "urgency": {
+              "O": {
+                "category": "critical",
+                "priority_weight": 3.0
+              }
+            }
+          }
+        ],
+        "routes": [
+          {
+            "source": "bank_a",
+            "destination": "hospital_1",
+            "travel_time_minutes": 18.0,
+            "distance_km": 0.0,
+            "transport_cost": 4.5,
+            "status": "available"
+          }
+        ],
+        "compatibility": [
+          {
+            "donor_group": "O",
+            "recipient_group": "O",
+            "allowed": true
+          }
+        ]
+      },
+      "transport_cost_tradeoff": {
+        "synthetic": true,
+        "blood_groups": [
+          "O"
+        ],
+        "blood_banks": [
+          {
+            "id": "bank_a",
+            "name": "Bank A",
+            "location_id": "LOC_BANK_A",
+            "inventory": {
+              "O": 1
+            }
+          }
+        ],
+        "hospitals": [
+          {
+            "id": "hospital_1",
+            "name": "Hospital 1",
+            "location_id": "LOC_HOSPITAL_1",
+            "demand": {
+              "O": 1
+            },
+            "urgency": {
+              "O": {
+                "category": "medium",
+                "priority_weight": 3.0
+              }
+            }
+          }
+        ],
+        "routes": [
+          {
+            "source": "bank_a",
+            "destination": "hospital_1",
+            "travel_time_minutes": 10.0,
+            "distance_km": 0.0,
+            "transport_cost": 40.0,
+            "status": "available"
+          }
+        ],
+        "compatibility": [
+          {
+            "donor_group": "O",
+            "recipient_group": "O",
+            "allowed": true
+          }
+        ]
+      },
+      "emergency_demand_spike": {
+        "synthetic": true,
+        "blood_groups": [
+          "O"
+        ],
+        "blood_banks": [
+          {
+            "id": "bank_a",
+            "name": "Bank A",
+            "location_id": "LOC_BANK_A",
+            "inventory": {
+              "O": 12
+            }
+          }
+        ],
+        "hospitals": [
+          {
+            "id": "hospital_1",
+            "name": "Hospital 1",
+            "location_id": "LOC_HOSPITAL_1",
+            "demand": {
+              "O": 16
+            },
+            "urgency": {
+              "O": {
+                "category": "critical",
+                "priority_weight": 3.0
+              }
+            }
+          }
+        ],
+        "routes": [
+          {
+            "source": "bank_a",
+            "destination": "hospital_1",
+            "travel_time_minutes": 18.0,
+            "distance_km": 0.0,
+            "transport_cost": 4.5,
+            "status": "available"
+          }
+        ],
+        "compatibility": [
+          {
+            "donor_group": "O",
+            "recipient_group": "O",
+            "allowed": true
+          }
+        ]
+      },
+      "transport_disruption": {
+        "synthetic": true,
+        "blood_groups": [
+          "O"
+        ],
+        "blood_banks": [
+          {
+            "id": "bank_a",
+            "name": "Bank A",
+            "location_id": "LOC_BANK_A",
+            "inventory": {
+              "O": 5
+            }
+          }
+        ],
+        "hospitals": [
+          {
+            "id": "hospital_1",
+            "name": "Hospital 1",
+            "location_id": "LOC_HOSPITAL_1",
+            "demand": {
+              "O": 4
+            },
+            "urgency": {
+              "O": {
+                "category": "high",
+                "priority_weight": 3.0
+              }
+            }
+          }
+        ],
+        "routes": [
+          {
+            "source": "bank_a",
+            "destination": "hospital_1",
+            "travel_time_minutes": 18.0,
+            "distance_km": 0.0,
+            "transport_cost": 4.5,
+            "status": "blocked"
+          }
+        ],
+        "compatibility": [
+          {
+            "donor_group": "O",
+            "recipient_group": "O",
+            "allowed": true
+          }
+        ]
+      },
+      "multi_facility_tradeoff": {
+        "synthetic": true,
+        "blood_groups": [
+          "O"
+        ],
+        "blood_banks": [
+          {
+            "id": "bank_a",
+            "name": "Bank A",
+            "location_id": "LOC_BANK_A",
+            "inventory": {
+              "O": 2
+            }
+          },
+          {
+            "id": "bank_b",
+            "name": "Synthetic Bank B",
+            "location_id": "location_b",
+            "inventory": {
+              "O": 1
+            }
+          }
+        ],
+        "hospitals": [
+          {
+            "id": "hospital_1",
+            "name": "Hospital 1",
+            "location_id": "LOC_HOSPITAL_1",
+            "demand": {
+              "O": 2
+            },
+            "urgency": {
+              "O": {
+                "category": "medium",
+                "priority_weight": 1.0
+              }
+            }
+          },
+          {
+            "id": "hospital_2",
+            "name": "Synthetic Hospital 2",
+            "location_id": "location_c",
+            "demand": {
+              "O": 2
+            },
+            "urgency": {
+              "O": {
+                "category": "critical",
+                "priority_weight": 3.0
+              }
+            }
+          }
+        ],
+        "routes": [
+          {
+            "source": "bank_a",
+            "destination": "hospital_1",
+            "travel_time_minutes": 5.0,
+            "distance_km": 2.0,
+            "transport_cost": 1.0,
+            "status": "available"
+          },
+          {
+            "source": "bank_a",
+            "destination": "hospital_2",
+            "travel_time_minutes": 25.0,
+            "distance_km": 12.0,
+            "transport_cost": 6.0,
+            "status": "available"
+          },
+          {
+            "source": "bank_b",
+            "destination": "hospital_1",
+            "travel_time_minutes": 18.0,
+            "distance_km": 9.0,
+            "transport_cost": 5.0,
+            "status": "available"
+          },
+          {
+            "source": "bank_b",
+            "destination": "hospital_2",
+            "travel_time_minutes": 4.0,
+            "distance_km": 1.5,
+            "transport_cost": 0.8,
+            "status": "available"
+          }
+        ],
+        "compatibility": [
+          {
+            "donor_group": "O",
+            "recipient_group": "O",
+            "allowed": true
+          }
+        ]
+      }
+    },
+    "scenario_count": 6,
+    "qaoa_repetitions": 5,
+    "objective_weights": {
+      "critical_unmet_weight": 10.0,
+      "total_unmet_weight": 5.0,
+      "transportation_cost_weight": 1.0,
+      "transportation_time_weight": 0.1,
+      "secondary_penalty_weight": 0.0
+    },
+    "qaoa": {
+      "p": 1,
+      "shots": 128,
+      "optimizer": "COBYLA",
+      "max_iterations": 15,
+      "base_seed": 7,
+      "seed_sequence": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "repetitions": 5,
+      "max_qubits": 16
+    },
+    "qubo_penalty_weights": {
+      "inventory_penalty_weight": 10000.0,
+      "demand_penalty_weight": 10000.0
+    },
+    "exact_max_candidate_states": 50000,
+    "environment": {
+      "python": "3.12.14",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "packages": {
+        "qiskit": "2.5.2",
+        "qiskit-aer": "0.17.2",
+        "numpy": "2.5.4",
+        "scipy": "1.18.1"
+      }
+    },
+    "limits": {
+      "scenario_count_max": 6,
+      "qaoa_max_qubits": 16,
+      "max_inventory_units_per_bank": 12,
+      "max_demand_units_per_hospital": 7
+    }
+  },
+  "results": [
+    {
+      "scenario_id": "normal_reference",
+      "method": "greedy",
+      "status": "completed",
+      "objective": 25.2,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 0,
+      "transport_cost": 18.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 6.440000106522348e-05,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 4
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "repetition": null,
+      "seed": null,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "milp",
+      "status": "completed",
+      "objective": 25.2,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 0,
+      "transport_cost": 18.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.012733200001093792,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 4
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "exact",
+      "status": "completed",
+      "objective": 25.2,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 0,
+      "transport_cost": 18.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.00014109999938227702,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 4
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 82.6,
+      "critical_satisfaction": 0.5,
+      "critical_unmet_demand": 2,
+      "total_unmet_demand": 2,
+      "transport_cost": 9.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.19814729999961855,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 2
+        }
+      ],
+      "qubo_variable_count": 10,
+      "best_measured_bitstring": "1100010101",
+      "counts": {
+        "1100111001": 1,
+        "1101111110": 1,
+        "0110011100": 1,
+        "0111110010": 1,
+        "1011010111": 1,
+        "0011001111": 2,
+        "0001111011": 1,
+        "0101111111": 2,
+        "0100101110": 1,
+        "0011110110": 1,
+        "0111101111": 2,
+        "0101001110": 1,
+        "0101010101": 3,
+        "0000011011": 1,
+        "0100111100": 1,
+        "0100010110": 1,
+        "0001110111": 2,
+        "0110101111": 2,
+        "0001011010": 1,
+        "0010110100": 1,
+        "1011111000": 1,
+        "1100011000": 1,
+        "0111010001": 1,
+        "0111101011": 1,
+        "0110111111": 1,
+        "0000001111": 1,
+        "0110111001": 1,
+        "0111101100": 1,
+        "0101110110": 1,
+        "0010111011": 2,
+        "1010110010": 1,
+        "0000111110": 1,
+        "1111110111": 1,
+        "0000011111": 1,
+        "0010110111": 3,
+        "0100110011": 1,
+        "1111101010": 1,
+        "0101110101": 1,
+        "0010011110": 1,
+        "0010011011": 1,
+        "0100011010": 1,
+        "0001111111": 1,
+        "1111011011": 2,
+        "0111111101": 1,
+        "0100110111": 1,
+        "0110001111": 1,
+        "0111111110": 1,
+        "1110101011": 1,
+        "0111111100": 1,
+        "0111111011": 1,
+        "0110010011": 1,
+        "1100101101": 1,
+        "0010011111": 1,
+        "0100011110": 1,
+        "0010101101": 2,
+        "0110110010": 1,
+        "0100010101": 1,
+        "1101010111": 1,
+        "0101110111": 1,
+        "0110011001": 1,
+        "0111011100": 2,
+        "0110011011": 1,
+        "0010111101": 2,
+        "0111110110": 2,
+        "0011101111": 1,
+        "1011000110": 1,
+        "0110110110": 1,
+        "0100110110": 1,
+        "1000101011": 2,
+        "0010100011": 1,
+        "0111110011": 1,
+        "0001000110": 1,
+        "0011111111": 1,
+        "0100111011": 1,
+        "0110111101": 2,
+        "0110111010": 1,
+        "0110111110": 1,
+        "0001110101": 1,
+        "0101011111": 1,
+        "0111001110": 1,
+        "1010111100": 1,
+        "0011011111": 1,
+        "0111111111": 1,
+        "0100110101": 1,
+        "0110010110": 1,
+        "1101110110": 1,
+        "0100110001": 1,
+        "0101101111": 1,
+        "0000110010": 1,
+        "0111110101": 1,
+        "0110101101": 1,
+        "0111101001": 1,
+        "0011101011": 1,
+        "0100101111": 1,
+        "0100111010": 1,
+        "1101000101": 1,
+        "1111111011": 1,
+        "1111111101": 1,
+        "0100111101": 1,
+        "1100010100": 1,
+        "0100101011": 1,
+        "0100111110": 1,
+        "0111001111": 1,
+        "1010001010": 1,
+        "0011001011": 1,
+        "1101110111": 1,
+        "1010000011": 1,
+        "1100010101": 1,
+        "0010001110": 1,
+        "1101101110": 1,
+        "1110111110": 1
+      },
+      "measured_energy": 10082.600000000093,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 232351.04908530935,
+        "initial_parameters": [
+          3.927590651355011,
+          2.818680285825393
+        ],
+        "final_parameters": [
+          4.927590651355011,
+          2.818680285825393
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 1,
+      "seed": 7,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 2.2777777777777777,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 25.2,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 0,
+      "transport_cost": 18.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.17504619999999704,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 4
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "qubo_variable_count": 10,
+      "best_measured_bitstring": "1011000111",
+      "counts": {
+        "1111100011": 1,
+        "1011101111": 2,
+        "0110110110": 1,
+        "1111101010": 1,
+        "1101001111": 2,
+        "1011001111": 1,
+        "0000111111": 2,
+        "1110011110": 1,
+        "0110110111": 1,
+        "1111010011": 1,
+        "0110101111": 2,
+        "0011101010": 1,
+        "1111111111": 1,
+        "0010101111": 2,
+        "0011011101": 1,
+        "1111001101": 4,
+        "1110001111": 2,
+        "1111111101": 1,
+        "1111000101": 1,
+        "1110101100": 1,
+        "0111000111": 3,
+        "0000011111": 2,
+        "1010101111": 2,
+        "1101110101": 2,
+        "1111110110": 1,
+        "0110011111": 1,
+        "1100100011": 1,
+        "1111101111": 3,
+        "0111001111": 3,
+        "1101100111": 2,
+        "0000101111": 1,
+        "1010111111": 1,
+        "0011001010": 1,
+        "1110010111": 1,
+        "0000101100": 2,
+        "1111001110": 2,
+        "0111011111": 1,
+        "0111101111": 3,
+        "1111100010": 1,
+        "1111100111": 2,
+        "0110100111": 1,
+        "1111011011": 1,
+        "1110101101": 1,
+        "1110100101": 2,
+        "1101111111": 1,
+        "0111010111": 1,
+        "1110101111": 1,
+        "1011110110": 1,
+        "1111100101": 1,
+        "1011101110": 1,
+        "1011100111": 2,
+        "1100100111": 1,
+        "1111101101": 4,
+        "1111001111": 3,
+        "1100110111": 1,
+        "1101001110": 1,
+        "1011110111": 1,
+        "0000000111": 1,
+        "1101100110": 1,
+        "1101100101": 1,
+        "1100101001": 1,
+        "1111101100": 1,
+        "1100100110": 1,
+        "1101101101": 1,
+        "1110000111": 2,
+        "1100000110": 1,
+        "1011011111": 2,
+        "1100111111": 1,
+        "1111011001": 1,
+        "1110011001": 1,
+        "1011111111": 2,
+        "0001111001": 1,
+        "0011010101": 1,
+        "0110111111": 1,
+        "0110001111": 3,
+        "1100001101": 1,
+        "0111100011": 1,
+        "0111100111": 1,
+        "0001001101": 1,
+        "0111110010": 1,
+        "1111100001": 2,
+        "1011101101": 2,
+        "1011000111": 1,
+        "1011000110": 1,
+        "1101000110": 1,
+        "1111101110": 1,
+        "1101001010": 1,
+        "1101111011": 1,
+        "0111101110": 1,
+        "1111011111": 1
+      },
+      "measured_energy": 25.199999999953434,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 185872.50650713025,
+        "initial_parameters": [
+          2.0544274042231185,
+          3.101621678089748
+        ],
+        "final_parameters": [
+          3.1334199741187736,
+          1.1907170208436817
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 2,
+      "seed": 8,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 53.9,
+      "critical_satisfaction": 0.75,
+      "critical_unmet_demand": 1,
+      "total_unmet_demand": 1,
+      "transport_cost": 13.5,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.17057129999921017,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 3
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 10,
+      "best_measured_bitstring": "1100100110",
+      "counts": {
+        "1110111101": 4,
+        "1110111111": 2,
+        "1111111011": 5,
+        "1101111010": 2,
+        "1101111110": 1,
+        "1111111111": 7,
+        "1110111011": 3,
+        "0110111000": 1,
+        "0111101111": 1,
+        "0111111110": 2,
+        "1011111011": 1,
+        "0000111010": 1,
+        "0110111001": 1,
+        "1110111100": 5,
+        "0001111110": 1,
+        "1000111010": 3,
+        "0111001110": 1,
+        "0001011000": 1,
+        "0111111111": 2,
+        "1100101000": 1,
+        "1100111100": 1,
+        "1101011000": 1,
+        "1111111010": 3,
+        "1101111011": 1,
+        "0100101100": 1,
+        "0101111000": 2,
+        "1111101101": 2,
+        "1111111110": 3,
+        "1101111111": 3,
+        "1001011001": 1,
+        "1110111001": 4,
+        "0111101011": 2,
+        "1111110101": 1,
+        "1110011000": 1,
+        "1110101111": 3,
+        "1110111010": 5,
+        "1000110101": 1,
+        "0001111100": 1,
+        "1111111001": 2,
+        "1111111100": 3,
+        "1100110001": 2,
+        "1111001010": 1,
+        "1100100110": 1,
+        "0110111010": 1,
+        "1110111000": 1,
+        "0101111100": 1,
+        "0010111001": 2,
+        "0000011110": 1,
+        "0100111101": 1,
+        "1101101110": 1,
+        "1100111111": 1,
+        "1110111110": 3,
+        "0011111101": 1,
+        "0010111000": 1,
+        "1101111101": 1,
+        "1111001000": 1,
+        "1101111000": 2,
+        "1110110111": 1,
+        "1001111111": 1,
+        "1001111100": 1,
+        "1011111110": 1,
+        "1001111000": 1,
+        "0100111100": 1,
+        "1111111101": 3,
+        "1100011100": 1,
+        "1000101111": 1,
+        "1110001000": 1,
+        "1101111100": 1,
+        "1110011001": 1,
+        "1100111110": 1,
+        "1010111010": 1,
+        "1101110101": 1,
+        "1100111011": 1,
+        "0000111101": 1,
+        "1011111001": 1
+      },
+      "measured_energy": 53.89999999990687,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 197920.56317874693,
+        "initial_parameters": [
+          5.467937011969567,
+          0.9010628369925916
+        ],
+        "final_parameters": [
+          5.956456761422632,
+          0.7945337123631536
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 3,
+      "seed": 9,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 1.1388888888888888,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 25.2,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 0,
+      "transport_cost": 18.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.16219730000011623,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 4
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "qubo_variable_count": 10,
+      "best_measured_bitstring": "1011000111",
+      "counts": {
+        "1100000110": 1,
+        "1001000011": 1,
+        "0100010111": 2,
+        "1011111010": 1,
+        "1001000111": 2,
+        "1111010110": 1,
+        "1101010001": 1,
+        "1100000010": 1,
+        "1100011110": 1,
+        "1011111110": 1,
+        "0011110101": 1,
+        "1111100001": 1,
+        "0110001000": 1,
+        "0000010101": 1,
+        "0110010110": 1,
+        "1101100101": 1,
+        "0001110000": 1,
+        "1001011111": 1,
+        "1111010100": 1,
+        "0110010010": 1,
+        "1101100001": 1,
+        "0101100100": 1,
+        "0101101010": 2,
+        "1101101100": 1,
+        "0110110100": 1,
+        "0010110110": 1,
+        "1011101100": 1,
+        "0110110001": 2,
+        "1111000000": 1,
+        "1001000000": 1,
+        "0100110110": 1,
+        "1110100010": 2,
+        "1101011010": 1,
+        "1100011111": 1,
+        "1010100011": 1,
+        "0001101111": 1,
+        "1011000111": 1,
+        "1111001111": 1,
+        "0010011010": 1,
+        "1010011110": 1,
+        "1010000111": 1,
+        "1110010001": 1,
+        "0011001011": 1,
+        "1100001101": 1,
+        "1111011000": 1,
+        "1110001101": 1,
+        "1111110110": 1,
+        "1111101000": 1,
+        "1000101000": 1,
+        "1110111110": 1,
+        "0100010010": 2,
+        "1110000101": 1,
+        "1000001101": 1,
+        "1000010111": 1,
+        "0010100111": 1,
+        "1101001001": 1,
+        "1010111101": 1,
+        "1101000011": 1,
+        "1001010111": 1,
+        "1110110111": 1,
+        "1111001101": 1,
+        "1011010100": 2,
+        "1001110111": 1,
+        "0001101001": 1,
+        "1010010100": 1,
+        "0001001101": 1,
+        "0111111001": 1,
+        "1110111000": 2,
+        "1010101011": 2,
+        "1110101110": 1,
+        "1111011010": 1,
+        "0101101000": 1,
+        "0010001010": 1,
+        "1010001010": 1,
+        "1001010000": 1,
+        "0111010111": 1,
+        "1100000011": 1,
+        "0011101100": 1,
+        "0111010010": 1,
+        "0110101110": 1,
+        "1000100111": 1,
+        "1011101011": 1,
+        "0101010101": 2,
+        "1011100100": 1,
+        "1011000010": 2,
+        "0011010001": 2,
+        "1111100000": 1,
+        "1100011011": 1,
+        "1010001101": 1,
+        "0011010010": 1,
+        "1011010101": 2,
+        "1000100011": 1,
+        "0000110001": 1,
+        "1110111100": 2,
+        "0100100011": 1,
+        "1010010110": 1,
+        "1100010101": 1,
+        "1100100001": 1,
+        "1000101101": 1,
+        "1100110000": 1,
+        "0111011000": 1,
+        "0001000010": 1,
+        "1101110000": 1,
+        "1110100111": 1,
+        "1110101100": 1,
+        "0100001111": 1,
+        "1001111011": 1,
+        "0010001001": 1,
+        "1000000011": 1,
+        "0110011111": 1,
+        "1110110001": 1,
+        "1101000101": 1,
+        "0000100101": 1,
+        "1011011010": 1
+      },
+      "measured_energy": 25.199999999953434,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 280228.4949766015,
+        "initial_parameters": [
+          6.006735895579343,
+          0.6524516488288785
+        ],
+        "final_parameters": [
+          6.414128643941704,
+          1.8132745025646204
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 4,
+      "seed": 10,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 25.2,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 0,
+      "transport_cost": 18.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.16364720000092348,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 4
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "qubo_variable_count": 10,
+      "best_measured_bitstring": "1011000111",
+      "counts": {
+        "1110001010": 2,
+        "1011111111": 1,
+        "1101100011": 2,
+        "1001100110": 1,
+        "1100111010": 1,
+        "0010100101": 2,
+        "1110000111": 1,
+        "0111101011": 1,
+        "1000100101": 1,
+        "0100010111": 1,
+        "1011001011": 1,
+        "1101001011": 1,
+        "1101011010": 1,
+        "1111101111": 1,
+        "1000101111": 1,
+        "0111000110": 1,
+        "1001101011": 1,
+        "0001000000": 1,
+        "0001111110": 1,
+        "1110001111": 1,
+        "0110110010": 1,
+        "0111100011": 1,
+        "0111111111": 2,
+        "0010101011": 1,
+        "0111011111": 1,
+        "1101000111": 2,
+        "1011000111": 3,
+        "0100000001": 1,
+        "1000010000": 1,
+        "0110111111": 2,
+        "0000100010": 1,
+        "0010010011": 1,
+        "0010100011": 1,
+        "0111101101": 1,
+        "1000010011": 1,
+        "1111111010": 1,
+        "0111000111": 3,
+        "0000100110": 1,
+        "0101101010": 1,
+        "0100111011": 1,
+        "0001100110": 1,
+        "1011101111": 2,
+        "1101010000": 1,
+        "1110100011": 1,
+        "0110000100": 1,
+        "0101101111": 2,
+        "0001100001": 1,
+        "1110111010": 1,
+        "0110101111": 4,
+        "1111110010": 1,
+        "0100001001": 2,
+        "0111010101": 1,
+        "0010100001": 1,
+        "0111111011": 1,
+        "1100010101": 1,
+        "1110101110": 1,
+        "0110001000": 1,
+        "1010000111": 1,
+        "0101100011": 2,
+        "1111001000": 1,
+        "1110001110": 2,
+        "1111111111": 2,
+        "1111100110": 1,
+        "1010100111": 1,
+        "0100110110": 1,
+        "0101001011": 1,
+        "0100011111": 1,
+        "1101001001": 1,
+        "0110101100": 1,
+        "1110110110": 1,
+        "0110111001": 1,
+        "0001111010": 1,
+        "1000111000": 1,
+        "0101100110": 1,
+        "0110010111": 1,
+        "0110100111": 1,
+        "1011100110": 1,
+        "1110111111": 1,
+        "0110101010": 1,
+        "0001000101": 1,
+        "1111101101": 1,
+        "0000100111": 1,
+        "0111111010": 2,
+        "0100110011": 1,
+        "0100110101": 1,
+        "1001000111": 1,
+        "1111000111": 1,
+        "1010111111": 1,
+        "0001010111": 1,
+        "0000001001": 1,
+        "0111010010": 1,
+        "0110011010": 1,
+        "1110101010": 1,
+        "1111010101": 1,
+        "1111011010": 1,
+        "1110100100": 1,
+        "0000000011": 1,
+        "0110001011": 1,
+        "0101001001": 1,
+        "0111000000": 1,
+        "1110101101": 1,
+        "1110110111": 1,
+        "0001101001": 1,
+        "0011000100": 1,
+        "1101110001": 1,
+        "0000110100": 1,
+        "1100001110": 1,
+        "0110110011": 1
+      },
+      "measured_energy": 25.199999999953434,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 265152.1090328743,
+        "initial_parameters": [
+          0.8078304089805352,
+          1.5685276647418804
+        ],
+        "final_parameters": [
+          0.45883425444315457,
+          1.8269360203136116
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 5,
+      "seed": 11,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "greedy",
+      "status": "completed",
+      "objective": 152.6,
+      "critical_satisfaction": 0.3333333333333333,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 9.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.00012380000043776818,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "milp",
+      "status": "completed",
+      "objective": 152.6,
+      "critical_satisfaction": 0.3333333333333333,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 9.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.002196600000388571,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "exact",
+      "status": "completed",
+      "objective": 152.6,
+      "critical_satisfaction": 0.3333333333333333,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 9.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.00011790000098699238,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 152.6,
+      "critical_satisfaction": 0.3333333333333333,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 9.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.1407985000005283,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "qubo_variable_count": 7,
+      "best_measured_bitstring": "0010111",
+      "counts": {
+        "0101010": 1,
+        "0110110": 1,
+        "1111011": 3,
+        "1000111": 1,
+        "0110011": 1,
+        "0101101": 1,
+        "0111100": 1,
+        "1110111": 2,
+        "0011100": 2,
+        "1001101": 1,
+        "0001011": 1,
+        "0111110": 2,
+        "0111010": 2,
+        "0100110": 1,
+        "0001111": 5,
+        "1011011": 6,
+        "0000011": 1,
+        "0110100": 3,
+        "0011110": 2,
+        "1110011": 1,
+        "1001111": 2,
+        "0011001": 3,
+        "1010101": 1,
+        "0101110": 2,
+        "1111111": 4,
+        "0111001": 3,
+        "0010111": 3,
+        "1111101": 2,
+        "0000111": 2,
+        "1010111": 2,
+        "0001110": 1,
+        "1110110": 1,
+        "0111011": 1,
+        "0010100": 1,
+        "0011111": 2,
+        "1111110": 2,
+        "1000000": 1,
+        "0101111": 3,
+        "1011101": 3,
+        "1011110": 2,
+        "0011010": 3,
+        "1001001": 1,
+        "1111001": 1,
+        "0001100": 1,
+        "0111101": 2,
+        "0010110": 2,
+        "0010101": 2,
+        "1011001": 2,
+        "0011000": 2,
+        "1101101": 1,
+        "1000110": 1,
+        "0010011": 1,
+        "1101111": 2,
+        "1011100": 3,
+        "0101011": 2,
+        "1011111": 2,
+        "0011101": 1,
+        "1010010": 2,
+        "1010110": 1,
+        "1010011": 1,
+        "0101001": 1,
+        "1101110": 1,
+        "0011011": 2,
+        "0001010": 1,
+        "1011010": 1,
+        "0111000": 1,
+        "0001101": 1,
+        "0101000": 1,
+        "1111000": 1,
+        "1110101": 2,
+        "1101000": 1,
+        "0100001": 1,
+        "1111010": 1,
+        "1100111": 1
+      },
+      "measured_energy": 152.59999999997672,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 36598.24274916481,
+        "initial_parameters": [
+          3.927590651355011,
+          2.818680285825393
+        ],
+        "final_parameters": [
+          4.927590651355011,
+          2.818680285825393
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 1,
+      "seed": 7,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 181.3,
+      "critical_satisfaction": 0.16666666666666666,
+      "critical_unmet_demand": 5,
+      "total_unmet_demand": 5,
+      "transport_cost": 4.5,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.14057909999974072,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 5
+        }
+      ],
+      "qubo_variable_count": 7,
+      "best_measured_bitstring": "0111001",
+      "counts": {
+        "0100000": 1,
+        "1001111": 2,
+        "1110011": 2,
+        "1110110": 1,
+        "0111011": 2,
+        "1001100": 3,
+        "0001110": 4,
+        "0010100": 7,
+        "1010000": 1,
+        "1011111": 2,
+        "1110101": 1,
+        "0001111": 2,
+        "1011011": 2,
+        "0010110": 1,
+        "1101100": 10,
+        "0111001": 1,
+        "1001000": 1,
+        "1101011": 1,
+        "0010011": 7,
+        "0110101": 1,
+        "1111010": 1,
+        "1000111": 1,
+        "1111011": 1,
+        "0000011": 3,
+        "0110100": 5,
+        "1110001": 1,
+        "0100010": 2,
+        "1111001": 3,
+        "0011001": 1,
+        "1010100": 6,
+        "1100011": 1,
+        "1001010": 1,
+        "1110100": 3,
+        "1101110": 2,
+        "1100000": 1,
+        "1010111": 3,
+        "0000110": 2,
+        "1000000": 2,
+        "1110111": 2,
+        "1001011": 1,
+        "0111100": 2,
+        "1100010": 1,
+        "1110010": 1,
+        "0111111": 1,
+        "1111000": 3,
+        "1100100": 1,
+        "0000111": 1,
+        "0111000": 1,
+        "1001001": 2,
+        "0001000": 2,
+        "0010101": 2,
+        "1111111": 1,
+        "1000011": 3,
+        "1011100": 1,
+        "1010011": 1,
+        "0011011": 1,
+        "1110000": 1,
+        "0100011": 2,
+        "0001100": 1,
+        "0011101": 1,
+        "1100001": 1,
+        "0110111": 2,
+        "0001001": 1,
+        "1010110": 1
+      },
+      "measured_energy": 181.29999999998836,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 80009.78229037696,
+        "initial_parameters": [
+          2.0544274042231185,
+          3.101621678089748
+        ],
+        "final_parameters": [
+          3.8333124917730745,
+          3.8057517937116487
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 2,
+      "seed": 8,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.18807339449541297,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 181.3,
+      "critical_satisfaction": 0.16666666666666666,
+      "critical_unmet_demand": 5,
+      "total_unmet_demand": 5,
+      "transport_cost": 4.5,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.1332628999989538,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 5
+        }
+      ],
+      "qubo_variable_count": 7,
+      "best_measured_bitstring": "0111001",
+      "counts": {
+        "0110001": 3,
+        "1010011": 19,
+        "0110011": 12,
+        "0010011": 19,
+        "0011011": 12,
+        "1111011": 8,
+        "0111011": 12,
+        "1011011": 4,
+        "1010010": 5,
+        "0011010": 2,
+        "1110011": 13,
+        "1000011": 1,
+        "0110010": 2,
+        "0010001": 1,
+        "0111111": 1,
+        "1110010": 1,
+        "1100011": 1,
+        "0100010": 1,
+        "1111010": 1,
+        "0000010": 1,
+        "1010001": 1,
+        "0111010": 1,
+        "1001011": 1,
+        "0011001": 2,
+        "0111001": 1,
+        "0010010": 2,
+        "1111001": 1
+      },
+      "measured_energy": 181.29999999998836,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 29227.13811023422,
+        "initial_parameters": [
+          5.467937011969567,
+          0.9010628369925916
+        ],
+        "final_parameters": [
+          6.331881449454756,
+          0.8582926593185723
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 3,
+      "seed": 9,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.18807339449541297,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 152.6,
+      "critical_satisfaction": 0.3333333333333333,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 9.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.157403000001068,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "qubo_variable_count": 7,
+      "best_measured_bitstring": "0010111",
+      "counts": {
+        "1010101": 4,
+        "0010101": 2,
+        "0100100": 5,
+        "1110111": 9,
+        "1110001": 2,
+        "1010111": 5,
+        "1101100": 1,
+        "0010110": 5,
+        "1010100": 8,
+        "1110010": 1,
+        "1000100": 4,
+        "0110101": 3,
+        "0110001": 1,
+        "0110000": 3,
+        "0111010": 1,
+        "1110101": 6,
+        "0001100": 1,
+        "1001110": 1,
+        "1110000": 1,
+        "0010100": 11,
+        "0110111": 1,
+        "1000110": 1,
+        "1010011": 1,
+        "0101110": 1,
+        "1000011": 1,
+        "1111011": 1,
+        "0110110": 4,
+        "1010010": 3,
+        "1110100": 3,
+        "1010110": 2,
+        "1100100": 3,
+        "0110011": 3,
+        "0000100": 2,
+        "0101100": 1,
+        "0110100": 7,
+        "0111011": 1,
+        "1110110": 7,
+        "1001100": 1,
+        "0010000": 2,
+        "0010011": 1,
+        "0010111": 2,
+        "1110011": 1,
+        "1001111": 1,
+        "0011111": 2,
+        "0101001": 1,
+        "1011110": 1
+      },
+      "measured_energy": 152.59999999997672,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 72945.8496463461,
+        "initial_parameters": [
+          6.006735895579343,
+          0.6524516488288785
+        ],
+        "final_parameters": [
+          6.006735895579343,
+          0.6524516488288785
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 4,
+      "seed": 10,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 152.6,
+      "critical_satisfaction": 0.3333333333333333,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 9.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.14505640000061248,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "qubo_variable_count": 7,
+      "best_measured_bitstring": "0010111",
+      "counts": {
+        "1001110": 1,
+        "1110000": 2,
+        "0001100": 2,
+        "0100011": 1,
+        "0111101": 2,
+        "0110100": 2,
+        "0101100": 2,
+        "1000101": 2,
+        "0011110": 1,
+        "1101000": 1,
+        "1011010": 1,
+        "1100100": 2,
+        "0111111": 2,
+        "0100001": 2,
+        "0001010": 1,
+        "1011101": 3,
+        "0110000": 3,
+        "1000001": 3,
+        "1111101": 2,
+        "0000111": 2,
+        "1101110": 1,
+        "0010000": 1,
+        "0000101": 1,
+        "1000011": 3,
+        "1111111": 2,
+        "0110010": 3,
+        "0001111": 1,
+        "0111010": 2,
+        "0100110": 3,
+        "1100110": 1,
+        "0011100": 1,
+        "0011111": 1,
+        "1100011": 1,
+        "0110001": 4,
+        "0101111": 2,
+        "1111110": 1,
+        "1011100": 3,
+        "0010010": 1,
+        "0100100": 1,
+        "0001101": 2,
+        "1010011": 2,
+        "0100010": 2,
+        "0111110": 3,
+        "1001101": 3,
+        "0010011": 2,
+        "1011110": 2,
+        "0101001": 1,
+        "1101100": 3,
+        "1010101": 1,
+        "0010101": 1,
+        "1100101": 2,
+        "0000001": 1,
+        "1000111": 1,
+        "0100101": 3,
+        "0011101": 2,
+        "1110011": 2,
+        "1001001": 1,
+        "0111000": 2,
+        "1011000": 1,
+        "0010100": 2,
+        "0110101": 2,
+        "1111010": 1,
+        "0001001": 1,
+        "1010010": 1,
+        "1111100": 1,
+        "1110110": 1,
+        "1001100": 1,
+        "0000000": 1,
+        "0101000": 1,
+        "1101001": 1,
+        "1110111": 1,
+        "0101010": 1,
+        "0110011": 1,
+        "1101111": 1,
+        "0010111": 1,
+        "1011111": 1,
+        "0001000": 1,
+        "1010111": 1
+      },
+      "measured_energy": 152.59999999997672,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 89534.5938145162,
+        "initial_parameters": [
+          0.8078304089805352,
+          1.5685276647418804
+        ],
+        "final_parameters": [
+          1.745389700833219,
+          1.6509819502676286
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 5,
+      "seed": 11,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "greedy",
+      "status": "completed",
+      "objective": 41.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 0,
+      "transport_cost": 40.0,
+      "average_travel_time": 10.0,
+      "feasibility": true,
+      "runtime_seconds": 6.889999895065557e-05,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "repetition": null,
+      "seed": null,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 7.2,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "milp",
+      "status": "completed",
+      "objective": 5.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.001416699999026605,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "exact",
+      "status": "completed",
+      "objective": 5.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 7.670000013604295e-05,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 5.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.13039190000017697,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 3,
+      "best_measured_bitstring": "110",
+      "counts": {
+        "110": 48,
+        "010": 52,
+        "000": 13,
+        "100": 7,
+        "111": 4,
+        "001": 4
+      },
+      "measured_energy": 5.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 6665.082894585967,
+        "initial_parameters": [
+          3.927590651355011,
+          2.818680285825393
+        ],
+        "final_parameters": [
+          3.937641985176927,
+          3.9250340704373685
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 1,
+      "seed": 7,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 5.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.1222022999991168,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 3,
+      "best_measured_bitstring": "110",
+      "counts": {
+        "110": 21,
+        "100": 17,
+        "101": 32,
+        "010": 26,
+        "001": 16,
+        "111": 2,
+        "000": 5,
+        "011": 9
+      },
+      "measured_energy": 5.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 7643.554945314269,
+        "initial_parameters": [
+          2.0544274042231185,
+          3.101621678089748
+        ],
+        "final_parameters": [
+          4.447004243009236,
+          2.740204572431326
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 2,
+      "seed": 8,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 5.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.12495440000020608,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 3,
+      "best_measured_bitstring": "110",
+      "counts": {
+        "101": 19,
+        "011": 18,
+        "001": 39,
+        "110": 28,
+        "100": 8,
+        "000": 11,
+        "010": 4,
+        "111": 1
+      },
+      "measured_energy": 5.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 5353.215146380983,
+        "initial_parameters": [
+          5.467937011969567,
+          0.9010628369925916
+        ],
+        "final_parameters": [
+          6.237797291267373,
+          5.0534689038550535
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 3,
+      "seed": 9,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 5.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.12223889999950188,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 3,
+      "best_measured_bitstring": "110",
+      "counts": {
+        "101": 54,
+        "001": 58,
+        "100": 12,
+        "110": 2,
+        "010": 2
+      },
+      "measured_energy": 5.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 5325.0013083952845,
+        "initial_parameters": [
+          6.006735895579343,
+          0.6524516488288785
+        ],
+        "final_parameters": [
+          6.002916384227429,
+          0.6556783085618845
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 4,
+      "seed": 10,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 5.0,
+      "critical_satisfaction": null,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.1359353000007104,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 3,
+      "best_measured_bitstring": "110",
+      "counts": {
+        "100": 10,
+        "101": 38,
+        "011": 13,
+        "001": 28,
+        "010": 28,
+        "111": 5,
+        "110": 4,
+        "000": 2
+      },
+      "measured_energy": 5.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 7875.673596406987,
+        "initial_parameters": [
+          0.8078304089805352,
+          1.5685276647418804
+        ],
+        "final_parameters": [
+          1.7799518053224312,
+          2.5377732906808177
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 5,
+      "seed": 11,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "greedy",
+      "status": "completed",
+      "objective": 215.6,
+      "critical_satisfaction": 0.75,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 54.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 5.8099998568650335e-05,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 12
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "milp",
+      "status": "completed",
+      "objective": 215.6,
+      "critical_satisfaction": 0.75,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 54.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.001336299999820767,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 12
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "exact",
+      "status": "completed",
+      "objective": 215.6,
+      "critical_satisfaction": 0.75,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 54.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.000302100001135841,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 12
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 273.0,
+      "critical_satisfaction": 0.625,
+      "critical_unmet_demand": 6,
+      "total_unmet_demand": 6,
+      "transport_cost": 45.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.2586637000003975,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 10
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 6
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0010001101101",
+      "counts": {
+        "0001000001110": 1,
+        "0000001011011": 1,
+        "0111010110100": 1,
+        "1110001001001": 1,
+        "0001111011010": 1,
+        "1101001011110": 1,
+        "0010011000011": 1,
+        "1000101011000": 1,
+        "1000111001011": 1,
+        "0011011111100": 1,
+        "1001100100101": 1,
+        "0010110011100": 1,
+        "1010000000000": 1,
+        "1111001100111": 1,
+        "0110101001110": 1,
+        "0100001001001": 1,
+        "0101110000111": 1,
+        "1010001001110": 1,
+        "0101111000011": 1,
+        "1000001000001": 1,
+        "0100001011000": 1,
+        "1100011110000": 1,
+        "1001001000110": 1,
+        "1100000111000": 1,
+        "0011010111101": 1,
+        "1001110111000": 1,
+        "0010010001011": 1,
+        "1001111001001": 1,
+        "1000001101001": 1,
+        "0000001111001": 1,
+        "0101000100101": 1,
+        "0001101100011": 1,
+        "1111111010001": 1,
+        "0010110111001": 1,
+        "0000100101110": 1,
+        "1111101110000": 1,
+        "0010001101101": 1,
+        "0110011000101": 1,
+        "0010100000001": 1,
+        "0110010111010": 1,
+        "0001000000110": 1,
+        "0001000011110": 1,
+        "1111011011101": 1,
+        "1001010100110": 1,
+        "1100110010100": 1,
+        "0110111000010": 1,
+        "0110111110111": 1,
+        "0100010011011": 1,
+        "0001100111100": 1,
+        "0110000101101": 1,
+        "0010001000001": 1,
+        "1000000110001": 1,
+        "1101000000001": 1,
+        "1001111100100": 1,
+        "1010010110010": 1,
+        "1110100100010": 1,
+        "1001111011011": 1,
+        "1010011001000": 1,
+        "1011101111110": 1,
+        "1010100011001": 1,
+        "0111010100110": 1,
+        "0100011101100": 1,
+        "1101100011111": 1,
+        "1011011000000": 1,
+        "0111001100101": 1,
+        "0001000001001": 1,
+        "0110011010110": 1,
+        "1001100101101": 1,
+        "0000000011110": 1,
+        "0101010001110": 1,
+        "0100111011111": 1,
+        "1010011110000": 1,
+        "0010010100000": 1,
+        "1000011110000": 1,
+        "0101011100101": 1,
+        "0001001101001": 1,
+        "0101010100111": 1,
+        "1011111110101": 1,
+        "0001111011100": 1,
+        "0001110001100": 1,
+        "0001100001100": 1,
+        "0101001011001": 1,
+        "1010110011110": 1,
+        "0011101111111": 1,
+        "1010000001110": 1,
+        "0000101100011": 1,
+        "1000101110000": 1,
+        "0101011000101": 1,
+        "1111001100000": 1,
+        "0010011111100": 1,
+        "1001000000001": 1,
+        "0101110111011": 1,
+        "1000111001110": 1,
+        "0000111110111": 1,
+        "0010110110011": 1,
+        "1001010001100": 1,
+        "0011001001100": 1,
+        "1011111010011": 1,
+        "1110000000001": 1,
+        "0101001001111": 1,
+        "0111000010100": 1,
+        "1010001000011": 1,
+        "0101000001111": 1,
+        "1010100110010": 1,
+        "1000000000000": 1,
+        "0000011001111": 1,
+        "1001110101001": 1,
+        "1010000110011": 1,
+        "0101110111100": 1,
+        "0011010001101": 1,
+        "0110010011111": 1,
+        "0010011011111": 1,
+        "0000110001110": 1,
+        "0100111111101": 1,
+        "1101010110100": 1,
+        "1111110111100": 1,
+        "0110100111110": 1,
+        "0101011111100": 1,
+        "1011011001001": 1,
+        "1100101110110": 1,
+        "0101100011111": 1,
+        "0100110101100": 1,
+        "1001010010101": 1,
+        "1010110100001": 1,
+        "1110110111000": 1,
+        "1101110110110": 1,
+        "1110000001001": 1,
+        "1100101111001": 1
+      },
+      "measured_energy": 273.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 508709.971698873,
+        "initial_parameters": [
+          3.927590651355011,
+          2.818680285825393
+        ],
+        "final_parameters": [
+          3.569731443598904,
+          2.813362211142722
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 1,
+      "seed": 7,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.26623376623376627,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 416.5,
+      "critical_satisfaction": 0.3125,
+      "critical_unmet_demand": 11,
+      "total_unmet_demand": 11,
+      "transport_cost": 22.5,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.2582290999998804,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 5
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 11
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0111110100101",
+      "counts": {
+        "0111001010011": 1,
+        "0101010110110": 1,
+        "1001101011101": 2,
+        "1110101110001": 1,
+        "1111111111101": 1,
+        "1101101011010": 1,
+        "1001010100101": 1,
+        "1100101011011": 1,
+        "1100111100010": 1,
+        "1001111011010": 1,
+        "1010000010001": 1,
+        "0011100111110": 1,
+        "0100110100101": 1,
+        "0100110110000": 1,
+        "0010111110101": 1,
+        "1000101011111": 1,
+        "1011110111001": 2,
+        "0110000111100": 1,
+        "1000011111101": 1,
+        "1111101011100": 1,
+        "0100110010101": 1,
+        "1000100110011": 1,
+        "0110111110000": 1,
+        "1001100011100": 1,
+        "0100111110001": 1,
+        "1011100111010": 1,
+        "0101100111101": 1,
+        "1111001111011": 1,
+        "0100101010110": 1,
+        "1100000000011": 1,
+        "1011111000001": 1,
+        "0011100001111": 1,
+        "1101111111110": 1,
+        "0001110110001": 1,
+        "1000000100011": 1,
+        "0111111010110": 1,
+        "0011010011010": 1,
+        "1001100100011": 1,
+        "1010111010011": 1,
+        "1000101110110": 1,
+        "0111111010001": 1,
+        "0101101011111": 1,
+        "1011111111111": 1,
+        "1100111011101": 1,
+        "1001110110100": 1,
+        "1010011111100": 1,
+        "0111000000001": 1,
+        "1010110110100": 1,
+        "0111111110010": 1,
+        "0000110110101": 1,
+        "1101100011111": 1,
+        "0100111100100": 1,
+        "1011111111110": 1,
+        "1001100111010": 1,
+        "1101110111100": 1,
+        "1001100100110": 1,
+        "1001101111110": 1,
+        "1101010010101": 1,
+        "0111110100101": 1,
+        "1000110111110": 1,
+        "0111001001111": 1,
+        "1101110110010": 1,
+        "1100011100011": 1,
+        "1010101111011": 1,
+        "0110000000100": 1,
+        "1110011111100": 1,
+        "1000110001100": 1,
+        "0110111100001": 1,
+        "1000001010000": 1,
+        "1001001011001": 1,
+        "0000011100101": 1,
+        "1001000010100": 1,
+        "1001110101010": 1,
+        "0010010011011": 1,
+        "0101100010011": 2,
+        "0001101011011": 1,
+        "1000100011100": 1,
+        "0010111110100": 1,
+        "1000101111100": 1,
+        "1000011111110": 1,
+        "1110101101001": 1,
+        "1001111101100": 1,
+        "0111100010011": 1,
+        "0000110110001": 1,
+        "1011110110010": 1,
+        "1001111111011": 1,
+        "0100110010011": 1,
+        "1000111100011": 1,
+        "1100100010011": 1,
+        "1100101010110": 1,
+        "0100101101101": 1,
+        "1001111111100": 1,
+        "1001100011000": 1,
+        "0100100111111": 3,
+        "0011011110110": 1,
+        "0010110001100": 1,
+        "1010100010011": 1,
+        "0111101101011": 1,
+        "0101101111101": 1,
+        "0100110110110": 1,
+        "0101110110001": 1,
+        "0100111110010": 1,
+        "1001010010101": 1,
+        "0111101100111": 1,
+        "1101111010000": 1,
+        "0010100010001": 1,
+        "0010010011101": 1,
+        "1100111010010": 1,
+        "0110010110111": 1,
+        "0110010111011": 1,
+        "0111110011011": 1,
+        "0110000111001": 1,
+        "1101110101101": 1,
+        "0111110111010": 1,
+        "0001101010111": 1,
+        "1000111111000": 1,
+        "1101100101100": 1,
+        "1100000010111": 1,
+        "1100110110101": 1,
+        "1001101110110": 1,
+        "0111110111011": 1,
+        "1100110111101": 1,
+        "1101110010000": 1
+      },
+      "measured_energy": 416.5,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 504528.90221967665,
+        "initial_parameters": [
+          2.0544274042231185,
+          3.101621678089748
+        ],
+        "final_parameters": [
+          2.9992743788253318,
+          3.517993294125106
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 2,
+      "seed": 8,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.9318181818181819,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 387.8,
+      "critical_satisfaction": 0.375,
+      "critical_unmet_demand": 10,
+      "total_unmet_demand": 10,
+      "transport_cost": 27.0,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.23865849999856437,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 6
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 10
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0110010100110",
+      "counts": {
+        "0010111000000": 1,
+        "1001000000111": 1,
+        "0110100110010": 1,
+        "0010100110100": 1,
+        "1001010110101": 1,
+        "1111100110010": 1,
+        "1000011101111": 1,
+        "0100101100101": 1,
+        "0000010110110": 1,
+        "1111010010101": 1,
+        "1100100101101": 1,
+        "0010101110110": 1,
+        "0100101111010": 1,
+        "0011101001010": 1,
+        "0111010010101": 1,
+        "0101101111000": 1,
+        "1000101011100": 1,
+        "0011101001100": 1,
+        "0010101111111": 1,
+        "0110111101010": 1,
+        "0110101011001": 1,
+        "0011010100011": 1,
+        "0010100110010": 1,
+        "0101000111101": 1,
+        "0100001011011": 1,
+        "1011101111111": 1,
+        "1001000010101": 1,
+        "0111100111011": 2,
+        "0111001111001": 1,
+        "0101000111010": 1,
+        "1001000101101": 1,
+        "1000010100101": 1,
+        "1001111101011": 1,
+        "0110100111110": 1,
+        "1111001110101": 1,
+        "1101110010100": 1,
+        "1110000011001": 1,
+        "0011011100101": 1,
+        "0001101011101": 1,
+        "1010011110011": 1,
+        "1011000100100": 1,
+        "0111000011010": 1,
+        "0010110100101": 1,
+        "0011010110010": 1,
+        "0011101001110": 1,
+        "1000110011011": 1,
+        "1111001000101": 1,
+        "1000101001001": 1,
+        "0001011111001": 1,
+        "1000101010110": 1,
+        "1001100101001": 1,
+        "1011100100111": 1,
+        "0110111111010": 1,
+        "0010101111000": 1,
+        "1001010101111": 1,
+        "0111111000000": 1,
+        "0010100011000": 1,
+        "0101010000111": 1,
+        "0101010000110": 1,
+        "0010110110100": 2,
+        "0010101100000": 1,
+        "1001001100110": 1,
+        "1011010111010": 1,
+        "0001101101010": 1,
+        "0110010100110": 1,
+        "1100101111000": 1,
+        "0100001110110": 1,
+        "1111101001000": 1,
+        "0010011001111": 1,
+        "0110000010000": 1,
+        "1001100100100": 1,
+        "1011101110110": 1,
+        "1000000100110": 1,
+        "0111101110110": 1,
+        "1011001101000": 1,
+        "0000000011111": 1,
+        "1100010001101": 1,
+        "0010010101000": 1,
+        "0101000101101": 1,
+        "1100101100101": 1,
+        "0100111000100": 1,
+        "1000010101111": 2,
+        "0000100001001": 1,
+        "1010000010110": 1,
+        "1000110011000": 1,
+        "0110001101010": 1,
+        "1100001110010": 1,
+        "1110011010000": 1,
+        "1101001011001": 1,
+        "1000101010000": 1,
+        "0110001011101": 1,
+        "1000000111101": 1,
+        "0001000011111": 1,
+        "0010100100100": 1,
+        "0011111001100": 1,
+        "1011100101010": 1,
+        "1001000011001": 1,
+        "0011001100010": 1,
+        "0110110011001": 1,
+        "0110011001011": 1,
+        "1101100110010": 1,
+        "1001001001100": 1,
+        "0111010001001": 1,
+        "0011011011101": 1,
+        "1000000101101": 1,
+        "0001010001001": 1,
+        "1000010101001": 1,
+        "0011110010011": 1,
+        "1001010000111": 1,
+        "0111010011011": 1,
+        "1000101111010": 1,
+        "0110101111000": 1,
+        "0111100111001": 1,
+        "0100011000101": 1,
+        "0110011010000": 1,
+        "0000100111110": 1,
+        "0110011000011": 1,
+        "0101101100101": 1,
+        "1101010001111": 1,
+        "0111111110110": 1,
+        "0011001100110": 1,
+        "1101100000110": 1,
+        "1101001110111": 1,
+        "1100011000010": 1,
+        "1000010001011": 1
+      },
+      "measured_energy": 387.79999999981374,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 455191.9307615881,
+        "initial_parameters": [
+          5.467937011969567,
+          0.9010628369925916
+        ],
+        "final_parameters": [
+          5.467937011969567,
+          1.9010628369925917
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 3,
+      "seed": 9,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.7987012987012988,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 416.5,
+      "critical_satisfaction": 0.3125,
+      "critical_unmet_demand": 11,
+      "total_unmet_demand": 11,
+      "transport_cost": 22.5,
+      "average_travel_time": 18.0,
+      "feasibility": true,
+      "runtime_seconds": 0.2591292999986763,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 5
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 11
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "1010110101000",
+      "counts": {
+        "1001111011101": 1,
+        "0100001000110": 1,
+        "1110111110101": 1,
+        "0101001001111": 1,
+        "1000011101001": 1,
+        "1010111000010": 1,
+        "0100111000001": 1,
+        "0110101010110": 2,
+        "1101001010010": 1,
+        "0010000010010": 1,
+        "1100010001000": 1,
+        "0110100001110": 1,
+        "1001110110001": 1,
+        "1110011000110": 1,
+        "1010000001101": 1,
+        "0110000001111": 1,
+        "0100001010110": 2,
+        "1100001000101": 1,
+        "1011011110101": 1,
+        "0100111011011": 1,
+        "0111011001111": 1,
+        "1001011010101": 1,
+        "1101001000110": 1,
+        "1100011001011": 1,
+        "0101110100010": 1,
+        "0111000000110": 1,
+        "1011111000111": 1,
+        "1000001000100": 1,
+        "1001011101001": 1,
+        "0011110111000": 1,
+        "0101101111100": 1,
+        "1110011001001": 1,
+        "0010011010110": 1,
+        "1000011000110": 1,
+        "1110111010111": 1,
+        "1101101010110": 2,
+        "1100111011101": 1,
+        "1100000000001": 1,
+        "1111000000110": 1,
+        "0010111011101": 1,
+        "1110001001100": 2,
+        "1010000101111": 1,
+        "0110111110111": 1,
+        "0010101001111": 1,
+        "0111001000011": 2,
+        "0100111111001": 2,
+        "1111001011110": 1,
+        "0110001010010": 1,
+        "1001111110110": 1,
+        "0100011101000": 1,
+        "1001001001101": 1,
+        "0011001001101": 1,
+        "0010000101000": 1,
+        "1110001001001": 1,
+        "1010011001100": 1,
+        "1010001001111": 1,
+        "1111101011100": 1,
+        "0110101111101": 1,
+        "0100001001010": 1,
+        "1011101000010": 1,
+        "1000100011010": 1,
+        "1000111110000": 1,
+        "1111011001101": 1,
+        "0010011011011": 1,
+        "0111110111111": 1,
+        "0000011101010": 1,
+        "1101111110100": 1,
+        "0100111000101": 1,
+        "0001011011100": 1,
+        "1010111001000": 1,
+        "1110111010000": 1,
+        "1111000010111": 1,
+        "0001111111000": 1,
+        "1101111011001": 1,
+        "1000101011110": 1,
+        "1111001000110": 1,
+        "1000001001111": 1,
+        "0111010100110": 1,
+        "0111001001010": 1,
+        "0110000000100": 1,
+        "0011101011110": 1,
+        "1000101011111": 1,
+        "1001110011101": 1,
+        "1001101011011": 1,
+        "1000111111001": 1,
+        "0101101011111": 1,
+        "0101111111101": 1,
+        "0011010111101": 1,
+        "0101011000110": 1,
+        "0001011000010": 1,
+        "0111111010111": 1,
+        "1000001101111": 1,
+        "1111001010110": 1,
+        "1010110101000": 1,
+        "0011011000100": 1,
+        "0110101001011": 1,
+        "1000011001001": 1,
+        "0100011000001": 1,
+        "1001011011010": 1,
+        "0000111101011": 1,
+        "1010101010100": 1,
+        "0101011001111": 1,
+        "1010111010101": 1,
+        "1011001000110": 1,
+        "0101101111111": 1,
+        "0011010101111": 1,
+        "0100111110011": 1,
+        "1100011101011": 1,
+        "1000111111010": 1,
+        "0100001000101": 1,
+        "1101110011110": 1,
+        "0110001100111": 1,
+        "1001011011001": 1,
+        "1110011000100": 1,
+        "0010110010101": 1,
+        "0110011000111": 1,
+        "1110011100100": 1,
+        "0101011110100": 1,
+        "1110000001000": 1,
+        "1011100000111": 1,
+        "0000110101101": 1,
+        "1001011001110": 1
+      },
+      "measured_energy": 416.5,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 483935.82958418847,
+        "initial_parameters": [
+          6.006735895579343,
+          0.6524516488288785
+        ],
+        "final_parameters": [
+          8.489680832573505,
+          0.49584012178078984
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 4,
+      "seed": 10,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.9318181818181819,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "qaoa",
+      "status": "infeasible",
+      "objective": 324.1,
+      "critical_satisfaction": 0.5,
+      "critical_unmet_demand": 8,
+      "total_unmet_demand": 8,
+      "transport_cost": 31.5,
+      "average_travel_time": 18.0,
+      "feasibility": false,
+      "runtime_seconds": 0.22737550000056217,
+      "objective_basis": "unpenalized objective expression on original infeasible QUBO bits; not a feasible allocation score",
+      "validation": {
+        "feasible": false,
+        "violations": [
+          {
+            "check": "demand_accounting",
+            "message": "served plus unmet quantity does not equal demand",
+            "location": "hospitals[hospital_1].demand[O]",
+            "expected": 16,
+            "actual": 15
+          }
+        ],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": false,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 7
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 8
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0101010001010",
+      "counts": {
+        "1100010100110": 1,
+        "0010011100011": 1,
+        "1000101111010": 1,
+        "1101001110110": 2,
+        "1011110110111": 1,
+        "0011001001011": 1,
+        "1000010000001": 1,
+        "0111100011110": 1,
+        "0010001110111": 1,
+        "0111100110101": 1,
+        "1100011000110": 1,
+        "0011100000001": 1,
+        "0011000001000": 1,
+        "1100001101111": 1,
+        "0000001000111": 1,
+        "0001110010101": 1,
+        "1000011001000": 1,
+        "0011100011000": 1,
+        "0101010001010": 1,
+        "0111111110000": 1,
+        "0010110010110": 1,
+        "0100010010101": 1,
+        "0100111111001": 1,
+        "0011100101100": 1,
+        "1000001101001": 1,
+        "0101101101111": 1,
+        "1000110000010": 1,
+        "0000100011000": 1,
+        "1000011000101": 1,
+        "0101110011011": 1,
+        "1001100110100": 1,
+        "0111010000110": 1,
+        "0111001100100": 1,
+        "1100001001100": 1,
+        "1100110000101": 1,
+        "0110001001011": 1,
+        "0110111010011": 1,
+        "0110001111001": 1,
+        "0010001000011": 1,
+        "1000011100101": 1,
+        "1111110111011": 1,
+        "1101001100110": 1,
+        "1000001100100": 1,
+        "0011110011010": 1,
+        "1101011000000": 1,
+        "1101100110111": 1,
+        "1101110010101": 1,
+        "0111111001011": 1,
+        "0111111101000": 1,
+        "1110001101011": 1,
+        "0001001111110": 1,
+        "1111110010110": 1,
+        "1010001101000": 2,
+        "1101111011000": 1,
+        "1010110010100": 2,
+        "0101100111001": 1,
+        "0001001101011": 1,
+        "0101110100000": 1,
+        "0101101101010": 1,
+        "0010001101010": 1,
+        "0101101110111": 1,
+        "1100100011000": 1,
+        "0011100001110": 1,
+        "0010001101000": 1,
+        "0010010010110": 1,
+        "1111110001011": 1,
+        "0101100111011": 1,
+        "1010111010000": 1,
+        "1111111100110": 1,
+        "1001001001110": 1,
+        "0010110110011": 1,
+        "0100001001000": 1,
+        "1100001001001": 1,
+        "0100001000000": 1,
+        "1110111110011": 1,
+        "0110111101011": 1,
+        "1111100011011": 1,
+        "1101011000110": 1,
+        "1100001100110": 1,
+        "1011011000011": 1,
+        "0000011100011": 1,
+        "0000101100111": 1,
+        "0010001110101": 1,
+        "1110001001011": 1,
+        "0100011000110": 2,
+        "0101101001000": 1,
+        "1010001110000": 1,
+        "0101110010011": 1,
+        "0000110010110": 1,
+        "0001101110110": 1,
+        "0100001001100": 1,
+        "0101100011101": 1,
+        "0000110111000": 1,
+        "1010100111111": 1,
+        "0110010100111": 1,
+        "1010010001111": 1,
+        "1111101010010": 1,
+        "0101100110001": 1,
+        "1110010110101": 1,
+        "0111110111001": 1,
+        "0000100101011": 1,
+        "1110111011011": 1,
+        "1111111110110": 1,
+        "0010110110100": 1,
+        "0101010100110": 1,
+        "1101010011100": 1,
+        "0110001001000": 1,
+        "1010001001011": 1,
+        "0111110111110": 1,
+        "0001001000111": 1,
+        "1111010100010": 1,
+        "1100100011001": 1,
+        "1111001101010": 1,
+        "0100110000110": 1,
+        "0000000100101": 1,
+        "1101100111100": 1,
+        "0101111001100": 1,
+        "0101000101100": 1,
+        "0011110010111": 1,
+        "0001011001001": 1,
+        "1101111010110": 1,
+        "0101101111011": 1,
+        "1110011100100": 1,
+        "1011001101110": 1
+      },
+      "measured_energy": 10324.100000000093,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 496399.5502554988,
+        "initial_parameters": [
+          0.8078304089805352,
+          1.5685276647418804
+        ],
+        "final_parameters": [
+          0.8078304089805352,
+          2.5685276647418807
+        ]
+      },
+      "validator_violations": [
+        {
+          "check": "demand_accounting",
+          "message": "served plus unmet quantity does not equal demand",
+          "location": "hospitals[hospital_1].demand[O]",
+          "expected": 16,
+          "actual": 15
+        }
+      ],
+      "repetition": 5,
+      "seed": 11,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": null,
+      "approximation_gap_status": "unavailable: feasible method result is required"
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "greedy",
+      "status": "completed",
+      "objective": 140.0,
+      "critical_satisfaction": 0.0,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 6.410000059986487e-05,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "milp",
+      "status": "completed",
+      "objective": 140.0,
+      "critical_satisfaction": 0.0,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.002118099999279366,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "exact",
+      "status": "completed",
+      "objective": 140.0,
+      "critical_satisfaction": 0.0,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 4.799999987881165e-05,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 140.0,
+      "critical_satisfaction": 0.0,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.13537149999865505,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "qubo_variable_count": 6,
+      "best_measured_bitstring": "111111",
+      "counts": {
+        "100010": 1,
+        "001011": 1,
+        "111110": 8,
+        "000101": 1,
+        "101110": 2,
+        "110010": 3,
+        "011000": 1,
+        "101100": 1,
+        "000011": 5,
+        "000000": 3,
+        "110111": 2,
+        "101000": 4,
+        "100110": 2,
+        "001111": 1,
+        "111010": 13,
+        "000110": 1,
+        "101111": 1,
+        "100011": 2,
+        "001100": 1,
+        "111101": 5,
+        "011011": 3,
+        "111000": 9,
+        "111001": 2,
+        "110110": 4,
+        "110101": 1,
+        "101011": 1,
+        "000010": 3,
+        "100001": 1,
+        "001010": 2,
+        "111111": 7,
+        "000100": 1,
+        "101101": 2,
+        "100000": 1,
+        "000111": 2,
+        "110000": 3,
+        "010010": 2,
+        "011101": 1,
+        "100100": 1,
+        "001101": 1,
+        "100101": 1,
+        "001110": 4,
+        "111011": 8,
+        "011111": 3,
+        "010111": 1,
+        "001000": 1,
+        "011001": 1,
+        "010101": 1,
+        "010110": 1,
+        "011110": 1,
+        "010001": 1
+      },
+      "measured_energy": 140.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 93199.5366806635,
+        "initial_parameters": [
+          3.927590651355011,
+          2.818680285825393
+        ],
+        "final_parameters": [
+          4.9205367783976905,
+          2.7946960644225216
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 1,
+      "seed": 7,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 140.0,
+      "critical_satisfaction": 0.0,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.13231660000019474,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "qubo_variable_count": 6,
+      "best_measured_bitstring": "111111",
+      "counts": {
+        "101011": 2,
+        "001011": 4,
+        "111110": 27,
+        "111010": 5,
+        "001111": 2,
+        "111001": 6,
+        "111011": 16,
+        "001110": 5,
+        "011011": 13,
+        "111100": 2,
+        "110110": 4,
+        "001010": 2,
+        "111111": 5,
+        "011110": 7,
+        "011111": 4,
+        "000011": 1,
+        "101100": 3,
+        "110001": 2,
+        "101111": 3,
+        "000110": 2,
+        "101110": 7,
+        "111000": 1,
+        "011100": 1,
+        "110011": 4
+      },
+      "measured_energy": 140.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 67265.01197758464,
+        "initial_parameters": [
+          2.0544274042231185,
+          3.101621678089748
+        ],
+        "final_parameters": [
+          3.219037910329768,
+          1.9925850703532384
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 2,
+      "seed": 8,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 140.0,
+      "critical_satisfaction": 0.0,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.1210427999994863,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "qubo_variable_count": 6,
+      "best_measured_bitstring": "111111",
+      "counts": {
+        "111101": 35,
+        "001111": 14,
+        "111001": 3,
+        "110101": 7,
+        "111111": 31,
+        "011111": 4,
+        "110111": 9,
+        "001101": 5,
+        "111100": 4,
+        "011101": 2,
+        "010111": 2,
+        "000111": 1,
+        "110100": 1,
+        "101100": 1,
+        "000100": 1,
+        "100111": 1,
+        "111011": 1,
+        "100101": 1,
+        "010101": 2,
+        "101111": 1,
+        "001011": 1,
+        "001001": 1
+      },
+      "measured_energy": 140.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 52644.98289414689,
+        "initial_parameters": [
+          5.467937011969567,
+          0.9010628369925916
+        ],
+        "final_parameters": [
+          4.508795421097136,
+          0.6181363294704045
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 3,
+      "seed": 9,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "qaoa",
+      "status": "infeasible",
+      "objective": 105.0,
+      "critical_satisfaction": 0.25,
+      "critical_unmet_demand": 3,
+      "total_unmet_demand": 3,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": false,
+      "runtime_seconds": 0.12631010000040988,
+      "objective_basis": "unpenalized objective expression on original infeasible QUBO bits; not a feasible allocation score",
+      "validation": {
+        "feasible": false,
+        "violations": [
+          {
+            "check": "demand_accounting",
+            "message": "served plus unmet quantity does not equal demand",
+            "location": "hospitals[hospital_1].demand[O]",
+            "expected": 4,
+            "actual": 3
+          }
+        ],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": false,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 3
+        }
+      ],
+      "qubo_variable_count": 6,
+      "best_measured_bitstring": "111011",
+      "counts": {
+        "111010": 38,
+        "111011": 10,
+        "001110": 2,
+        "110010": 16,
+        "111000": 26,
+        "110000": 9,
+        "101010": 2,
+        "001011": 1,
+        "111110": 7,
+        "011010": 3,
+        "101000": 4,
+        "001000": 3,
+        "110111": 1,
+        "001010": 2,
+        "011000": 2,
+        "110011": 2
+      },
+      "measured_energy": 10105.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 98978.27817298443,
+        "initial_parameters": [
+          6.006735895579343,
+          0.6524516488288785
+        ],
+        "final_parameters": [
+          7.290363530956128,
+          0.5717080417624972
+        ]
+      },
+      "validator_violations": [
+        {
+          "check": "demand_accounting",
+          "message": "served plus unmet quantity does not equal demand",
+          "location": "hospitals[hospital_1].demand[O]",
+          "expected": 4,
+          "actual": 3
+        }
+      ],
+      "repetition": 4,
+      "seed": 10,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": null,
+      "approximation_gap_status": "unavailable: feasible method result is required"
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 140.0,
+      "critical_satisfaction": 0.0,
+      "critical_unmet_demand": 4,
+      "total_unmet_demand": 4,
+      "transport_cost": 0.0,
+      "average_travel_time": null,
+      "feasibility": true,
+      "runtime_seconds": 0.13639789999979257,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 4
+        }
+      ],
+      "qubo_variable_count": 6,
+      "best_measured_bitstring": "111111",
+      "counts": {
+        "100110": 4,
+        "001111": 6,
+        "010111": 11,
+        "101111": 7,
+        "110111": 22,
+        "100111": 12,
+        "000101": 1,
+        "101110": 3,
+        "110101": 1,
+        "101011": 2,
+        "000111": 4,
+        "010101": 1,
+        "111111": 17,
+        "110011": 4,
+        "001110": 1,
+        "100101": 2,
+        "111011": 2,
+        "010110": 4,
+        "011111": 8,
+        "100011": 5,
+        "101010": 2,
+        "011110": 3,
+        "011011": 2,
+        "111110": 1,
+        "001011": 1,
+        "101001": 1,
+        "000011": 1
+      },
+      "measured_energy": 140.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 63688.53879694474,
+        "initial_parameters": [
+          0.8078304089805352,
+          1.5685276647418804
+        ],
+        "final_parameters": [
+          0.4715500271704217,
+          0.676530014423494
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 5,
+      "seed": 11,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "greedy",
+      "status": "completed",
+      "objective": 16.200000000000003,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 7.8,
+      "average_travel_time": 11.333333333333334,
+      "feasibility": true,
+      "runtime_seconds": 7.809999988239724e-05,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_a",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_b",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "repetition": null,
+      "seed": null,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.0,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "milp",
+      "status": "completed",
+      "objective": 16.200000000000003,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 7.8,
+      "average_travel_time": 11.333333333333334,
+      "feasibility": true,
+      "runtime_seconds": 0.018718400000580004,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_a",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_b",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "exact",
+      "status": "completed",
+      "objective": 16.200000000000003,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 1,
+      "transport_cost": 7.8,
+      "average_travel_time": 11.333333333333334,
+      "feasibility": true,
+      "runtime_seconds": 0.0010646000009728596,
+      "objective_basis": "classical objective on validated allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_a",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_b",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "repetition": null,
+      "seed": null
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 55.3,
+      "critical_satisfaction": 0.5,
+      "critical_unmet_demand": 1,
+      "total_unmet_demand": 2,
+      "transport_cost": 11.0,
+      "average_travel_time": 21.5,
+      "feasibility": true,
+      "runtime_seconds": 0.20321420000072976,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_b",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 1
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0101001011000",
+      "counts": {
+        "1110100010100": 1,
+        "1111111010001": 1,
+        "1101110110100": 1,
+        "1111100010001": 1,
+        "0111111000010": 1,
+        "1110000011000": 1,
+        "0001100011110": 1,
+        "1001101110010": 1,
+        "1111110111000": 1,
+        "1101111010000": 2,
+        "1010001010101": 1,
+        "0101111010001": 1,
+        "0111111010100": 1,
+        "0001110010010": 1,
+        "0011101000011": 1,
+        "0111111111000": 1,
+        "1111101110100": 1,
+        "1011111011000": 1,
+        "0111111010000": 4,
+        "1101111010100": 1,
+        "1001101110000": 1,
+        "1010110011000": 1,
+        "1111111010000": 4,
+        "0111001000010": 1,
+        "1011101011000": 1,
+        "1101110010001": 1,
+        "1101110010100": 1,
+        "0001100010110": 1,
+        "1111110110000": 1,
+        "0111101010000": 3,
+        "1111111110100": 1,
+        "0111111010101": 1,
+        "0011111000101": 1,
+        "0011110010100": 1,
+        "1111111110001": 1,
+        "0001110010001": 2,
+        "0000111011000": 1,
+        "1001101010000": 1,
+        "1111111110000": 2,
+        "1100001011100": 1,
+        "0001101010001": 1,
+        "0011111010010": 1,
+        "0010111011000": 1,
+        "1111110010001": 1,
+        "1001111111000": 1,
+        "0111100000010": 1,
+        "0000110011111": 1,
+        "1111100110001": 1,
+        "0001110010111": 1,
+        "1110011010000": 1,
+        "1001001010110": 1,
+        "0101011011100": 1,
+        "0111111011000": 1,
+        "0111011010011": 1,
+        "1111111010101": 1,
+        "0111000010110": 1,
+        "1001100010001": 1,
+        "0011111010000": 2,
+        "1101100010001": 1,
+        "1101111110100": 1,
+        "0111101110100": 1,
+        "0000011010010": 1,
+        "0111101000000": 1,
+        "0011011010010": 1,
+        "1111101010001": 1,
+        "0101111001011": 1,
+        "0011111011000": 2,
+        "0111101010100": 2,
+        "0111110010000": 2,
+        "1011100010110": 1,
+        "0010011010100": 1,
+        "0011101010000": 1,
+        "1111101010000": 1,
+        "0011100001010": 1,
+        "1111101000010": 1,
+        "1110111011000": 1,
+        "0110010010001": 1,
+        "1101111000000": 1,
+        "0101001011000": 1,
+        "1011101110001": 1,
+        "1011110110010": 2,
+        "1011111110010": 1,
+        "1011111010000": 1,
+        "0001110001011": 1,
+        "0101011011000": 1,
+        "0101101010110": 1,
+        "1101111010010": 2,
+        "1001100010110": 1,
+        "1110101011000": 1,
+        "0001100000010": 1,
+        "1001111110000": 1,
+        "1101110000001": 1,
+        "0101110010100": 1,
+        "0111111010010": 1,
+        "0011111010100": 1,
+        "1111111111000": 1,
+        "1111111111001": 1,
+        "0111110000010": 1,
+        "1101100010010": 1,
+        "1111111000010": 1,
+        "0111100011011": 1,
+        "0111110010010": 1,
+        "1110111011001": 1,
+        "1111110010000": 2,
+        "0111110010100": 1,
+        "1011111110100": 1,
+        "0111111110100": 1,
+        "1111100010000": 1,
+        "0001111010001": 1,
+        "1111111100001": 1
+      },
+      "measured_energy": 55.30000000000291,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 46412.47710767744,
+        "initial_parameters": [
+          3.927590651355011,
+          2.818680285825393
+        ],
+        "final_parameters": [
+          6.253002793933122,
+          2.594415608965257
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 1,
+      "seed": 7,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 2.4135802469135794,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 27.0,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 2,
+      "transport_cost": 12.0,
+      "average_travel_time": 25.0,
+      "feasibility": true,
+      "runtime_seconds": 0.21663939999962167,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 2
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "1000011001100",
+      "counts": {
+        "0110101111000": 1,
+        "1101011001000": 1,
+        "1001011001110": 2,
+        "1100011110000": 1,
+        "1000101000111": 1,
+        "1110111111000": 1,
+        "0001110110010": 1,
+        "0001110000100": 1,
+        "0111110100010": 1,
+        "1010001100000": 1,
+        "0001101011011": 1,
+        "0011000101111": 1,
+        "0111000011111": 1,
+        "1101111110001": 1,
+        "0011000011100": 1,
+        "1100010000000": 1,
+        "1111100000110": 1,
+        "0110101101101": 1,
+        "0010110001100": 1,
+        "1100111111000": 1,
+        "1001111001001": 1,
+        "1111101111100": 1,
+        "1001000001111": 1,
+        "1011110001100": 1,
+        "0101110001110": 1,
+        "1100010010110": 1,
+        "0111110111010": 1,
+        "0011101011001": 1,
+        "1111001100111": 1,
+        "0000101110011": 1,
+        "0100001101010": 1,
+        "1101100111110": 1,
+        "0011110001101": 1,
+        "0101110000001": 1,
+        "0001110010111": 1,
+        "0111010010110": 1,
+        "1101110010100": 1,
+        "1100100000000": 1,
+        "0000000110011": 1,
+        "0101110110100": 1,
+        "0011010101010": 1,
+        "1101011000101": 1,
+        "0011100001010": 1,
+        "0111001111111": 1,
+        "1010011000010": 1,
+        "0000010110101": 1,
+        "1000100000111": 1,
+        "1011000001000": 1,
+        "1001100111001": 1,
+        "0010111110001": 1,
+        "0110111101011": 1,
+        "1001000010101": 1,
+        "1010110101011": 1,
+        "0011010110010": 1,
+        "1110011010000": 1,
+        "1100101100000": 1,
+        "0111001001111": 1,
+        "1000001010110": 1,
+        "1110100010010": 1,
+        "1011001010101": 1,
+        "1000111010111": 1,
+        "0111111011000": 1,
+        "1100100000110": 1,
+        "1001101100111": 1,
+        "1001001100101": 1,
+        "1001110000011": 1,
+        "0001101011010": 1,
+        "1111111111101": 1,
+        "0000111001010": 1,
+        "0000101001110": 1,
+        "0011100111001": 1,
+        "1100010000011": 1,
+        "0111111000111": 1,
+        "0111100100000": 1,
+        "0000010101111": 1,
+        "1010000010001": 1,
+        "1000010000000": 1,
+        "1100001010111": 1,
+        "0010111101100": 1,
+        "0110000111011": 1,
+        "1111001100010": 1,
+        "0010110101100": 1,
+        "1100110000101": 1,
+        "0111011111000": 1,
+        "1100111100100": 1,
+        "1010000110000": 1,
+        "1000111001010": 1,
+        "0011100111010": 1,
+        "0010101001011": 1,
+        "0001011001101": 1,
+        "0011110100001": 1,
+        "0001110010101": 1,
+        "0011001010001": 1,
+        "0111101010001": 1,
+        "1000100111010": 1,
+        "1010011011001": 1,
+        "0110011110100": 1,
+        "0000111111100": 1,
+        "1001111100000": 1,
+        "0000111001011": 1,
+        "0011010110110": 1,
+        "0011111001001": 1,
+        "0010101010101": 1,
+        "1110101001000": 1,
+        "0100010111001": 1,
+        "0111011111101": 1,
+        "1101110011001": 1,
+        "0110111000000": 1,
+        "1101010110111": 1,
+        "1110011000000": 1,
+        "0100001101001": 1,
+        "0100010110101": 1,
+        "0000101001011": 1,
+        "1100100001101": 1,
+        "1110110110111": 1,
+        "0101111010010": 1,
+        "1000010011101": 1,
+        "0101111001001": 1,
+        "1000011001100": 1,
+        "0010101010010": 1,
+        "0110011110001": 1,
+        "0110111001011": 1,
+        "0100001001100": 1,
+        "1001100000111": 1,
+        "1101010010001": 1,
+        "1101010100101": 1,
+        "1110001110010": 1
+      },
+      "measured_energy": 27.0,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 58866.41151758168,
+        "initial_parameters": [
+          2.0544274042231185,
+          3.101621678089748
+        ],
+        "final_parameters": [
+          2.7705078051295917,
+          3.0047698505610154
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 2,
+      "seed": 8,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 0.6666666666666664,
+      "approximation_gap_status": "defined"
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "qaoa",
+      "status": "infeasible",
+      "objective": 37.699999999999996,
+      "critical_satisfaction": 0.5,
+      "critical_unmet_demand": 1,
+      "total_unmet_demand": 1,
+      "transport_cost": 1.8,
+      "average_travel_time": 4.5,
+      "feasibility": false,
+      "runtime_seconds": 0.21558340000046883,
+      "objective_basis": "unpenalized objective expression on original infeasible QUBO bits; not a feasible allocation score",
+      "validation": {
+        "feasible": false,
+        "violations": [
+          {
+            "check": "demand_accounting",
+            "message": "served plus unmet quantity does not equal demand",
+            "location": "hospitals[hospital_1].demand[O]",
+            "expected": 2,
+            "actual": 1
+          }
+        ],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": false,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        },
+        {
+          "source": "bank_b",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0010100100001",
+      "counts": {
+        "0101100110000": 1,
+        "1101100110001": 1,
+        "1001000100010": 1,
+        "0000110100000": 1,
+        "0010100100001": 3,
+        "1111100110000": 1,
+        "0110101110011": 1,
+        "0011100100011": 1,
+        "0000100110010": 1,
+        "1001100100010": 2,
+        "1000100100000": 1,
+        "0011100110000": 1,
+        "0000000110001": 1,
+        "0001100110000": 4,
+        "0110100110000": 1,
+        "0001100110011": 1,
+        "1000100110001": 1,
+        "0001000100000": 2,
+        "0100100110000": 1,
+        "0011000100001": 1,
+        "0101100110010": 1,
+        "0110100100001": 1,
+        "0001100100010": 2,
+        "0011101010000": 1,
+        "1101100110000": 1,
+        "1001000100011": 2,
+        "1110110100000": 1,
+        "1100100100001": 1,
+        "0111000100000": 2,
+        "1111100100011": 1,
+        "0101100110001": 1,
+        "1001000110000": 1,
+        "1010100100010": 1,
+        "0111100100000": 3,
+        "1101100100000": 2,
+        "1111000110000": 1,
+        "1100100100000": 1,
+        "0011110100010": 1,
+        "1011000110000": 1,
+        "1011100110000": 2,
+        "0010010100000": 1,
+        "0001100110010": 3,
+        "0010000100010": 1,
+        "0000000100000": 1,
+        "1000000110000": 4,
+        "1001100110010": 2,
+        "0110100100011": 1,
+        "0001100100000": 1,
+        "0010000110000": 1,
+        "1101001110000": 1,
+        "0010001100011": 1,
+        "1000110110011": 1,
+        "1000100110000": 3,
+        "1001001100010": 1,
+        "1111100100010": 1,
+        "1111100110010": 1,
+        "0111100110000": 1,
+        "0011100110011": 2,
+        "0111100100010": 1,
+        "1011101110001": 1,
+        "0101010100011": 1,
+        "0011110100001": 1,
+        "1100000100010": 1,
+        "0111100110011": 2,
+        "1111100110011": 1,
+        "1101000100001": 1,
+        "1010100110000": 1,
+        "0011000100000": 1,
+        "0001010110010": 1,
+        "1111001100001": 1,
+        "1000110110001": 1,
+        "0101000110000": 1,
+        "0001100100001": 2,
+        "1101000100000": 1,
+        "0111101100001": 1,
+        "1100000100011": 1,
+        "0101000100011": 1,
+        "0010100110011": 1,
+        "1001100100000": 1,
+        "0000100110000": 1,
+        "0110110110001": 1,
+        "1000000100000": 1,
+        "0110000100010": 1,
+        "1001000110010": 1,
+        "0101100100000": 3,
+        "0001110110000": 1,
+        "0010100110001": 1,
+        "0011000110011": 1,
+        "0101110100001": 1,
+        "1000101100010": 1,
+        "1110100100000": 1,
+        "0000100100000": 1,
+        "0101000100000": 1,
+        "0100100100011": 1,
+        "1101100110101": 1,
+        "0001110110001": 1,
+        "1110000110001": 1,
+        "0000010110000": 1,
+        "0011100100010": 1,
+        "0111100110010": 1,
+        "1101000110000": 1
+      },
+      "measured_energy": 10037.699999999997,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 45673.340873513815,
+        "initial_parameters": [
+          5.467937011969567,
+          0.9010628369925916
+        ],
+        "final_parameters": [
+          6.452520588546438,
+          0.8813820369875408
+        ]
+      },
+      "validator_violations": [
+        {
+          "check": "demand_accounting",
+          "message": "served plus unmet quantity does not equal demand",
+          "location": "hospitals[hospital_1].demand[O]",
+          "expected": 2,
+          "actual": 1
+        }
+      ],
+      "repetition": 3,
+      "seed": 9,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": null,
+      "approximation_gap_status": "unavailable: feasible method result is required"
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "qaoa",
+      "status": "infeasible",
+      "objective": 11.200000000000001,
+      "critical_satisfaction": 1.0,
+      "critical_unmet_demand": 0,
+      "total_unmet_demand": 2,
+      "transport_cost": 0.8,
+      "average_travel_time": 4.0,
+      "feasibility": false,
+      "runtime_seconds": 0.1994297999990522,
+      "objective_basis": "unpenalized objective expression on original infeasible QUBO bits; not a feasible allocation score",
+      "validation": {
+        "feasible": false,
+        "violations": [
+          {
+            "check": "demand_accounting",
+            "message": "served plus unmet quantity does not equal demand",
+            "location": "hospitals[hospital_2].demand[O]",
+            "expected": 2,
+            "actual": 1
+          }
+        ],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": false,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_b",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 2
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 0
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0110011100000",
+      "counts": {
+        "0111111100000": 1,
+        "1101011000000": 1,
+        "0111011101100": 1,
+        "0000111110111": 1,
+        "0010100101100": 1,
+        "0001011011111": 1,
+        "1000111100011": 1,
+        "1100000111000": 1,
+        "0010011010000": 1,
+        "1000011000000": 3,
+        "0100011111111": 1,
+        "1110000111110": 1,
+        "0110111110000": 1,
+        "1001000100111": 1,
+        "0000011101100": 2,
+        "1101011100110": 1,
+        "0000111011111": 1,
+        "1100001010101": 1,
+        "1101110000100": 1,
+        "1010111101000": 1,
+        "1001010101100": 1,
+        "1001111101000": 1,
+        "0000011001011": 2,
+        "0000011100000": 4,
+        "1000110100010": 1,
+        "0001011010011": 3,
+        "0100111100000": 2,
+        "0000011100011": 2,
+        "0000011000100": 1,
+        "1011110100110": 1,
+        "1000011100101": 1,
+        "1000111100000": 1,
+        "0000000111100": 1,
+        "0110111101100": 1,
+        "0000011000011": 2,
+        "0000011001111": 1,
+        "1101001100111": 1,
+        "0010011101111": 1,
+        "0010011000100": 1,
+        "0000011010111": 1,
+        "0000100101110": 1,
+        "1101100100111": 1,
+        "0111100111011": 1,
+        "0100011000000": 1,
+        "0111111100100": 1,
+        "1000001000000": 1,
+        "0101111010011": 1,
+        "1001111100001": 1,
+        "0010111000000": 2,
+        "1000011101111": 1,
+        "0100000001000": 1,
+        "1111011100111": 1,
+        "0101011100001": 1,
+        "0000011101011": 1,
+        "0000011000000": 1,
+        "1110011100100": 1,
+        "1010111100100": 1,
+        "0000111100001": 2,
+        "0010001001100": 1,
+        "0100011100000": 1,
+        "0110011001000": 1,
+        "0100110011100": 1,
+        "1011001110000": 1,
+        "1100011001111": 1,
+        "1001101100111": 1,
+        "0001111001101": 1,
+        "1000000000100": 1,
+        "0011000100111": 1,
+        "0100011001111": 1,
+        "1101111010000": 1,
+        "0010111100011": 1,
+        "0001011101100": 1,
+        "0000111001111": 2,
+        "0101011101000": 2,
+        "0001011101011": 1,
+        "0110110011101": 1,
+        "0001001100100": 1,
+        "0010011000001": 1,
+        "0100011010000": 1,
+        "1110000100010": 1,
+        "0000011110001": 1,
+        "0010010101111": 1,
+        "0110011100000": 1,
+        "0110011001111": 1,
+        "0100011100011": 1,
+        "1100011001000": 1,
+        "0000010000000": 1,
+        "1000010001000": 1,
+        "0000011101001": 1,
+        "0001010101111": 1,
+        "1000011001001": 1,
+        "0000111100000": 1,
+        "0001011110010": 1,
+        "0000010101100": 1,
+        "1001011000010": 1,
+        "0100000110000": 1,
+        "1000011000001": 1,
+        "1011100001100": 1,
+        "0000011101000": 1,
+        "0001111101011": 1,
+        "1100011100100": 1,
+        "0001111100010": 1,
+        "0110011001101": 1,
+        "1100011000000": 1,
+        "0001011000010": 1,
+        "0000011010011": 1,
+        "1011111100011": 1,
+        "0011011010011": 1,
+        "1000011101000": 1,
+        "0000001100000": 1,
+        "0110011000101": 1,
+        "1100001001111": 1
+      },
+      "measured_energy": 10011.199999999997,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 59758.05471357911,
+        "initial_parameters": [
+          6.006735895579343,
+          0.6524516488288785
+        ],
+        "final_parameters": [
+          7.006735895579343,
+          0.6524516488288785
+        ]
+      },
+      "validator_violations": [
+        {
+          "check": "demand_accounting",
+          "message": "served plus unmet quantity does not equal demand",
+          "location": "hospitals[hospital_2].demand[O]",
+          "expected": 2,
+          "actual": 1
+        }
+      ],
+      "repetition": 4,
+      "seed": 10,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": null,
+      "approximation_gap_status": "unavailable: feasible method result is required"
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "qaoa",
+      "status": "completed",
+      "objective": 39.199999999999996,
+      "critical_satisfaction": 0.5,
+      "critical_unmet_demand": 1,
+      "total_unmet_demand": 1,
+      "transport_cost": 2.8,
+      "average_travel_time": 4.666666666666667,
+      "feasibility": true,
+      "runtime_seconds": 0.2169344000012643,
+      "objective_basis": "classical objective calculator on feasible allocation",
+      "validation": {
+        "feasible": true,
+        "violations": [],
+        "checks": {
+          "inventory_constraints": true,
+          "demand_accounting": true,
+          "compatibility": true,
+          "route_availability": true,
+          "non_negative_allocations": true,
+          "valid_source_ids": true,
+          "valid_hospital_ids": true,
+          "valid_blood_groups": true
+        }
+      },
+      "allocation": [
+        {
+          "source": "bank_a",
+          "destination": "hospital_1",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 2
+        },
+        {
+          "source": "bank_b",
+          "destination": "hospital_2",
+          "blood_group": "O",
+          "recipient_group": "O",
+          "quantity": 1
+        }
+      ],
+      "unmet_demand": [
+        {
+          "hospital_id": "hospital_1",
+          "blood_group": "O",
+          "units": 0
+        },
+        {
+          "hospital_id": "hospital_2",
+          "blood_group": "O",
+          "units": 1
+        }
+      ],
+      "qubo_variable_count": 13,
+      "best_measured_bitstring": "0001000100011",
+      "counts": {
+        "1000100000000": 1,
+        "0100111111100": 1,
+        "1100010101011": 1,
+        "1001011110001": 2,
+        "1111111011100": 1,
+        "0101011011110": 1,
+        "1000011110101": 2,
+        "0100001100000": 1,
+        "0100100110110": 1,
+        "1000011101000": 1,
+        "0000011111000": 1,
+        "1000100110011": 1,
+        "0001001010010": 1,
+        "0100110110000": 1,
+        "0000010011111": 1,
+        "0000011110010": 1,
+        "0010111111001": 1,
+        "0100000100100": 1,
+        "0100011110000": 2,
+        "0101011101111": 1,
+        "0100000011011": 1,
+        "0111100100001": 1,
+        "0000010110100": 1,
+        "0010100000001": 1,
+        "1111010010111": 1,
+        "0110000101110": 1,
+        "1011000101010": 1,
+        "1000100010111": 1,
+        "0100100100111": 1,
+        "0010010110000": 1,
+        "0010011100001": 1,
+        "0000011010000": 3,
+        "0100100100001": 1,
+        "1011000100111": 1,
+        "0000000101111": 1,
+        "0010111010101": 1,
+        "1001011010010": 1,
+        "0000001110010": 1,
+        "0100001110000": 1,
+        "0010010000000": 1,
+        "1111101101001": 1,
+        "0010010111011": 1,
+        "1000111110010": 1,
+        "0000000000100": 1,
+        "1000001010010": 2,
+        "0111100001010": 1,
+        "1010010011110": 1,
+        "0000001110001": 1,
+        "0010011010001": 1,
+        "0001000101010": 1,
+        "0010100001101": 1,
+        "1000010110100": 1,
+        "0000011000100": 1,
+        "1110110110000": 1,
+        "0000001001001": 1,
+        "1000110010000": 2,
+        "1010000010001": 1,
+        "0000110100111": 1,
+        "1101111111101": 1,
+        "0000011000000": 1,
+        "0001100100101": 1,
+        "0010000101011": 1,
+        "0100011011000": 1,
+        "0000111110001": 1,
+        "1000001110110": 1,
+        "0000011110100": 2,
+        "1001111110011": 1,
+        "0011100100101": 1,
+        "0000100000000": 1,
+        "0110011110000": 1,
+        "0000110010001": 1,
+        "1000011111000": 1,
+        "0001001111100": 2,
+        "0000000101000": 1,
+        "1011011011100": 1,
+        "0100111010000": 1,
+        "1110100101111": 1,
+        "1100000010111": 1,
+        "0010011000000": 1,
+        "0000010011000": 1,
+        "0111101111111": 1,
+        "0001000101111": 1,
+        "0010011110100": 1,
+        "0000001110000": 1,
+        "1000000110011": 1,
+        "0010010011000": 1,
+        "1000000000010": 1,
+        "0010000100101": 1,
+        "0000001010110": 1,
+        "0011000010000": 1,
+        "1110010011001": 1,
+        "1011111110111": 1,
+        "0000000110000": 1,
+        "0000110000100": 1,
+        "0100011010001": 1,
+        "1100010100000": 1,
+        "0000110010000": 1,
+        "1001110011110": 1,
+        "0010111010000": 1,
+        "0111000110110": 1,
+        "0011011111100": 1,
+        "0000000001100": 1,
+        "0100011010100": 1,
+        "1010101110101": 1,
+        "1100101111011": 1,
+        "1101000001110": 1,
+        "0001011101000": 1,
+        "0010011011000": 1,
+        "1010011010001": 1,
+        "0001111010000": 1,
+        "0001000100011": 1,
+        "0000001111000": 1,
+        "0000111110000": 1,
+        "0010100101111": 1,
+        "1011100101011": 1,
+        "0000000110110": 1,
+        "0010011110000": 1,
+        "1000010101000": 1,
+        "0000011011000": 1
+      },
+      "measured_energy": 39.19999999999709,
+      "qaoa_depth": 1,
+      "shots": 128,
+      "optimizer_information": {
+        "name": "COBYLA",
+        "success": false,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "iterations": 0,
+        "function_evaluations": 15,
+        "final_expected_energy": 54306.09473638616,
+        "initial_parameters": [
+          0.8078304089805352,
+          1.5685276647418804
+        ],
+        "final_parameters": [
+          1.8080150007601328,
+          0.6185239197604336
+        ]
+      },
+      "validator_violations": [],
+      "repetition": 5,
+      "seed": 11,
+      "approximation_reference": "exact_and_milp",
+      "approximation_gap": 1.4197530864197525,
+      "approximation_gap_status": "defined"
+    }
+  ]
+}

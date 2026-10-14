@@ -10,17 +10,17 @@ BloodFlow-Q models how scarce blood-bank inventories can be dynamically allocate
 
 ## 2. Problem
 
-In emergency medical logistics, blood products are perishable and critically scarce, while hospital demand fluctuates unpredictably across blood groups and urgency tiers. Traditional nearest-neighbor dispatching behaves myopically—fulfilling one hospital's immediate request while inducing fatal shortages across regional trauma centers. Finding the optimal allocation requires solving a multi-commodity flow problem subject to rigid biological compatibility (ABO/Rh), physical inventory caps, golden-hour transit limits, and clinical triage priority within an exponentially expanding combinatorial search space.
+Emergency logistics can require allocating scarce inventory across multiple facilities while demand and routes change. BloodFlow-Q models this as a bounded, aggregate, single-period optimization problem with synthetic inventory, demand, route costs and times, and explicitly supplied compatibility assumptions. It is a research model; it does not represent patient-level triage, clinical transfusion compatibility, perishability, or guaranteed delivery.
 
 ## 3. Why it matters
 
-Supply-chain bottlenecks during mass-casualty events or regional transit disruptions directly impact patient survival. When demand surges or transit corridors fail, manual phone dispatching cannot re-optimize multi-facility trade-offs in real time. BloodFlow-Q demonstrates how complex operational constraints can be mathematically formalized, stress-tested against emergency shocks, and solved across both classical algorithms and emerging quantum computing frameworks.
+The project explores how a synthetic allocation model can be formalized, stress-tested under demand and route changes, solved with classical methods, and investigated with a small QAOA simulation. It does not measure patient outcomes, actual delivery, or operational readiness.
 
 ## 4. Solution
 
 BloodFlow-Q delivers an end-to-end optimization and decision-support system featuring:
 - **Unified FastAPI & Python Engine:** Orchestrates scenario modeling, constraint validation, and solver execution.
-- **Multi-Algorithm Baseline Suite:** Solves allocations using deterministic Greedy, provably optimal classical MILP (SciPy HiGHS in $< 15$ ms), and exhaustive Exact search for small instances.
+- **Multi-Algorithm Baseline Suite:** Compares deterministic Greedy, a SciPy/HiGHS MILP solver, and exhaustive Exact search for small instances. An optimal MILP status is accepted only when reported by the solver.
 - **Hybrid Quantum Pipeline:** Formulates allocations as a Quadratic Unconstrained Binary Optimization (QUBO) model mapped to an Ising Hamiltonian, sampled via parameterized QAOA circuits on Qiskit Aer.
 - **Zero-Cheating Classical Validator:** Decodes raw quantum bitstrings and rigorously verifies candidate allocations against inventory and compatibility rules—without hidden repairs.
 - **Dynamic Emergency Simulation:** Simulates demand shocks and route disruptions, computing real-time before-and-after reallocation metrics.
@@ -89,9 +89,9 @@ The data layer rejects malformed or inconsistent scenarios. Classical solvers re
 
 ## 13. Results
 
-The reproducible local experiment run used five one-bank, one-hospital, one-group scenarios. All 15 method runs (Greedy, Exact, and QAOA for each scenario) completed and passed the validator. Mean objective values across these five synthetic cases were **96.42 Greedy**, **95.64 Exact**, and **107.38 QAOA**. QAOA's mean per-scenario approximation gap versus Exact was **47.29%**; its median gap was 0%, reflecting that it matched Exact on four scenarios but returned a worse feasible candidate on the normal reference scenario.
+The checked-in results below are a historical run of five one-bank, one-hospital, one-group scenarios. They do not include the expanded Round 2 suite described under reproducibility.
 
-These are descriptive measurements from one small local simulator run, not general performance evidence. QAOA matched Exact on three of the five cases, was slightly worse on one, and had a much larger gap on the normal reference case. See the full [experiment analysis](docs/EXPERIMENT_RESULTS.md), [raw results](experiments/results/20261007-01.json), and [saved configuration](experiments/configurations/20261007-01.json).
+These are descriptive measurements from a small local simulator run, not general performance evidence. See the historical [experiment analysis](docs/EXPERIMENT_RESULTS.md), [Round 2 experiment analysis](docs/EXPERIMENT_RESULTS_ROUND2.md), [Round 2 raw results](experiments/results/round2-20261015-r2.json), and [Round 2 configuration](experiments/configurations/round2-20261015-r2.json).
 
 **The results do not demonstrate quantum advantage.** In this run QAOA used a local classical simulator and was slower than the classical methods; the scenario set is far too small to support general claims.
 
@@ -154,14 +154,10 @@ Open `http://localhost:5173`. The frontend expects the API at `http://127.0.0.1:
 
 ### Run a bounded experiment suite
 
-From the project root, the defaults run at most five tiny cases with QAOA depth 1, 128 shots, 15 optimizer iterations, and Exact capped at 50,000 candidate states:
+The experiment runner preserves the historical five-case baseline and adds a six-case Round 2 suite. Both compare Greedy, MILP, Exact, and measured QAOA. QAOA repetitions use distinct seeds and keep errors and infeasible candidates in the raw output. The Round 2 suite includes one synthetic 2-bank/2-hospital case; its QUBO remains within the configured 16-variable local simulator cap. Example:
 
 ```bash
-.venv/bin/python -m experiments.run_experiments \
-  --scenarios 5 --seed 7 --p 1 --shots 128 \
-  --optimizer COBYLA --max-iterations 15 \
-  --penalty-weight 10000 --max-exact-states 50000 \
-  --run-id my-run
+python -m experiments.run_experiments --suite round2 --scenarios 6 --repetitions 5 --seed 7 --p 1 --shots 128 --optimizer COBYLA --max-iterations 15 --penalty-weight 10000 --max-exact-states 50000 --run-id round2-local
 ```
 
 Raw result JSON is written to `experiments/results/`; the matching configuration is stored in `experiments/configurations/`. Analyze the run and regenerate the summary report with:
@@ -172,7 +168,7 @@ Raw result JSON is written to `experiments/results/`; the matching configuration
   --summary-json experiments/results/my-run-analysis.json
 ```
 
-Scenario count is capped at five, QAOA depth at three, and shots at 1,024 by the experiment command. These safeguards keep the provided workflow suitable for a local laptop. The saved config captures full scenario inputs, objective and penalty weights, QAOA settings, Python/package versions, platform details, invocation arguments, and source-file hashes. Further reproduction guidance is in [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+For a quicker smoke run, pass `--repetitions 1 --max-iterations 5 --shots 32`. Scenario count is capped at five for `baseline` and six for `round2`; QAOA depth is capped at three, shots at 1,024, repetitions at 20, and simulator size at 16 variables. The saved config captures full scenario inputs, objective and penalty weights, per-run seeds, Python/package versions, platform details, invocation arguments, and source-file hashes. Further reproduction guidance is in [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
 
 ### Deployment preparation
 

@@ -1,5 +1,7 @@
 # BloodFlow-Q Experiment Results
 
+> Historical report for the five-case run captured on 2026-10-07. The runner now also supports the separate Round 2 suite and repeated QAOA seeds; see [EXPERIMENT_RESULTS_ROUND2.md](EXPERIMENT_RESULTS_ROUND2.md) for its measured output. This historical file remains unchanged so its raw data and analysis stay paired.
+
 **Raw data:** [`20261007-01.json`](../experiments/results/20261007-01.json)  
 **Configuration:** [`20261007-01.json`](../experiments/configurations/20261007-01.json)
 

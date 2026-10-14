@@ -25,13 +25,20 @@ def summarize(experiment: dict[str, Any]) -> dict[str, Any]:
     rows = experiment["results"]
     summary: dict[str, Any] = {"scenario_count": experiment["configuration"]["scenario_count"],
                                "methods": {}}
-    for method in ("greedy", "exact", "qaoa"):
+    methods = ("greedy", "milp", "exact", "qaoa")
+    for method in methods:
         method_rows = [row for row in rows if row["method"] == method]
         method_summary: dict[str, Any] = {
+            "attempt_count": len(method_rows),
+            "completed_count": sum(row.get("status") in {"completed", "infeasible"} for row in method_rows),
             "status_counts": {status: sum(row.get("status") == status for row in method_rows)
                               for status in sorted({row.get("status") for row in method_rows})},
             "feasible_count": sum(row.get("feasibility") is True for row in method_rows),
             "infeasible_count": sum(row.get("feasibility") is False for row in method_rows),
+            "feasibility_rate_over_attempts": (
+                sum(row.get("feasibility") is True for row in method_rows) / len(method_rows)
+                if method_rows else None
+            ),
             "metrics": {},
         }
         for metric, _label in METRICS:
@@ -61,60 +68,87 @@ def render_report(experiment: dict[str, Any], summary: dict[str, Any], source: s
     rows = experiment["results"]
     lines = [
         "# BloodFlow-Q Experiment Results", "",
-        f"**Raw data:** [`{Path(source).name}`](../{source})  ",
+        f"**Raw data:** [`{Path(source).name}`](../{Path(source).as_posix()})  ",
         f"**Configuration:** [`{Path(source).stem}.json`](../experiments/configurations/{Path(source).stem}.json)",
         "", "## Methodology", "",
         "This report is generated from the raw JSON experiment output. It does not alter source measurements. "
-        "Each method runs on the same compact, fictional scenario with a shared objective. Greedy is the "
-        "deterministic baseline; Exact enumerates the bounded allocation states up to its configured limit; "
+        "Each method runs on the same fictional scenario with a shared objective. Greedy is the "
+        "deterministic baseline; MILP uses HiGHS; Exact enumerates bounded allocation states up to its configured limit; "
         "QAOA uses the local Qiskit Aer simulator, samples finite-shot bitstrings, decodes them, and runs "
         "the shared classical feasibility validator. An infeasible QAOA sample is retained as infeasible and "
         "is not repaired. Runtime is measured locally and is environment-dependent.", "",
         "## Number and size of scenarios", "",
-        f"The run contains **{config['scenario_count']} scenarios**. Full scenario inputs and per-case "
-        f"unit counts are in [`{Path(source).stem}.json`](../experiments/configurations/{Path(source).stem}.json). "
-        "Each case has one synthetic bank, one synthetic hospital, one modeled blood group, and at most one potential "
-        "allocation variable. Inventory and demand are bounded by 12 and 7 units respectively. The QUBO bit count "
-        "is reported per case below. This deliberately "
-        "small design keeps exact enumeration and the local simulator bounded.", "",
-        "| Scenario | Banks | Hospitals | Groups | Inventory units | Demand units | QUBO bits |", "|---|---:|---:|---:|---:|---:|---:|",
+        f"Suite: **{config.get('suite', 'baseline')}**; scenarios: **{config['scenario_count']}**. Full inputs "
+        f"and settings are in [`{Path(source).stem}.json`](../experiments/configurations/{Path(source).stem}.json). "
+        "The Round 2 suite includes a deterministic 2-bank/2-hospital/1-group case with four routes. All values are "
+        "synthetic. QUBO bit counts are reported per case; local QAOA is capped at 16 variables.", "",
+        "| Scenario | Banks | Hospitals | Groups | Routes | Allocation vars | Inventory units | Demand units | QUBO bits |", "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     qaoa_variables = {row["scenario_id"]: row.get("qubo_variable_count")
                       for row in rows if row["method"] == "qaoa"}
     for scenario_id, size in config["scenario_sizes"].items():
-        lines.append(f"| {scenario_id} | {size['blood_banks']} | {size['hospitals']} | {size['blood_groups']} | {size['inventory_units']} | {size['demand_units']} | {qaoa_variables.get(scenario_id, '—')} |")
+        lines.append(f"| {scenario_id} | {size['blood_banks']} | {size['hospitals']} | {size['blood_groups']} | {size.get('routes', '—')} | {size['allocation_decision_variables']} | {size['inventory_units']} | {size['demand_units']} | {qaoa_variables.get(scenario_id, '—')} |")
     lines += ["", "## Parameters", "",
               f"- Objective weights: `{json.dumps(config['objective_weights'], sort_keys=True)}`",
               f"- QAOA: `{json.dumps(config['qaoa'], sort_keys=True)}`",
+              f"- QAOA repetitions: `{config.get('qaoa_repetitions', 1)}` independent seeds per scenario; failures remain in raw results.",
               f"- QUBO penalty weights: `{json.dumps(config['qubo_penalty_weights'], sort_keys=True)}`",
               f"- Exact candidate-state cap: `{config['exact_max_candidate_states']:,}`",
               f"- Software versions: `{json.dumps(config['environment']['packages'], sort_keys=True)}`", "",
               "## Per-scenario results", "",
               "`Feasible` is the validator result. A QAOA objective is reported only for a feasible decoded allocation; "
               "an infeasible measured candidate's raw objective expression is not comparable and is excluded from "
-              "objective statistics. Approximation gap is `(method objective - exact objective) / abs(exact objective)` "
-              "and is recorded only when both method and Exact results are feasible. Runtime includes solving and "
+              "objective statistics. Approximation gap is `(method objective - reference objective) / abs(reference objective)` "
+              "and is recorded only when the method and the optimum-capable reference are feasible. Runtime includes solving and "
               "the independent validation performed by this runner.", "",
-              "| Scenario | Method | Status | Objective | Critical satisfied | Unmet | Transport cost | Avg travel time | Feasible | Runtime (s) | Gap vs Exact |",
-              "|---|---|---|---:|---:|---:|---:|---:|:---:|---:|---:|"]
+              "| Scenario | Method | Rep | Seed | Status | Objective | Critical satisfied | Unmet | Transport cost | Avg travel time | Feasible | Runtime (s) | Gap vs reference |",
+              "|---|---|---:|---:|---|---:|---:|---:|---:|---:|:---:|---:|---:|"]
     for row in rows:
         val = lambda value: "—" if value is None else (f"{value:.6g}" if isinstance(value, float) else str(value))
         critical = None if row.get("critical_satisfaction") is None else 100 * row["critical_satisfaction"]
-        lines.append("| " + " | ".join((row["scenario_id"], row["method"], row["status"],
+        lines.append("| " + " | ".join((row["scenario_id"], row["method"],
+            val(row.get("repetition")), val(row.get("seed")), row["status"],
             val(row.get("objective")), "—" if critical is None else f"{critical:.1f}%",
             val(row.get("total_unmet_demand")), val(row.get("transport_cost")),
             val(row.get("average_travel_time")), val(row.get("feasibility")),
             val(row.get("runtime_seconds")), val(row.get("approximation_gap")))) + " |")
+    qaoa_rows = [row for row in rows if row.get("method") == "qaoa"]
+    if qaoa_rows:
+        lines += ["", "## QAOA repeated-run summary by scenario", "",
+                  "Objective statistics below use feasible measured candidates only. Feasibility rate uses all attempted seeds, including errors.", "",
+                  "| Scenario | Attempts | Measured | Feasible | Feasibility rate | Mean feasible objective | Median | Population SD | Mean runtime (s) |",
+                  "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+        for scenario_id in config["scenario_sizes"]:
+            scenario_rows = [row for row in qaoa_rows if row["scenario_id"] == scenario_id]
+            feasible_objectives = [float(row["objective"]) for row in scenario_rows
+                                   if row.get("feasibility") is True and row.get("objective") is not None
+                                   and math.isfinite(float(row["objective"]))]
+            measured_times = [float(row["runtime_seconds"]) for row in scenario_rows
+                              if row.get("status") in {"completed", "infeasible"}
+                              and row.get("runtime_seconds") is not None]
+            fmt = lambda value: "—" if value is None else f"{value:.6g}"
+            lines.append("| " + " | ".join((
+                scenario_id, str(len(scenario_rows)),
+                str(sum(row.get("status") in {"completed", "infeasible"} for row in scenario_rows)),
+                str(len(feasible_objectives)),
+                fmt(len(feasible_objectives) / len(scenario_rows) if scenario_rows else None),
+                fmt(statistics.fmean(feasible_objectives) if feasible_objectives else None),
+                fmt(statistics.median(feasible_objectives) if feasible_objectives else None),
+                fmt(statistics.pstdev(feasible_objectives) if feasible_objectives else None),
+                fmt(statistics.fmean(measured_times) if measured_times else None),
+            )) + " |")
     lines += ["", "## Summary statistics", "",
               "Mean, median, minimum, maximum, and population standard deviation are calculated across available "
               "measurements only. No missing or failed run is converted to zero. Objective summaries use feasible "
               "results only; the remaining metrics use actual completed outputs, including infeasible QAOA samples. "
               "Critical satisfaction is summarized as a fraction from 0 to 1 (the scenario table shows percentages).", ""]
-    for method in ("greedy", "exact", "qaoa"):
+    for method in ("greedy", "milp", "exact", "qaoa"):
         method_summary = summary["methods"][method]
         lines += [f"### {method.title()}", "",
-                  f"Completed statuses: `{method_summary['status_counts']}`; feasible: "
-                  f"`{method_summary['feasible_count']}`; infeasible: `{method_summary['infeasible_count']}`.", "",
+                  f"Attempts: `{method_summary['attempt_count']}`; completed: `{method_summary['completed_count']}`; "
+                  f"feasible: `{method_summary['feasible_count']}`; infeasible: `{method_summary['infeasible_count']}`; "
+                  f"feasible/attempted: `{method_summary['feasibility_rate_over_attempts']}`; statuses: "
+                  f"`{method_summary['status_counts']}`.", "",
                   "| Metric | n | Mean | Median | Min | Max | Std. dev. (population) |", "|---|---:|---:|---:|---:|---:|---:|"]
         for metric, label in METRICS:
             values = method_summary["metrics"][metric]
@@ -123,13 +157,14 @@ def render_report(experiment: dict[str, Any], summary: dict[str, Any], source: s
         lines.append("")
     lines += ["## Interpretation", "",
               "These measurements describe only this small synthetic instance set and this local software environment. "
-              "Greedy and Exact outputs can be compared directly where both completed; Exact serves as an optimum "
-              "certificate only for cases it actually solved within its cap. QAOA uses a hybrid classical optimizer "
+              "Greedy, MILP, and Exact outputs can be compared on the same objective. Exact is an exhaustive reference "
+              "only for cases solved within its cap; MILP is an optimum reference only when HiGHS reports success. "
+              "Repeated QAOA seeds are descriptive observations, not formal statistical evidence. QAOA uses a hybrid classical optimizer "
               "and local simulator, so its runtime includes classical optimization and simulator work. Finite shots "
               "can yield infeasible samples; those remain visible. The sample is too small and the execution setup "
               "too limited to support broad performance claims.", "",
               "## Limitations", "",
-              "- Scenarios contain only one bank, one hospital, and one blood-group label, and use synthetic values. They are not representative of operational networks.",
+              "- Cases remain small synthetic research instances; the two-bank/two-hospital case is not representative of an operational network.",
               "- Compatibility is a simplified prototype assumption, not a complete clinical compatibility model.",
               "- Local simulator results and wall-clock timings depend on package versions, machine load, and platform.",
               "- The QAOA candidate is a measured sample, not an optimality proof. Infeasible samples are not repaired.",
