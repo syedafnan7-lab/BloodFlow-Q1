@@ -8,6 +8,8 @@ import NetworkOverview from '../components/NetworkOverview';
 import PageHeader from '../components/PageHeader';
 import { MetaRow } from '../components/DataField';
 import { getDashboardMetrics } from '../services/donorNetwork';
+import DemandAllocationChart from '../components/DemandAllocationChart';
+import ResearchSnapshot from '../components/ResearchSnapshot';
 
 function summarize(scenario, savedResults) {
   const banks = scenario.blood_banks || [];
@@ -29,6 +31,9 @@ function summarize(scenario, savedResults) {
     currentUnmet,
     runStatus,
     latestRun,
+    latestAllocation: latestRun?.endpoint === '/simulate-emergency'
+      ? latestPayload?.after_allocation
+      : latestPayload?.allocation,
   };
 }
 
@@ -96,6 +101,7 @@ export default function Dashboard({ onNavigate, onOptimization }) {
   return <>
     <PageHeader eyebrow="OVERVIEW" title="Dashboard" description="A live view of the synthetic allocation network and recent optimization activity."
       action={<button className="button button-primary" onClick={handleRun}><Play size={16} fill="currentColor" /> Run optimization</button>} />
+    <ResearchSnapshot onNavigate={onNavigate} />
     {loading && <LoadingState label="Connecting to the BloodFlow-Q API…" />}
     {!loading && error && <ErrorState message={error} onRetry={reload} />}
     {!loading && !error && data && <>
@@ -140,6 +146,7 @@ export default function Dashboard({ onNavigate, onOptimization }) {
             tone="blue"
           />
         </section>
+        <DemandAllocationChart scenario={data.scenario} allocation={summary.latestAllocation} onNavigate={onNavigate} />
         <section className="donor-dashboard-section" aria-labelledby="donor-dashboard-title">
           <div className="donor-dashboard-heading"><div><span className="eyebrow">DONOR COORDINATION</span><h2 id="donor-dashboard-title">Donor network activity</h2><p>Private counts are shown only in an authenticated platform-administrator session. Synthetic coordination walkthroughs are available in Donor Network.</p></div><button type="button" className="button button-secondary button-small" onClick={() => onNavigate('donor-network')}>Open Donor Network <ArrowUpRight size={14} /></button></div>
           <div className="metric-grid coordination-dashboard-grid" aria-label="Donor coordination metrics">

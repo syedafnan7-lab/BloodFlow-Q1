@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Activity, AlertTriangle, Boxes, ChevronDown, ClipboardPlus, FileClock, FlaskConical, HeartPulse, Hospital, LayoutDashboard, Menu, Network, Settings2, Siren, X, PlayCircle, UserRoundPlus, Truck } from 'lucide-react';
+import { Activity, AlertTriangle, Boxes, ChevronDown, ClipboardPlus, FileChartColumn, FileClock, FlaskConical, HeartPulse, Hospital, LayoutDashboard, Menu, Network, Settings2, Siren, X, PlayCircle, UserRoundPlus, Truck } from 'lucide-react';
 import { api } from './services/api';
 import Dashboard from './pages/Dashboard';
 import BloodBanks from './pages/BloodBanks';
@@ -10,6 +10,7 @@ import EmergencySimulation from './pages/EmergencySimulation';
 import Results from './pages/Results';
 import About from './pages/About';
 import DemoMode from './pages/DemoMode';
+import ExperimentReports from './pages/ExperimentReports';
 import LoadingState from './components/Feedback';
 
 // The private coordination module includes an optional auth client. Load it
@@ -30,7 +31,8 @@ const NAV_ITEMS = [
   { id: 'donor-network', label: 'Donor Network', icon: UserRoundPlus, group: 'COORDINATION' },
   { id: 'emergency-requests', label: 'Emergency Blood Request', icon: ClipboardPlus },
   { id: 'coordination', label: 'Collection & transport', icon: Truck },
-  { id: 'results', label: 'Results', icon: FileClock, group: 'RESEARCH' },
+  { id: 'results', label: 'Solver Lab', icon: FileClock, group: 'RESEARCH' },
+  { id: 'reports', label: 'Experiment reports', icon: FileChartColumn },
   { id: 'about', label: 'About / methodology', icon: FlaskConical },
 ];
 
@@ -85,6 +87,7 @@ export default function App() {
       case 'emergency-requests': return <EmergencyRequests demoState={coordinationDemo} onStartDemo={startCoordinationDemo} onDemoAction={advanceCoordinationDemo} />;
       case 'coordination': return <Coordination demoState={coordinationDemo} onDemoAction={advanceCoordinationDemo} onNavigate={navigate} />;
       case 'results': return <Results />;
+      case 'reports': return <ExperimentReports />;
       case 'about': return <About />;
       default: return <Dashboard onNavigate={navigate} onOptimization={runQuickOptimization} />;
     }
@@ -102,7 +105,7 @@ export default function App() {
     <div className="main-shell">
       <header className="topbar"><button className="mobile-menu" aria-label="Open navigation" aria-controls="primary-navigation" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}><Menu size={20} /></button><div className="breadcrumbs" aria-label="Breadcrumb"><span>BloodFlow-Q</span><span className="breadcrumb-slash" aria-hidden="true">/</span><strong aria-current="page">{TITLES[page] || 'Dashboard'}</strong></div><div className="topbar-right"><span className="environment-pill"><i aria-hidden="true" />Synthetic data</span><span className="topbar-divider" /><div className="user-chip"><span aria-hidden="true">R</span><strong>Researcher</strong></div></div></header>
       <main className="page-content" id="main-content"><div className="page-container"><Suspense fallback={<LoadingState label="Loading coordination tools…" />}>{renderPage()}</Suspense></div></main>
-      <footer className="app-footer"><span><Activity size={13} /> BloodFlow-Q research prototype</span><span>Aggregate logistics model <i /> Synthetic data only</span></footer>
+      <footer className="app-footer"><span><Activity size={13} /> BloodFlow-Q research prototype</span><span>Aggregate logistics model <i /> Synthetic data only</span><span className="app-attribution">Tooltip adapted from <a href="https://skiper-ui.com/v1/skiper101" target="_blank" rel="noreferrer">Skiper UI</a></span></footer>
     </div>
   </div>;
 }

@@ -1,24 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { EmptyState, ErrorState, LoadingState } from './Feedback';
 import { StatusBadge } from './DataField';
+import { useResearchStudy } from '../hooks/useResearchStudy';
 
 const CLASSICAL_ORDER = ['milp', 'exact', 'classical_multistart', 'greedy'];
 
 export default function QuantumValueStudy() {
-  const [study, setStudy] = useState(null);
-  const [error, setError] = useState('');
+  const { study, error } = useResearchStudy();
   const [scenarioId, setScenarioId] = useState('multi_facility_tradeoff');
   const [seed, setSeed] = useState('201');
-
-  useEffect(() => {
-    fetch('/quantum-value-study.json')
-      .then((response) => {
-        if (!response.ok) throw new Error(`Study data request failed (${response.status})`);
-        return response.json();
-      })
-      .then(setStudy)
-      .catch((issue) => setError(issue.message || 'Could not load the saved research run.'));
-  }, []);
 
   const scenarios = Object.keys(study?.configuration?.scenario_sizes || {});
   const rows = useMemo(() => (study?.results || []).filter((row) => row.scenario_id === scenarioId), [study, scenarioId]);
