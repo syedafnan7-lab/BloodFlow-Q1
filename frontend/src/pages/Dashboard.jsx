@@ -9,7 +9,6 @@ import PageHeader from '../components/PageHeader';
 import { MetaRow } from '../components/DataField';
 import { getDashboardMetrics } from '../services/donorNetwork';
 import DemandAllocationChart from '../components/DemandAllocationChart';
-import ResearchSnapshot from '../components/ResearchSnapshot';
 
 function summarize(scenario, savedResults) {
   const banks = scenario.blood_banks || [];
@@ -101,7 +100,10 @@ export default function Dashboard({ onNavigate, onOptimization }) {
   return <>
     <PageHeader eyebrow="OVERVIEW" title="Dashboard" description="A live view of the synthetic allocation network and recent optimization activity."
       action={<button className="button button-primary" onClick={handleRun}><Play size={16} fill="currentColor" /> Run optimization</button>} />
-    <ResearchSnapshot onNavigate={onNavigate} />
+    <section className="dashboard-capability-hero" aria-label="BloodFlow-Q capabilities">
+      <div className="dashboard-capability-copy"><span className="eyebrow">NETWORK DECISION SUPPORT · SYNTHETIC RESEARCH</span><h2>Model the network. Re-plan when conditions change.</h2><p>Investigate allocation strategies across simulated blood banks, hospitals, supply, demand and routes. Compare classical and quantum-assisted methods, then test resilience under disruption.</p><div className="dashboard-hero-actions"><button className="button button-primary" onClick={() => onNavigate('emergency')}><Siren size={15} /> Simulate disruption</button><button className="button button-secondary" onClick={() => onNavigate('quantum-lab')}>Explore Quantum Lab <ArrowUpRight size={15} /></button></div></div>
+      <div className="dashboard-capability-list"><button onClick={() => onNavigate('network')}><span>01</span><strong>Network intelligence</strong><small>Supply · demand · routes</small><ArrowUpRight size={15} /></button><button onClick={() => onNavigate('optimization')}><span>02</span><strong>Allocation optimization</strong><small>Compare methods and validate</small><ArrowUpRight size={15} /></button><button onClick={() => onNavigate('emergency')}><span>03</span><strong>Emergency resilience</strong><small>Disrupt · re-optimize · review</small><ArrowUpRight size={15} /></button></div>
+    </section>
     {loading && <LoadingState label="Connecting to the BloodFlow-Q API…" />}
     {!loading && error && <ErrorState message={error} onRetry={reload} />}
     {!loading && !error && data && <>

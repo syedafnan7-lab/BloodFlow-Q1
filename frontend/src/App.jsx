@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Activity, AlertTriangle, Boxes, ChevronDown, ClipboardPlus, FileChartColumn, FileClock, FlaskConical, HeartPulse, Hospital, LayoutDashboard, Menu, Network, Settings2, Siren, X, PlayCircle, UserRoundPlus, Truck } from 'lucide-react';
+import { Activity, AlertTriangle, Boxes, ChevronDown, ClipboardPlus, FileChartColumn, FileClock, FlaskConical, HeartPulse, Hospital, LayoutDashboard, Menu, Network, Settings2, Siren, X, PlayCircle, UserRoundPlus, Truck, Atom } from 'lucide-react';
 import { api } from './services/api';
 import Dashboard from './pages/Dashboard';
 import BloodBanks from './pages/BloodBanks';
@@ -11,6 +11,7 @@ import Results from './pages/Results';
 import About from './pages/About';
 import DemoMode from './pages/DemoMode';
 import ExperimentReports from './pages/ExperimentReports';
+import QuantumLab from './pages/QuantumLab';
 import LoadingState from './components/Feedback';
 
 // The private coordination module includes an optional auth client. Load it
@@ -33,6 +34,7 @@ const NAV_ITEMS = [
   { id: 'coordination', label: 'Collection & transport', icon: Truck },
   { id: 'results', label: 'Solver Lab', icon: FileClock, group: 'RESEARCH' },
   { id: 'reports', label: 'Experiment reports', icon: FileChartColumn },
+  { id: 'quantum-lab', label: 'Quantum Optimization Lab', icon: Atom },
   { id: 'about', label: 'About / methodology', icon: FlaskConical },
 ];
 
@@ -88,6 +90,7 @@ export default function App() {
       case 'coordination': return <Coordination demoState={coordinationDemo} onDemoAction={advanceCoordinationDemo} onNavigate={navigate} />;
       case 'results': return <Results />;
       case 'reports': return <ExperimentReports />;
+      case 'quantum-lab': return <QuantumLab onNavigate={navigate} />;
       case 'about': return <About />;
       default: return <Dashboard onNavigate={navigate} onOptimization={runQuickOptimization} />;
     }
