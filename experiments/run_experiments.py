@@ -32,8 +32,9 @@ from optimization.exact import ExactSolver, ExactSolverConfig, ExactSolverLimitE
 from optimization.greedy import GreedyAllocator
 from optimization.milp import MILPSolver, MILPSolverError
 from optimization.models import BloodBank, Hospital, Route, Scenario, Urgency
-from optimization.objective import ObjectiveConfig
+from optimization.objective import ObjectiveConfig, calculate_objective
 from quantum.qubo import QUBOPenaltyConfig, build_qubo
+from experiments.search_methods import classical_multistart, local_improve, state_from_allocation
 try:
     from quantum.qaoa_solver import QAOAConfig, QAOASolver
     _QAOA_IMPORT_ERROR: Exception | None = None
@@ -252,10 +253,64 @@ def run_experiments(*, count: int, seed: int, p: int, shots: int, optimizer: str
             item["seed"] = None
             scenario_records[name] = item
 
-        qaoa_items: list[dict[str, Any]] = []
+        exact = scenario_records["exact"]
+        milp = scenario_records["milp"]
+        target_objective = None
+        if exact.get("status") == "completed" and milp.get("status") == "completed":
+            if math.isclose(float(exact["objective"]), float(milp["objective"]), rel_tol=1e-9, abs_tol=1e-9):
+                target_objective = float(exact["objective"])
+        elif exact.get("status") == "completed":
+            target_objective = float(exact["objective"])
+        elif milp.get("status") == "completed":
+            target_objective = float(milp["objective"])
+
+        classical_search_items: list[dict[str, Any]] = []
         for repetition_index in range(repetitions):
             run_seed = seed + repetition_index
             started = perf_counter()
+            try:
+                greedy_started = perf_counter()
+                greedy_start = GreedyAllocator().solve(scenario, objective)
+                greedy_initialization_seconds = perf_counter() - greedy_started
+                improved, search_metrics = classical_multistart(
+                    scenario, objective, greedy_start.allocation, seed=run_seed,
+                    max_evaluations=100, random_starts=3,
+                    target_objective=target_objective,
+                    initialization_seconds=perf_counter() - started)
+                validation = validate_allocation(scenario, improved.allocation,
+                                                 improved.unmet_demand)
+                scored = type("ScoredSearchState", (), {
+                    "allocation": improved.allocation,
+                    "unmet_demand": improved.unmet_demand,
+                    "objective_breakdown": calculate_objective(
+                        scenario, improved.allocation, objective),
+                })()
+                row = _record(scenario, "classical_multistart", scored, validation,
+                              perf_counter() - started) | search_metrics | {
+                    "repetition": repetition_index + 1, "seed": run_seed,
+                    "first_feasible_seconds": greedy_initialization_seconds,
+                    "reference_objective": target_objective,
+                    "target_objective": (target_objective * 1.05
+                                         if target_objective is not None else None),
+                }
+            except Exception as error:
+                row = {"scenario_id": scenario.id, "method": "classical_multistart",
+                       "status": "error", "detail": f"{type(error).__name__}: {error}",
+                       "objective": None, "feasibility": None,
+                       "runtime_seconds": perf_counter() - started,
+                       "repetition": repetition_index + 1, "seed": run_seed,
+                       "objective_evaluations": 0, "evaluation_budget": 100}
+            classical_search_items.append(row)
+
+        qaoa_items: list[dict[str, Any]] = []
+        hybrid_items: list[dict[str, Any]] = []
+        for repetition_index in range(repetitions):
+            run_seed = seed + repetition_index
+            started = perf_counter()
+            sample = None
+            evaluated = None
+            validation = None
+            qubo = None
             try:
                 if _QAOA_IMPORT_ERROR is not None or QAOAConfig is None or QAOASolver is None:
                     raise RuntimeError(f"QAOA dependency import failed: {_QAOA_IMPORT_ERROR}")
@@ -277,7 +332,17 @@ def run_experiments(*, count: int, seed: int, p: int, shots: int, optimizer: str
                     "validator_violations": list(evaluated.violations),
                     "repetition": repetition_index + 1, "seed": run_seed,
                 }
+                qaoa_pipeline_runtime = perf_counter() - started
+                item["qaoa_runtime_seconds"] = qaoa_pipeline_runtime
+                item["first_feasible_seconds"] = (qaoa_pipeline_runtime
+                                                    if validation["feasible"] else None)
+                item["time_to_target_seconds"] = (
+                    qaoa_pipeline_runtime
+                    if validation["feasible"] and target_objective is not None
+                    and evaluated.objective_breakdown.total_objective <= target_objective * 1.05
+                    else None)
             except Exception as error:
+                qaoa_pipeline_runtime = perf_counter() - started
                 item = {
                     "scenario_id": scenario.id, "method": "qaoa", "status": "error",
                     "detail": f"{type(error).__name__}: {error}", "objective": None,
@@ -290,10 +355,79 @@ def run_experiments(*, count: int, seed: int, p: int, shots: int, optimizer: str
                 }
             qaoa_items.append(item)
 
+            hybrid_started = started
+            if sample is None or evaluated is None or validation is None:
+                hybrid_items.append({
+                    "scenario_id": scenario.id, "method": "hybrid_qaoa_local_search",
+                    "status": "error", "detail": item.get("detail", "QAOA candidate unavailable"),
+                    "objective": None, "feasibility": None,
+                    "runtime_seconds": item["runtime_seconds"], "qaoa_runtime_seconds": item["runtime_seconds"],
+                    "search_runtime_seconds": 0.0, "first_feasible_seconds": None,
+                    "time_to_target_seconds": None, "seed": run_seed,
+                    "repetition": repetition_index + 1,
+                })
+            elif not validation["feasible"]:
+                hybrid_items.append({
+                    "scenario_id": scenario.id, "method": "hybrid_qaoa_local_search",
+                    "status": "skipped_infeasible_qaoa_seed",
+                    "objective": None, "feasibility": False,
+                    "runtime_seconds": item["runtime_seconds"],
+                    "qaoa_runtime_seconds": qaoa_pipeline_runtime,
+                    "search_runtime_seconds": 0.0, "first_feasible_seconds": None,
+                    "time_to_target_seconds": None,
+                    "raw_qaoa_candidate_objective": evaluated.objective_breakdown.total_objective,
+                    "raw_qaoa_allocation": [asdict(row) for row in evaluated.decoded_allocation],
+                    "validator_violations": list(evaluated.violations),
+                    "objective_evaluations": 0, "evaluation_budget": 100,
+                    "seed": run_seed, "repetition": repetition_index + 1,
+                })
+            else:
+                try:
+                    initial_state = state_from_allocation(
+                        scenario, objective, evaluated.decoded_allocation)
+                    improved, search_metrics = local_improve(
+                        scenario, objective, initial_state, max_evaluations=100,
+                        target_objective=target_objective)
+                    hybrid_validation = validate_allocation(scenario, improved.allocation,
+                                                            improved.unmet_demand)
+                    scored = type("ScoredHybridState", (), {
+                        "allocation": improved.allocation,
+                        "unmet_demand": improved.unmet_demand,
+                        "objective_breakdown": calculate_objective(
+                            scenario, improved.allocation, objective),
+                    })()
+                    row = _record(scenario, "hybrid_qaoa_local_search", scored,
+                                  hybrid_validation, perf_counter() - hybrid_started) | {
+                        "qaoa_runtime_seconds": qaoa_pipeline_runtime,
+                        "search_runtime_seconds": search_metrics["search_runtime_seconds"],
+                        "first_feasible_seconds": qaoa_pipeline_runtime,
+                        "time_to_target_seconds": (
+                            qaoa_pipeline_runtime + search_metrics["time_to_target_seconds"]
+                            if search_metrics["time_to_target_seconds"] is not None else None),
+                        "raw_qaoa_candidate_objective": evaluated.objective_breakdown.total_objective,
+                        "raw_qaoa_allocation": [asdict(row) for row in evaluated.decoded_allocation],
+                        "raw_qaoa_feasible": True,
+                        "objective_evaluations": search_metrics["objective_evaluations"],
+                        "evaluation_budget": search_metrics["evaluation_budget"],
+                        "reference_objective": target_objective,
+                        "target_objective": (target_objective * 1.05
+                                             if target_objective is not None else None),
+                        "seed": run_seed, "repetition": repetition_index + 1,
+                    }
+                    hybrid_items.append(row)
+                except Exception as error:
+                    hybrid_items.append({
+                        "scenario_id": scenario.id, "method": "hybrid_qaoa_local_search",
+                        "status": "error", "detail": f"{type(error).__name__}: {error}",
+                        "objective": None, "feasibility": None,
+                        "runtime_seconds": perf_counter() - hybrid_started,
+                        "qaoa_runtime_seconds": qaoa_pipeline_runtime,
+                        "search_runtime_seconds": 0.0, "seed": run_seed,
+                        "repetition": repetition_index + 1,
+                    })
+
         # Require the two optimum-capable classical references to agree before
         # assigning a QAOA approximation gap.
-        exact = scenario_records["exact"]
-        milp = scenario_records["milp"]
         reference = None
         if exact.get("status") == "completed" and milp.get("status") == "completed":
             if math.isclose(float(exact["objective"]), float(milp["objective"]), rel_tol=1e-9, abs_tol=1e-9):
@@ -325,14 +459,27 @@ def run_experiments(*, count: int, seed: int, p: int, shots: int, optimizer: str
             else:
                 item["approximation_gap"] = None
                 item["approximation_gap_status"] = "unavailable: feasible method result is required"
+        for row in (*classical_search_items, *hybrid_items):
+            row["approximation_reference"] = reference["method"] if reference else None
+            if reference and row.get("status") == "completed" and row.get("feasibility") is True:
+                ref = float(reference["objective"])
+                value = float(row["objective"])
+                row["approximation_gap"] = (0.0 if ref == 0 and value == 0 else
+                                             (value - ref) / abs(ref) if ref != 0 else None)
+            else:
+                row["approximation_gap"] = None
         records.extend(scenario_records[method] for method in ("greedy", "milp", "exact"))
+        records.extend(classical_search_items)
         records.extend(qaoa_items)
+        records.extend(hybrid_items)
 
     tracked_inputs = (ROOT / "data" / "blood_banks.json", ROOT / "data" / "hospitals.json",
                       ROOT / "data" / "routes.json", ROOT / "data" / "compatibility.json")
     tracked_inputs += tuple(ROOT / path for path in (
         "backend/scenario_factory.py",
         "experiments/analyze_results.py",
+        "experiments/search_methods.py",
+        "docs/QUANTUM_VALUE_PROTOCOL.md",
         "optimization/models.py", "optimization/objective.py", "optimization/constraints.py",
         "optimization/greedy.py", "optimization/milp.py", "optimization/exact.py",
         "optimization/decoder.py", "quantum/qubo.py", "quantum/ising.py", "quantum/qaoa_solver.py",
@@ -373,6 +520,12 @@ def run_experiments(*, count: int, seed: int, p: int, shots: int, optimizer: str
         },
         "scenario_count": len(scenarios),
         "qaoa_repetitions": repetitions,
+        "classical_search": {"repetitions": repetitions, "seed_sequence": [seed + i for i in range(repetitions)],
+                             "objective_evaluation_budget_per_run": 100, "random_starts": 3,
+                             "neighborhood": "one-unit add/remove/transfer; best-improvement"},
+        "hybrid_search": {"repetitions": repetitions, "seed_sequence": [seed + i for i in range(repetitions)],
+                          "objective_evaluation_budget_per_run": 100,
+                          "initialization": "best measured QAOA bitstring; infeasible raw candidates are not repaired"},
         "objective_weights": asdict(objective),
         "qaoa": qaoa_settings,
         "qubo_penalty_weights": asdict(penalties),

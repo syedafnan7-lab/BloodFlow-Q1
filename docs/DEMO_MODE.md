@@ -32,6 +32,8 @@ The demo response includes an `experiment_configuration` record. Benchmark JSON 
 
 Demo Mode also offers a separate **PRECOMPUTED EXPERIMENT** view. It loads the checked-in experiment artifact through `GET /precomputed-demo`; these records are historical responses and are never presented as live calculations. See [Precomputed demonstration results](PRECOMPUTED_DEMO.md) and the timed presenter script in [FINAL_DEMO.md](FINAL_DEMO.md).
 
+Below the live/precomputed comparison, **Does the QAOA candidate help?** is a separate saved research experiment. Select a synthetic scenario and seed to compare the best feasible classical candidate, the raw measured QAOA candidate, the same QAOA candidate after bounded local refinement, and the lowest-objective feasible candidate selected for display. The view shows objective, feasibility, unmet units, transport cost, end-to-end time, and allocation rows. It identifies the QUBO bit count and QAOA settings, links the measured findings, and offers the exact configuration download. An infeasible raw QAOA sample is displayed as infeasible and is never repaired or used to start the hybrid. The panel reads the checked-in JSON from the frontend's public assets; it is a recorded synthetic experiment, not a new live run or a real-time emergency recommendation.
+
 Every demo run is also saved in the backend's in-memory `/results` history. That history resets when the API process restarts.
 
 ## Scope

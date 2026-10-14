@@ -1,0 +1,789 @@
+{
+  "scenario_count": 6,
+  "methods": {
+    "greedy": {
+      "attempt_count": 6,
+      "completed_count": 6,
+      "status_counts": {
+        "completed": 6
+      },
+      "feasible_count": 6,
+      "infeasible_count": 0,
+      "feasibility_rate_over_attempts": 1.0,
+      "metrics": {
+        "objective": {
+          "count": 6,
+          "mean": 98.43333333333334,
+          "median": 90.5,
+          "minimum": 16.200000000000003,
+          "maximum": 215.6,
+          "standard_deviation_population": 75.07093682348419
+        },
+        "critical_satisfaction": {
+          "count": 5,
+          "mean": 0.6166666666666667,
+          "median": 0.75,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "standard_deviation_population": 0.3929942040850532
+        },
+        "total_unmet_demand": {
+          "count": 6,
+          "mean": 2.1666666666666665,
+          "median": 2.5,
+          "minimum": 0.0,
+          "maximum": 4.0,
+          "standard_deviation_population": 1.8633899812498247
+        },
+        "transport_cost": {
+          "count": 6,
+          "mean": 21.46666666666667,
+          "median": 13.5,
+          "minimum": 0.0,
+          "maximum": 54.0,
+          "standard_deviation_population": 19.222093769641457
+        },
+        "average_travel_time": {
+          "count": 5,
+          "mean": 15.066666666666666,
+          "median": 18.0,
+          "minimum": 10.0,
+          "maximum": 18.0,
+          "standard_deviation_population": 3.6172426576668095
+        },
+        "runtime_seconds": {
+          "count": 6,
+          "mean": 5.346666633461913e-05,
+          "median": 4.4949999391974416e-05,
+          "minimum": 3.2699999792384915e-05,
+          "maximum": 8.059999890974723e-05,
+          "standard_deviation_population": 1.8111015810104284e-05
+        },
+        "search_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "qaoa_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "first_feasible_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "time_to_target_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "approximation_gap": {
+          "count": 6,
+          "mean": 1.2,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 7.2,
+          "standard_deviation_population": 2.6832815729997477
+        }
+      }
+    },
+    "milp": {
+      "attempt_count": 6,
+      "completed_count": 6,
+      "status_counts": {
+        "completed": 6
+      },
+      "feasible_count": 6,
+      "infeasible_count": 0,
+      "feasibility_rate_over_attempts": 1.0,
+      "metrics": {
+        "objective": {
+          "count": 6,
+          "mean": 92.43333333333334,
+          "median": 82.6,
+          "minimum": 5.0,
+          "maximum": 215.6,
+          "standard_deviation_population": 80.65262274443128
+        },
+        "critical_satisfaction": {
+          "count": 5,
+          "mean": 0.6166666666666667,
+          "median": 0.75,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "standard_deviation_population": 0.3929942040850532
+        },
+        "total_unmet_demand": {
+          "count": 6,
+          "mean": 2.3333333333333335,
+          "median": 2.5,
+          "minimum": 0.0,
+          "maximum": 4.0,
+          "standard_deviation_population": 1.699673171197595
+        },
+        "transport_cost": {
+          "count": 6,
+          "mean": 14.799999999999999,
+          "median": 8.4,
+          "minimum": 0.0,
+          "maximum": 54.0,
+          "standard_deviation_population": 18.563404860100423
+        },
+        "average_travel_time": {
+          "count": 4,
+          "mean": 16.333333333333332,
+          "median": 18.0,
+          "minimum": 11.333333333333334,
+          "maximum": 18.0,
+          "standard_deviation_population": 2.8867513459481287
+        },
+        "runtime_seconds": {
+          "count": 6,
+          "mean": 0.0036404833332805233,
+          "median": 0.0012427000001480337,
+          "minimum": 0.001153100000010454,
+          "maximum": 0.014132700000118348,
+          "standard_deviation_population": 0.004731644339107815
+        },
+        "search_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "qaoa_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "first_feasible_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "time_to_target_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "approximation_gap": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        }
+      }
+    },
+    "exact": {
+      "attempt_count": 6,
+      "completed_count": 6,
+      "status_counts": {
+        "completed": 6
+      },
+      "feasible_count": 6,
+      "infeasible_count": 0,
+      "feasibility_rate_over_attempts": 1.0,
+      "metrics": {
+        "objective": {
+          "count": 6,
+          "mean": 92.43333333333334,
+          "median": 82.6,
+          "minimum": 5.0,
+          "maximum": 215.6,
+          "standard_deviation_population": 80.65262274443128
+        },
+        "critical_satisfaction": {
+          "count": 5,
+          "mean": 0.6166666666666667,
+          "median": 0.75,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "standard_deviation_population": 0.3929942040850532
+        },
+        "total_unmet_demand": {
+          "count": 6,
+          "mean": 2.3333333333333335,
+          "median": 2.5,
+          "minimum": 0.0,
+          "maximum": 4.0,
+          "standard_deviation_population": 1.699673171197595
+        },
+        "transport_cost": {
+          "count": 6,
+          "mean": 14.799999999999999,
+          "median": 8.4,
+          "minimum": 0.0,
+          "maximum": 54.0,
+          "standard_deviation_population": 18.563404860100423
+        },
+        "average_travel_time": {
+          "count": 4,
+          "mean": 16.333333333333332,
+          "median": 18.0,
+          "minimum": 11.333333333333334,
+          "maximum": 18.0,
+          "standard_deviation_population": 2.8867513459481287
+        },
+        "runtime_seconds": {
+          "count": 6,
+          "mean": 0.00025628333302544587,
+          "median": 0.00010084999939863337,
+          "minimum": 3.130000004603062e-05,
+          "maximum": 0.0009681999999884283,
+          "standard_deviation_population": 0.00032798200897138455
+        },
+        "search_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "qaoa_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "first_feasible_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "time_to_target_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "approximation_gap": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        }
+      }
+    },
+    "classical_multistart": {
+      "attempt_count": 60,
+      "completed_count": 60,
+      "status_counts": {
+        "completed": 60
+      },
+      "feasible_count": 60,
+      "infeasible_count": 0,
+      "feasibility_rate_over_attempts": 1.0,
+      "metrics": {
+        "objective": {
+          "count": 60,
+          "mean": 92.43333333333334,
+          "median": 82.6,
+          "minimum": 5.0,
+          "maximum": 215.6,
+          "standard_deviation_population": 80.65262274443128
+        },
+        "critical_satisfaction": {
+          "count": 50,
+          "mean": 0.6166666666666667,
+          "median": 0.75,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "standard_deviation_population": 0.3929942040850532
+        },
+        "total_unmet_demand": {
+          "count": 60,
+          "mean": 2.3333333333333335,
+          "median": 2.5,
+          "minimum": 0.0,
+          "maximum": 4.0,
+          "standard_deviation_population": 1.699673171197595
+        },
+        "transport_cost": {
+          "count": 60,
+          "mean": 14.8,
+          "median": 8.4,
+          "minimum": 0.0,
+          "maximum": 54.0,
+          "standard_deviation_population": 18.563404860100423
+        },
+        "average_travel_time": {
+          "count": 40,
+          "mean": 16.333333333333336,
+          "median": 18.0,
+          "minimum": 11.333333333333334,
+          "maximum": 18.0,
+          "standard_deviation_population": 2.8867513459481287
+        },
+        "runtime_seconds": {
+          "count": 60,
+          "mean": 0.0007468883332573266,
+          "median": 0.000358849999429367,
+          "minimum": 8.610000077169389e-05,
+          "maximum": 0.0031246999988070456,
+          "standard_deviation_population": 0.0007927171569143237
+        },
+        "search_runtime_seconds": {
+          "count": 60,
+          "mean": 0.0007230183331254618,
+          "median": 0.00033820000044215703,
+          "minimum": 7.260000165842939e-05,
+          "maximum": 0.0030820000010862714,
+          "standard_deviation_population": 0.0007839464133734738
+        },
+        "qaoa_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "first_feasible_seconds": {
+          "count": 60,
+          "mean": 2.7333333249165057e-05,
+          "median": 2.3299999156733975e-05,
+          "minimum": 1.3499999113264494e-05,
+          "maximum": 7.540000115113799e-05,
+          "standard_deviation_population": 1.2657549492453754e-05
+        },
+        "time_to_target_seconds": {
+          "count": 60,
+          "mean": 4.7741666670238676e-05,
+          "median": 2.409999979136046e-05,
+          "minimum": 1.3799999578623101e-05,
+          "maximum": 0.00019419999989622738,
+          "standard_deviation_population": 4.610569499379465e-05
+        },
+        "approximation_gap": {
+          "count": 60,
+          "mean": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "standard_deviation_population": 0.0
+        }
+      }
+    },
+    "qaoa": {
+      "attempt_count": 60,
+      "completed_count": 60,
+      "status_counts": {
+        "completed": 53,
+        "infeasible": 7
+      },
+      "feasible_count": 53,
+      "infeasible_count": 7,
+      "feasibility_rate_over_attempts": 0.8833333333333333,
+      "metrics": {
+        "objective": {
+          "count": 53,
+          "mean": 128.78490566037735,
+          "median": 140.0,
+          "minimum": 5.0,
+          "maximum": 531.3,
+          "standard_deviation_population": 127.33718482864869
+        },
+        "critical_satisfaction": {
+          "count": 50,
+          "mean": 0.4025,
+          "median": 0.3333333333333333,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "standard_deviation_population": 0.3162398439300287
+        },
+        "total_unmet_demand": {
+          "count": 60,
+          "mean": 3.783333333333333,
+          "median": 3.0,
+          "minimum": 0.0,
+          "maximum": 15.0,
+          "standard_deviation_population": 3.624415661715539
+        },
+        "transport_cost": {
+          "count": 60,
+          "mean": 9.04,
+          "median": 6.5,
+          "minimum": 0.0,
+          "maximum": 54.0,
+          "standard_deviation_population": 11.492768740966353
+        },
+        "average_travel_time": {
+          "count": 39,
+          "mean": 17.271367521367523,
+          "median": 18.0,
+          "minimum": 4.5,
+          "maximum": 25.0,
+          "standard_deviation_population": 4.450332022438583
+        },
+        "runtime_seconds": {
+          "count": 60,
+          "mean": 0.1391530366666302,
+          "median": 0.12129765000008774,
+          "minimum": 0.09598489999916637,
+          "maximum": 0.2270688999997219,
+          "standard_deviation_population": 0.03806225041216689
+        },
+        "search_runtime_seconds": {
+          "count": 0,
+          "mean": null,
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "standard_deviation_population": null
+        },
+        "qaoa_runtime_seconds": {
+          "count": 60,
+          "mean": 0.13917050666677824,
+          "median": 0.12131495000085124,
+          "minimum": 0.09599519999937911,
+          "maximum": 0.22708869999951276,
+          "standard_deviation_population": 0.03806608304274435
+        },
+        "first_feasible_seconds": {
+          "count": 53,
+          "mean": 0.1368141471698522,
+          "median": 0.11678630000096746,
+          "minimum": 0.09599519999937911,
+          "maximum": 0.22708869999951276,
+          "standard_deviation_population": 0.037495860329381896
+        },
+        "time_to_target_seconds": {
+          "count": 29,
+          "mean": 0.1131248344827327,
+          "median": 0.10889549999956216,
+          "minimum": 0.09599519999937911,
+          "maximum": 0.19468549999874085,
+          "standard_deviation_population": 0.01789189194965955
+        },
+        "approximation_gap": {
+          "count": 53,
+          "mean": 0.7997772802082996,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 7.2,
+          "standard_deviation_population": 1.347435899753807
+        }
+      }
+    },
+    "hybrid_qaoa_local_search": {
+      "attempt_count": 60,
+      "completed_count": 53,
+      "status_counts": {
+        "completed": 53,
+        "skipped_infeasible_qaoa_seed": 7
+      },
+      "feasible_count": 53,
+      "infeasible_count": 7,
+      "feasibility_rate_over_attempts": 0.8833333333333333,
+      "metrics": {
+        "objective": {
+          "count": 53,
+          "mean": 90.56981132075471,
+          "median": 39.199999999999996,
+          "minimum": 5.0,
+          "maximum": 215.6,
+          "standard_deviation_population": 79.63600585329658
+        },
+        "critical_satisfaction": {
+          "count": 43,
+          "mean": 0.6007751937984496,
+          "median": 0.75,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "standard_deviation_population": 0.38401445198452205
+        },
+        "total_unmet_demand": {
+          "count": 53,
+          "mean": 2.30188679245283,
+          "median": 1.0,
+          "minimum": 0.0,
+          "maximum": 4.0,
+          "standard_deviation_population": 1.6999989529450423
+        },
+        "transport_cost": {
+          "count": 53,
+          "mean": 13.988679245283018,
+          "median": 9.0,
+          "minimum": 0.0,
+          "maximum": 54.0,
+          "standard_deviation_population": 17.970895341848788
+        },
+        "average_travel_time": {
+          "count": 35,
+          "mean": 16.285714285714285,
+          "median": 18.0,
+          "minimum": 4.666666666666667,
+          "maximum": 18.0,
+          "standard_deviation_population": 3.321065861745275
+        },
+        "runtime_seconds": {
+          "count": 60,
+          "mean": 0.13937435666663683,
+          "median": 0.12154705000011745,
+          "minimum": 0.09610059999977238,
+          "maximum": 0.22773099999903934,
+          "standard_deviation_population": 0.038192303870792546
+        },
+        "search_runtime_seconds": {
+          "count": 60,
+          "mean": 0.00014012499968885095,
+          "median": 4.199999966658652e-05,
+          "minimum": 0.0,
+          "maximum": 0.0007230000010167714,
+          "standard_deviation_population": 0.0001955549485747437
+        },
+        "qaoa_runtime_seconds": {
+          "count": 60,
+          "mean": 0.13917050666677824,
+          "median": 0.12131495000085124,
+          "minimum": 0.09599519999937911,
+          "maximum": 0.22708869999951276,
+          "standard_deviation_population": 0.03806608304274435
+        },
+        "first_feasible_seconds": {
+          "count": 53,
+          "mean": 0.1368141471698522,
+          "median": 0.11678630000096746,
+          "minimum": 0.09599519999937911,
+          "maximum": 0.22708869999951276,
+          "standard_deviation_population": 0.037495860329381896
+        },
+        "time_to_target_seconds": {
+          "count": 52,
+          "mean": 0.13612988076920374,
+          "median": 0.11633110000002489,
+          "minimum": 0.09599519999937911,
+          "maximum": 0.2276278999997885,
+          "standard_deviation_population": 0.037543622095156166
+        },
+        "approximation_gap": {
+          "count": 53,
+          "mean": 0.026787794083391558,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 1.4197530864197525,
+          "standard_deviation_population": 0.19316953024847827
+        }
+      }
+    }
+  },
+  "paired_objective_comparisons": [
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "qaoa",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 8,
+      "mean_objective_improvement": -168.61249999999998,
+      "mean_improvement_fraction": -0.7820616883116882,
+      "bootstrap_95pct_interval": [
+        -233.1875,
+        -104.0375
+      ],
+      "method_feasibility_rate": 0.8,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "emergency_demand_spike",
+      "method": "hybrid_qaoa_local_search",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 8,
+      "mean_objective_improvement": 0.0,
+      "mean_improvement_fraction": 0.0,
+      "bootstrap_95pct_interval": [
+        0.0,
+        0.0
+      ],
+      "method_feasibility_rate": 0.8,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "qaoa",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 10,
+      "mean_objective_improvement": -5.740000000000004,
+      "mean_improvement_fraction": -0.03761467889908259,
+      "bootstrap_95pct_interval": [
+        -14.350000000000009,
+        0.0
+      ],
+      "method_feasibility_rate": 1.0,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "inventory_shortage",
+      "method": "hybrid_qaoa_local_search",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 10,
+      "mean_objective_improvement": 0.0,
+      "mean_improvement_fraction": 0.0,
+      "bootstrap_95pct_interval": [
+        0.0,
+        0.0
+      ],
+      "method_feasibility_rate": 1.0,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "qaoa",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 8,
+      "mean_objective_improvement": -25.537499999999994,
+      "mean_improvement_fraction": -1.5763888888888882,
+      "bootstrap_95pct_interval": [
+        -31.499999999999996,
+        -18.9625
+      ],
+      "method_feasibility_rate": 0.8,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "multi_facility_tradeoff",
+      "method": "hybrid_qaoa_local_search",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 8,
+      "mean_objective_improvement": -2.874999999999999,
+      "mean_improvement_fraction": -0.17746913580246906,
+      "bootstrap_95pct_interval": [
+        -8.624999999999996,
+        0.0
+      ],
+      "method_feasibility_rate": 0.8,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "qaoa",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 9,
+      "mean_objective_improvement": -44.64444444444444,
+      "mean_improvement_fraction": -1.7716049382716048,
+      "bootstrap_95pct_interval": [
+        -70.15555555555555,
+        -22.32222222222222
+      ],
+      "method_feasibility_rate": 0.9,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "normal_reference",
+      "method": "hybrid_qaoa_local_search",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 9,
+      "mean_objective_improvement": 0.0,
+      "mean_improvement_fraction": 0.0,
+      "bootstrap_95pct_interval": [
+        0.0,
+        0.0
+      ],
+      "method_feasibility_rate": 0.9,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "qaoa",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 10,
+      "mean_objective_improvement": -3.6,
+      "mean_improvement_fraction": -0.72,
+      "bootstrap_95pct_interval": [
+        -10.8,
+        0.0
+      ],
+      "method_feasibility_rate": 1.0,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "transport_cost_tradeoff",
+      "method": "hybrid_qaoa_local_search",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 10,
+      "mean_objective_improvement": 0.0,
+      "mean_improvement_fraction": 0.0,
+      "bootstrap_95pct_interval": [
+        0.0,
+        0.0
+      ],
+      "method_feasibility_rate": 1.0,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "qaoa",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 8,
+      "mean_objective_improvement": 0.0,
+      "mean_improvement_fraction": 0.0,
+      "bootstrap_95pct_interval": [
+        0.0,
+        0.0
+      ],
+      "method_feasibility_rate": 0.8,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    },
+    {
+      "scenario_id": "transport_disruption",
+      "method": "hybrid_qaoa_local_search",
+      "baseline": "classical_multistart",
+      "paired_feasible_seeds": 8,
+      "mean_objective_improvement": 0.0,
+      "mean_improvement_fraction": 0.0,
+      "bootstrap_95pct_interval": [
+        0.0,
+        0.0
+      ],
+      "method_feasibility_rate": 0.8,
+      "baseline_feasibility_rate": 1.0,
+      "promising_signal_screen_met": false
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import { useApi } from '../hooks/useApi';
 import { EmptyState, ErrorState, LoadingState } from '../components/Feedback';
 import PageHeader from '../components/PageHeader';
 import { StatItem, MetaRow, StatusBadge } from '../components/DataField';
+import QuantumValueStudy from '../components/QuantumValueStudy';
 import { formatDemoMetric, getComparableResult } from '../utils/demoComparison';
 
 const FALLBACK_WEIGHTS = { critical_unmet_weight: 10, total_unmet_weight: 5, transportation_cost_weight: 1, transportation_time_weight: 0.1, secondary_penalty_weight: 0 };
@@ -251,6 +252,7 @@ export default function DemoMode() {
           />
         )}
       </section>
+      <QuantumValueStudy />
     </>}
   </>;
 }

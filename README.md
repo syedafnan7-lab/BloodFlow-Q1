@@ -91,7 +91,7 @@ The data layer rejects malformed or inconsistent scenarios. Classical solvers re
 
 The checked-in results below are a historical run of five one-bank, one-hospital, one-group scenarios. They do not include the expanded Round 2 suite described under reproducibility.
 
-These are descriptive measurements from a small local simulator run, not general performance evidence. See the historical [experiment analysis](docs/EXPERIMENT_RESULTS.md), [Round 2 experiment analysis](docs/EXPERIMENT_RESULTS_ROUND2.md), [Round 2 raw results](experiments/results/round2-20261015-r2.json), and [Round 2 configuration](experiments/configurations/round2-20261015-r2.json).
+These are descriptive measurements from a small local simulator run, not general performance evidence. See the historical [experiment analysis](docs/EXPERIMENT_RESULTS.md), [Round 2 experiment analysis](docs/EXPERIMENT_RESULTS_ROUND2.md), [quantum value protocol](docs/QUANTUM_VALUE_PROTOCOL.md), [confirmatory findings](docs/QUANTUM_VALUE_FINDINGS.md), [raw confirmatory results](experiments/results/quantum-value-confirmatory-seed301-20261015.json), and [matching configuration](experiments/configurations/quantum-value-confirmatory-seed301-20261015.json). Demo Mode includes a saved, seed-selectable comparison of the best classical allocation, raw QAOA sample, locally refined QAOA candidate, and selected feasible result. It is explicitly synthetic and runs in a classical local simulator.
 
 **The results do not demonstrate quantum advantage.** In this run QAOA used a local classical simulator and was slower than the classical methods; the scenario set is far too small to support general claims.
 
@@ -154,10 +154,10 @@ Open `http://localhost:5173`. The frontend expects the API at `http://127.0.0.1:
 
 ### Run a bounded experiment suite
 
-The experiment runner preserves the historical five-case baseline and adds a six-case Round 2 suite. Both compare Greedy, MILP, Exact, and measured QAOA. QAOA repetitions use distinct seeds and keep errors and infeasible candidates in the raw output. The Round 2 suite includes one synthetic 2-bank/2-hospital case; its QUBO remains within the configured 16-variable local simulator cap. Example:
+The experiment runner preserves the historical five-case baseline and adds a six-case Round 2 suite. The suite compares Greedy, MILP, Exact, a 100-evaluation seeded classical multistart search, raw measured QAOA, and QAOA-initialized local refinement. QAOA and search repetitions use paired seeds; errors and infeasible candidates remain in the raw output. The Round 2 suite includes one synthetic 2-bank/2-hospital case; its QUBO remains within the configured 16-variable local simulator cap. Example:
 
 ```bash
-python -m experiments.run_experiments --suite round2 --scenarios 6 --repetitions 5 --seed 7 --p 1 --shots 128 --optimizer COBYLA --max-iterations 15 --penalty-weight 10000 --max-exact-states 50000 --run-id round2-local
+python -m experiments.run_experiments --suite round2 --scenarios 6 --repetitions 10 --seed 301 --p 1 --shots 128 --optimizer COBYLA --max-iterations 15 --penalty-weight 10000 --max-exact-states 50000 --run-id my-run
 ```
 
 Raw result JSON is written to `experiments/results/`; the matching configuration is stored in `experiments/configurations/`. Analyze the run and regenerate the summary report with:

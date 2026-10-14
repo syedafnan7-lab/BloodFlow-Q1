@@ -2037,6 +2037,33 @@ a {
   color: var(--text-muted);
 }
 
+.quantum-value-study { margin-top: 18px; }
+.quantum-study-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  max-width: 520px;
+  margin: 14px 0;
+}
+.quantum-study-selection {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.quantum-study-allocations { display: grid; gap: 8px; margin-top: 12px; }
+.quantum-study-allocations details {
+  padding: 10px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+.quantum-study-allocations summary { cursor: pointer; color: var(--text-primary); font-weight: 600; }
+.quantum-study-allocations .table-scroll { margin-top: 10px; }
+.quantum-study-footnote { margin: 12px 0 0; color: var(--text-muted); font-size: 12px; }
+
 /* ==========================================================================
    Emergency Simulation Workflow
    ========================================================================== */
