@@ -13,11 +13,13 @@ The directive's repository and the attached local checkout have different owners
 | Repository / branch | Head | Relation to shared base | Findings |
 |---|---|---|---|
 | `syedafnan7-lab/BloodFlow-Q1` `main` / `origin/main` | `50c3b24` | Shared base | Default branch; includes prior emergency-satisfaction fix and donor/emergency coordination work. |
-| `syedafnan7-lab/BloodFlow-Q1` `codex/round2-research-hardening` | `d3ec6d2` | 5 commits ahead of base, 0 behind `main` | Current Codex branch; five research/UI commits are unique to this branch. No conflict with base. |
+| `syedafnan7-lab/BloodFlow-Q1` `codex/round2-research-hardening` | `f8c8b91` | 6 commits ahead of base, 0 behind `main`; 1 commit ahead of origin | Current Codex branch; QAOA hardening audit committed locally. Dashboard refresh and earlier user edits were present in the working tree at audit handoff. |
 | `Beezsy-del/BloodFlow-Q` `main` | `50c3b24` | Shared base | Default branch; same commit as destination `main`. |
 | `Beezsy-del/BloodFlow-Q` `quantum-optimizer-fix` | `0f13187` | 2 commits ahead of base | Candidate source branch. One commit adds warm-start/XY QAOA; the next adds LP-based initialization and benchmark penalty handling. |
 
-The current branch and the source feature branch diverge from the shared base: `HEAD...FETCH_HEAD` is 5 commits on the Codex branch and 2 on `quantum-optimizer-fix`. No branches were switched, modified, merged, or pushed.
+The current branch and the source feature branch diverge from the shared base: `HEAD...FETCH_HEAD` is 6 commits on the Codex branch and 2 on `quantum-optimizer-fix`. No branches were switched, merged, or pushed.
+
+The latest fetched `origin/main` is `50c3b24`, an ancestor of current HEAD. This branch is 6 commits ahead and 0 behind; no main-only features need porting.
 
 ## Codex branch commits beyond `main`
 
@@ -26,8 +28,9 @@ The current branch and the source feature branch diverge from the shared base: `
 3. `e746ca7` — formatting cleanup for the quantum-value report.
 4. `da87ef4` — research console polish: experiment reports, charts, tooltip, research metrics and tests.
 5. `d3ec6d2` — decision-support dashboard and Quantum Optimization Lab.
+6. `f8c8b91` — conservative QUBO benchmark penalties and early QAOA size guard, with regressions and audit documentation.
 
-Those commits add no back-end or quantum solver changes; the research pages consume saved artifacts and existing APIs. The frontend continues to distinguish live computation from precomputed measurements and avoids claiming quantum advantage.
+The first five commits add the research pages and consume saved artifacts and existing APIs. The sixth adds backend/QUBO hardening. The frontend continues to distinguish live computation from precomputed measurements and avoids claiming quantum advantage.
 
 ## Source branch candidates
 
@@ -39,4 +42,12 @@ The useful penalty-bound extraction was adapted into `quantum/qubo.py` and bench
 
 ## Working-tree baseline and final state
 
-Before this audit, the current branch already had two uncommitted edits: a toolchain/workflow section in `docs/PRODUCT_WORKFLOW_AND_INTEROPERABILITY.md` and a global reduced-motion rule in `frontend/src/styles.css`. Both were preserved. This audit leaves changes uncommitted and unpushed; see `TEST_RESULTS.md` for checks and `CHANGE_PORTING_REPORT.md` for decisions.
+The QAOA hardening audit was committed locally as `f8c8b91`; it has not been pushed. At audit handoff, the working tree had nine modified tracked files plus the new UI report. The user authorized committing the UI/audit set locally; the pre-existing workflow document was excluded.
+
+- `docs/PRODUCT_WORKFLOW_AND_INTEROPERABILITY.md`: 51-line toolchain/workflow review that predated the audit.
+- `frontend/src/styles.css`: pre-existing reduced-motion work, dashboard refresh, and shared cross-route styling for navigation, headers, panels, tables, metrics, forms, buttons, and responsive layouts.
+- `frontend/src/pages/Dashboard.jsx`: operations-focused heading, synthetic network illustration, and scenario metric-grid updates.
+- `frontend/src/App.jsx`: workspace-selector accessibility labeling and keyed page-entry transitions.
+- `BRANCH_CHANGE_SUMMARY.md`, `CHANGELOG_AUDIT.md`, `CHANGE_PORTING_REPORT.md`, `ENGINEERING_AUDIT_REPORT.md`, and `TEST_RESULTS.md`: audit and handoff records.
+
+All 14 routes were opened in the local browser; layouts, representative content, and route controls rendered, and Network filtering was exercised. Detailed findings are in `UI_UX_IMPROVEMENT_REPORT.md`. Backend and frontend tests and the production build passed after the cross-route refresh. For a local preview, run the backend with `.venv\\Scripts\\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000`, then in `frontend` set `$env:VITE_API_BASE_URL='http://127.0.0.1:8000'` and run `npm run dev -- --host 127.0.0.1 --port 5173`. The in-app preview is `http://127.0.0.1:5173/`. See `TEST_RESULTS.md`, `UI_UX_IMPROVEMENT_REPORT.md`, and `CHANGE_PORTING_REPORT.md` for verification and decisions.

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Activity, AlertTriangle, Boxes, ChevronDown, ClipboardPlus, FileChartColumn, FileClock, FlaskConical, HeartPulse, Hospital, LayoutDashboard, Menu, Network, Settings2, Siren, X, PlayCircle, UserRoundPlus, Truck, Atom } from 'lucide-react';
+import { Activity, AlertTriangle, Boxes, ClipboardPlus, FileChartColumn, FileClock, FlaskConical, HeartPulse, Hospital, LayoutDashboard, Menu, Network, Settings2, Siren, X, PlayCircle, UserRoundPlus, Truck, Atom } from 'lucide-react';
 import { api } from './services/api';
 import Dashboard from './pages/Dashboard';
 import BloodBanks from './pages/BloodBanks';
@@ -101,13 +101,13 @@ export default function App() {
     {sidebarOpen && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setSidebarOpen(false)} />}
     <aside id="primary-navigation" className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`} aria-label="Main navigation">
       <div className="brand-lockup"><span className="brand-symbol"><HeartPulse size={20} strokeWidth={2.2} /></span><span className="brand-name">BloodFlow<span>-Q</span><small>LOGISTICS RESEARCH</small></span><button className="mobile-close" aria-label="Close navigation" onClick={() => setSidebarOpen(false)}><X size={18} /></button></div>
-      <div className="workspace-select"><span className="workspace-avatar">BF</span><span><strong>Research workspace</strong><small>Synthetic environment</small></span><ChevronDown size={15} /></div>
+      <div className="workspace-select" role="group" aria-label="Research workspace, synthetic environment"><span className="workspace-avatar">BF</span><span><strong>Research workspace</strong><small>Synthetic environment</small></span></div>
       <nav className="main-nav">{NAV_ITEMS.map((item, index) => <div key={item.id}>{item.group && <div className={`nav-section-label ${index ? 'nav-section-spaced' : ''}`}>{item.group}</div>}<button className={`nav-link ${page === item.id ? 'nav-link-active' : ''}`} aria-current={page === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><item.icon size={17} strokeWidth={1.9} /><span>{item.label}</span>{item.id === 'emergency' && <span className="nav-live-dot" title="Synthetic event simulator" />}</button></div>)}</nav>
       <div className="sidebar-bottom"><div className="sidebar-status"><span className="status-dot" /><span><strong>Prototype mode</strong><small>Operational research only</small></span></div><div className="sidebar-disclaimer"><AlertTriangle size={13} /> Not for clinical decisions</div></div>
     </aside>
     <div className="main-shell">
       <header className="topbar"><button className="mobile-menu" aria-label="Open navigation" aria-controls="primary-navigation" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}><Menu size={20} /></button><div className="breadcrumbs" aria-label="Breadcrumb"><span>BloodFlow-Q</span><span className="breadcrumb-slash" aria-hidden="true">/</span><strong aria-current="page">{TITLES[page] || 'Dashboard'}</strong></div><div className="topbar-right"><span className="environment-pill"><i aria-hidden="true" />Synthetic data</span><span className="topbar-divider" /><div className="user-chip"><span aria-hidden="true">R</span><strong>Researcher</strong></div></div></header>
-      <main className="page-content" id="main-content"><div className="page-container"><Suspense fallback={<LoadingState label="Loading coordination tools…" />}>{renderPage()}</Suspense></div></main>
+      <main className="page-content" id="main-content"><div key={page} className={`page-container page-enter page-${page}`}><Suspense fallback={<LoadingState label="Loading coordination tools…" />}>{renderPage()}</Suspense></div></main>
       <footer className="app-footer"><span><Activity size={13} /> BloodFlow-Q research prototype</span><span>Aggregate logistics model <i /> Synthetic data only</span><span className="app-attribution">Tooltip adapted from <a href="https://skiper-ui.com/v1/skiper101" target="_blank" rel="noreferrer">Skiper UI</a></span></footer>
     </div>
   </div>;

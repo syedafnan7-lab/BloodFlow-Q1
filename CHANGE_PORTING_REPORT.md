@@ -6,7 +6,7 @@
 **Source branch reviewed:** `quantum-optimizer-fix` (two commits beyond `main`)
 **Comparison base:** shared commit `50c3b2476042af2227f77997fbd7e0cdd61904b4`
 
-The active checkout is a separate repository (`syedafnan7-lab/BloodFlow-Q1`) but shares the exact base commit with the linked source repository. The current Codex branch is treated as the destination; implementation stays on that branch. The linked source repository is readable but its GitHub permission is pull-only. No push, commit, merge, or change to another branch was performed.
+The active checkout is a separate repository (`syedafnan7-lab/BloodFlow-Q1`) but shares the exact base commit with the linked source repository. The current Codex branch is treated as the destination; implementation stays on that branch. The linked source repository is readable but its GitHub permission is pull-only. The adapted QUBO hardening work was committed locally as `f8c8b91`; no push, merge, or change to another branch was performed. Cross-route UI work remains uncommitted; see `BRANCH_CHANGE_SUMMARY.md` and `UI_UX_IMPROVEMENT_REPORT.md` for current state and route review. A fresh fetch confirmed `origin/main` at `50c3b24`, an ancestor of the current branch; there are no main-only changes to port.
 
 ## Selective porting matrix
 

@@ -165,9 +165,25 @@ During the adversarial quantum integrity audit, the implementation was inspected
 
 ## Audit session — 2026-10-18
 
-- Audited all accessible branches in both the linked repository (`Beezsy-del/BloodFlow-Q`) and the attached destination checkout (`syedafnan7-lab/BloodFlow-Q1`). The current Codex destination remains `codex/round2-research-hardening`; its two existing uncommitted edits were preserved.
+- Audited all accessible branches in both the linked repository (`Beezsy-del/BloodFlow-Q`) and the attached destination checkout (`syedafnan7-lab/BloodFlow-Q1`). The current Codex destination remains `codex/round2-research-hardening`; pre-existing local work was preserved.
 - Selectively adapted conservative QUBO penalty-bound calculation for benchmark requests and added an early direct-QAOA size guard before dense matrix construction.
 - Added regression coverage and updated API, benchmark, and audit documentation.
 - Verification: backend 159 tests + 17 subtests passed; frontend 7 tests passed; production build passed; full and production-only npm audits found 0 vulnerabilities.
-- Left all changes uncommitted and unpushed. No other branch or repository was modified.
+- Committed the audit implementation and its reports as `f8c8b91` (`fix: harden QAOA benchmark limits and audit branches`). It is local and one commit ahead of the remote branch; it has not been pushed. No other branch or repository was modified.
 - Detailed records: `BRANCH_CHANGE_SUMMARY.md`, `CHANGE_PORTING_REPORT.md`, `ENGINEERING_AUDIT_REPORT.md`, `TEST_RESULTS.md`, and `QUANTUM_INTEGRITY_REPORT.md`.
+
+## Dashboard visual refresh — 2026-10-18
+
+- Updated `frontend/src/pages/Dashboard.jsx` with an operations-focused heading, a synthetic supply-to-allocation-to-hospital flow illustration, and a dashboard-specific metric grid.
+- Extended `frontend/src/styles.css` with a deep navy/rose hero, animated route paths, stronger page hierarchy, improved metric spacing, responsive sizing, and reduced-motion support. Dependencies did not change. The diagram is labeled as a model preview so it is not confused with live route telemetry.
+- Preserved the pre-existing product workflow/toolchain note and reduced-motion CSS edit. Dashboard UI work is uncommitted and unpushed.
+- Verified by opening the dashboard against the local synthetic API at `http://127.0.0.1:5173/`; the API connected and synthetic scenario metrics loaded. Production build passed after setting `VITE_API_BASE_URL`.
+- Current local state and preview commands: `BRANCH_CHANGE_SUMMARY.md`. Test/build evidence: `TEST_RESULTS.md`.
+
+## Cross-route UI refresh and main comparison — 2026-10-18
+
+- Refined the dashboard and shared app styling across all 14 existing routes; accessibility labeling and reduced-motion handling were included. No dependencies or business workflows were replaced.
+- Reviewed all routes in the local browser at a narrow viewport and exercised Network filtering. The manual review scope and remaining verification are recorded in `UI_UX_IMPROVEMENT_REPORT.md`.
+- Fetched `origin/main` at `50c3b24`; it is an ancestor of the current branch, so no main-only changes required porting.
+- Backend suite (159 tests + 17 subtests), frontend suite (7 tests), and production build passed after the cross-route changes.
+- Work remains uncommitted and unpushed. Existing user edits are retained.

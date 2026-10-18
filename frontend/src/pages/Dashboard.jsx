@@ -98,11 +98,25 @@ export default function Dashboard({ onNavigate, onOptimization }) {
   };
 
   return <>
-    <PageHeader eyebrow="OVERVIEW" title="Dashboard" description="A live view of the synthetic allocation network and recent optimization activity."
+    <PageHeader eyebrow="BLOODFLOW-Q / RESEARCH NETWORK" title="Operations overview" description="A live view of the synthetic allocation network and recent optimization activity."
       action={<button className="button button-primary" onClick={handleRun}><Play size={16} fill="currentColor" /> Run optimization</button>} />
     <section className="dashboard-capability-hero" aria-label="BloodFlow-Q capabilities">
       <div className="dashboard-capability-copy"><span className="eyebrow">NETWORK DECISION SUPPORT · SYNTHETIC RESEARCH</span><h2>Model the network. Re-plan when conditions change.</h2><p>Investigate allocation strategies across simulated blood banks, hospitals, supply, demand and routes. Compare classical and quantum-assisted methods, then test resilience under disruption.</p><div className="dashboard-hero-actions"><button className="button button-primary" onClick={() => onNavigate('emergency')}><Siren size={15} /> Simulate disruption</button><button className="button button-secondary" onClick={() => onNavigate('quantum-lab')}>Explore Quantum Lab <ArrowUpRight size={15} /></button></div></div>
-      <div className="dashboard-capability-list"><button onClick={() => onNavigate('network')}><span>01</span><strong>Network intelligence</strong><small>Supply · demand · routes</small><ArrowUpRight size={15} /></button><button onClick={() => onNavigate('optimization')}><span>02</span><strong>Allocation optimization</strong><small>Compare methods and validate</small><ArrowUpRight size={15} /></button><button onClick={() => onNavigate('emergency')}><span>03</span><strong>Emergency resilience</strong><small>Disrupt · re-optimize · review</small><ArrowUpRight size={15} /></button></div>
+      <div className="dashboard-capability-list">
+        <div className="dashboard-network-art" aria-hidden="true">
+          <div className="dashboard-network-caption"><span className="network-live-indicator" /> SYNTHETIC NETWORK <span>MODEL PREVIEW</span></div>
+          <svg viewBox="0 0 420 176" role="presentation">
+            <defs><linearGradient id="flow-line" x1="0" x2="1"><stop offset="0" stopColor="#fb7185" /><stop offset="1" stopColor="#38bdf8" /></linearGradient><radialGradient id="node-glow"><stop stopColor="#fb7185" stopOpacity=".55" /><stop offset="1" stopColor="#fb7185" stopOpacity="0" /></radialGradient></defs>
+            <path className="network-route route-a" d="M58 48 C140 48 128 126 206 126 S285 48 362 48" /><path className="network-route route-b" d="M58 126 C126 126 140 48 206 48 S286 126 362 126" /><path className="network-route route-c" d="M58 48 C155 48 162 86 210 86 S287 126 362 126" />
+            <circle className="network-node-halo" cx="58" cy="48" r="27" /><circle className="network-node-halo" cx="58" cy="126" r="27" />
+            <circle className="network-node-dot network-supply" cx="58" cy="48" r="7" /><circle className="network-node-dot network-supply" cx="58" cy="126" r="7" />
+            <circle className="network-hub" cx="210" cy="86" r="22" /><path className="network-hub-mark" d="M210 75v22m-11-11h22" />
+            <circle className="network-node-dot network-demand" cx="362" cy="48" r="7" /><circle className="network-node-dot network-demand" cx="362" cy="126" r="7" />
+            <text x="58" y="23" textAnchor="middle">SUPPLY</text><text x="210" y="151" textAnchor="middle">ALLOCATION ENGINE</text><text x="362" y="23" textAnchor="middle">HOSPITALS</text>
+          </svg>
+          <div className="dashboard-network-legend"><span><i className="legend-supply" /> Blood banks</span><span><i className="legend-demand-dot" /> Demand nodes</span><span><i className="legend-route" /> Route pathways</span></div>
+        </div>
+        <button onClick={() => onNavigate('network')}><span>01</span><strong>Network intelligence</strong><small>Supply · demand · routes</small><ArrowUpRight size={15} /></button><button onClick={() => onNavigate('optimization')}><span>02</span><strong>Allocation optimization</strong><small>Compare methods and validate</small><ArrowUpRight size={15} /></button><button onClick={() => onNavigate('emergency')}><span>03</span><strong>Emergency resilience</strong><small>Disrupt · re-optimize · review</small><ArrowUpRight size={15} /></button></div>
     </section>
     {loading && <LoadingState label="Connecting to the BloodFlow-Q API…" />}
     {!loading && error && <ErrorState message={error} onRetry={reload} />}
@@ -133,7 +147,7 @@ export default function Dashboard({ onNavigate, onOptimization }) {
             <Activity size={15} />
           </button>
         </div>
-        <section className="metric-grid" aria-label="Scenario metrics">
+        <section className="metric-grid dashboard-metrics" aria-label="Scenario metrics">
           <MetricCard icon={Droplets} label="Blood banks" value={summary.banks} detail="Connected supply sources" tone="red" />
           <MetricCard icon={Hospital} label="Hospitals" value={summary.hospitals} detail="Demand locations" tone="blue" />
           <MetricCard icon={Boxes} label="Total inventory" value={summary.totalInventory.toLocaleString()} detail="Synthetic units across banks" tone="teal" />

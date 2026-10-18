@@ -64,4 +64,4 @@ The benchmark API returned 422 when `include_qaoa` was true and the caller omitt
 
 ## Verification
 
-See [`TEST_RESULTS.md`](TEST_RESULTS.md) for exact commands and outcomes. All 159 backend tests and all 7 frontend tests pass; production build succeeds; `git diff --check` passes. No commit, push, merge, or deployment was performed.
+See [`TEST_RESULTS.md`](TEST_RESULTS.md) for exact commands and outcomes. All 159 backend tests and all 7 frontend tests pass; production build succeeds; `git diff --check` passes. The engineering audit was committed locally as `f8c8b91`; it has not been pushed or deployed. A cross-route UI refresh remains uncommitted, as recorded in [`BRANCH_CHANGE_SUMMARY.md`](BRANCH_CHANGE_SUMMARY.md) and reviewed in [`UI_UX_IMPROVEMENT_REPORT.md`](UI_UX_IMPROVEMENT_REPORT.md).
