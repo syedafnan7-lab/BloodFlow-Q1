@@ -162,3 +162,12 @@ During the adversarial quantum integrity audit, the implementation was inspected
   - Authored and executed automated UI spacing audit suite verifying CSS class definitions and typography contracts.
   - 100% production build pass (`vite build`).
   - 100% test pass on backend test suite ($124/124$ tests passing).
+
+## Audit session — 2026-10-18
+
+- Audited all accessible branches in both the linked repository (`Beezsy-del/BloodFlow-Q`) and the attached destination checkout (`syedafnan7-lab/BloodFlow-Q1`). The current Codex destination remains `codex/round2-research-hardening`; its two existing uncommitted edits were preserved.
+- Selectively adapted conservative QUBO penalty-bound calculation for benchmark requests and added an early direct-QAOA size guard before dense matrix construction.
+- Added regression coverage and updated API, benchmark, and audit documentation.
+- Verification: backend 159 tests + 17 subtests passed; frontend 7 tests passed; production build passed; full and production-only npm audits found 0 vulnerabilities.
+- Left all changes uncommitted and unpushed. No other branch or repository was modified.
+- Detailed records: `BRANCH_CHANGE_SUMMARY.md`, `CHANGE_PORTING_REPORT.md`, `ENGINEERING_AUDIT_REPORT.md`, `TEST_RESULTS.md`, and `QUANTUM_INTEGRITY_REPORT.md`.

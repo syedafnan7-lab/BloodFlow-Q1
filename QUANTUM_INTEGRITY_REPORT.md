@@ -194,3 +194,17 @@ $$\mathbf{8.8 \;/\; 10}$$
 
 ### Final Classification:
 $$\mathbf{QUANTUM-DEFENSIBLE \; WITH \; MAJOR \; LIMITATIONS}$$
+
+## Quantum integrity reassessment — 2026-10-18
+
+This section supersedes the older subjective rating and two-scenario demonstration summary above where they differ from the current checked-in evidence. The earlier figures remain historical records, not a current general claim.
+
+- `quantum/qubo.py` constructs a binary QUBO for shipment, unmet-demand, and inventory-slack quantities; `quantum/ising.py` converts it to a Qiskit `SparsePauliOp`.
+- `quantum/qaoa_solver.py` evaluates circuit expectations with Qiskit `Statevector`, then measures with Qiskit Aer. This is a local classical simulation; no physical quantum processor is configured.
+- The returned candidate is the lowest-energy bitstring observed in finite shots, not an optimality certificate. The shared classical decoder/validator reports feasibility; infeasible samples are not silently repaired.
+- Current defaults use the standard uniform Hadamard start and X mixer. The linked source branch's warm-start and XY variants were not ported: it supplied smoke tests but no comparative evidence, and the LP warm-start duplicates an integral network-flow baseline. An XY mixer conserves excitation number, not BloodFlow allocation feasibility.
+- The checked-in paired-seed study and report use six synthetic scenarios and ten paired seeds. Its classical multistart matched Exact in 60/60 trials; raw QAOA was feasible in 53/60; hybrid refinement did not satisfy the preregistered success screen. The findings do not support quantum advantage.
+- The local simulator is capped at 16 variables/qubits. The bundled full-network scenario is estimated at 222 variables. Direct API QAOA now rejects over-limit instances before dense QUBO allocation; benchmark requests already skip oversized instances.
+- Benchmark QAOA may now derive safe penalties if omitted. Effective penalties, the bounding value, and whether values were derived are returned with experiment configuration. Direct QAOA endpoints continue to require explicit weights.
+
+For the current branch comparison and implementation evidence, see [`CHANGE_PORTING_REPORT.md`](CHANGE_PORTING_REPORT.md), [`ENGINEERING_AUDIT_REPORT.md`](ENGINEERING_AUDIT_REPORT.md), and [`TEST_RESULTS.md`](TEST_RESULTS.md). The best-supported classification remains: a genuine Qiskit simulator-based QAOA research prototype, with no evidence of quantum advantage or clinical validity.

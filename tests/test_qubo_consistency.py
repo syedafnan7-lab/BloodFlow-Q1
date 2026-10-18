@@ -10,7 +10,12 @@ from optimization.constraints import validate_allocation
 from optimization.exact import solve_exact
 from optimization.models import BloodBank, Hospital, Route, Scenario, Urgency
 from optimization.objective import ObjectiveConfig, calculate_objective
-from quantum.qubo import QUBOInputError, QUBOPenaltyConfig, build_qubo
+from quantum.qubo import (
+    QUBOInputError,
+    QUBOPenaltyConfig,
+    build_qubo,
+    compute_conservative_objective_bound,
+)
 
 
 def tiny_scenario() -> Scenario:
@@ -41,6 +46,12 @@ def built(scenario: Scenario | None = None):
 
 
 class QUBOConsistencyTests(unittest.TestCase):
+    def test_conservative_objective_bound_matches_the_encoded_objective_range(self) -> None:
+        self.assertAlmostEqual(
+            compute_conservative_objective_bound(tiny_scenario(), objective_config()),
+            22.25,
+        )
+
     def test_random_feasible_and_infeasible_bitstrings_match_polynomial(self) -> None:
         qubo = built()
         rng = random.Random(20261006)

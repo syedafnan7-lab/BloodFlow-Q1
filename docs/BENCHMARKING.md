@@ -2,10 +2,16 @@
 
 The benchmark runs the same validated synthetic scenario, objective weights,
 and secondary penalty inputs through Greedy, Exact (when its search space is
-small enough), and QAOA (when a real solver adapter is provided). Results are
-written per scenario and method. Use
+small enough), optional MILP, and QAOA (when a real solver adapter is provided).
+Results are written per scenario and method. Use
 `python3 -m optimization.run_benchmark --output results/benchmark.json` to run
 the bundled synthetic dataset and write JSON.
+
+For API benchmark requests, QAOA penalty weights may be supplied explicitly.
+If omitted, the service computes a conservative objective bound across all
+requested scenarios and uses `max(100, 1.5 * bound + 10)` for both constraint
+penalties. The response records the effective weights, the bound, and whether
+the service derived the values, so the run configuration remains inspectable.
 
 The command's objective weights are explicit demonstration settings. They can
 be changed with `--critical-weight`, `--unmet-weight`,
@@ -20,6 +26,9 @@ state cap and records `skipped_too_large` when it refuses an oversized case.
 - **Exact** enumerates every feasible candidate within its configured small
   search limit. For completed cases it supplies the reference minimum of the
   current classical objective.
+- **MILP** uses SciPy's HiGHS mixed-integer solver and can be included with
+  `include_milp=True`; it provides an exact classical baseline for the modeled
+  linear allocation objective.
 - **QAOA** uses a measured result only when the caller supplies an actual QAOA
   solver adapter implementing the shared solver interface. If no adapter is
   supplied, the record status is `not_requested` and all measurements are
@@ -46,8 +55,9 @@ allocation/report/objective record interface as the classical methods.
   It does not include installation, compilation, or remote service time unless
   the adapter includes those steps inside its `solve` call.
 - **Approximation gap:** for a completed, feasible QAOA result and completed
-  Exact result, `(QAOA objective - Exact objective) / abs(Exact objective)`.
-  If Exact is zero and QAOA is also zero, the gap is zero. If Exact is zero and
+  Exact result (or MILP result when Exact is unavailable),
+  `(QAOA objective - reference objective) / abs(reference objective)`.
+  If the reference is zero and QAOA is also zero, the gap is zero. If the reference is zero and
   QAOA is nonzero, the gap is undefined and is stored as null with an
   explanatory status. If Exact or QAOA did not complete feasibly, the gap is
   null.

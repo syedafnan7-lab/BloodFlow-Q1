@@ -36,9 +36,13 @@ exact HTTPS frontend origin in `BLOODFLOW_CORS_ORIGINS`; see
 - `POST /simulate-emergency` — apply one typed event and report optimizer
   output before and after. QAOA runs include separate measured sample summaries
   for the before and after scenarios; classical runs return null summaries.
-- `POST /benchmark` — compare Greedy and Exact. Set `include_qaoa` to true and
-  provide QUBO penalty weights to run a measured local QAOA sample. Without
-  that request, QAOA metrics remain null and marked `not_requested`.
+- `POST /benchmark` — compare Greedy and Exact, with optional MILP via
+  `include_milp`. Set `include_qaoa` to true to run a measured local QAOA
+  sample. Supplied QUBO penalty weights are used as
+  given; when omitted, conservative weights are derived from the largest
+  objective bound across the requested scenarios. The effective weights and
+  whether they were derived are returned in `experiment_configuration`.
+  Without `include_qaoa`, QAOA metrics remain null and marked `not_requested`.
 - `GET /demo-scenarios` — return the fixed deterministic demo scenario IDs.
 - `GET /experiment-defaults` — return backend-reported default QAOA and
   objective settings.
@@ -51,8 +55,11 @@ exact HTTPS frontend origin in `BLOODFLOW_CORS_ORIGINS`; see
   the server clears this list.
 
 Requests use Pydantic models. Unknown fields and malformed or inconsistent
-scenarios return a readable `422` response. QAOA requires explicit penalty
-weights and respects its local qubit limit; oversized requests return `422`.
+scenarios return a readable `422` response. Direct QAOA optimization requires
+explicit penalty weights and respects its local qubit limit; oversized
+instances are rejected before constructing the dense QUBO matrix. Benchmark
+QAOA can derive penalties when none are supplied. Oversized requests return
+`422`.
 Simulator failures return `502`; unexpected internal failures return a
 sanitized `500` response without a traceback.
 

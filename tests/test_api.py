@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import itertools
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -38,6 +40,14 @@ class FailingGreedy:
 class FailingQAOA:
     def solve(self, _qubo):
         raise RuntimeError("simulated QAOA simulator failure")
+
+
+class MinimumEnergyQAOA:
+    config = QAOAConfig(max_qubits=8)
+
+    def solve(self, qubo):
+        bits = min(itertools.product((0, 1), repeat=qubo.variable_count), key=qubo.energy)
+        return {"best_bitstring": "".join(str(bit) for bit in reversed(bits))}
 
 
 class APITests(unittest.TestCase):
@@ -198,6 +208,45 @@ class APITests(unittest.TestCase):
         self.assertIn("16 qubits", response.json()["detail"])
         self.assertIn("222 binary variables", response.json()["detail"])
         self.assertNotIn("best_measured_bitstring", response.json())
+
+    def test_oversized_qaoa_is_rejected_before_constructing_the_quadratic_qubo(self) -> None:
+        scenario = tiny_scenario_payload()
+        huge_quantity = 10**100
+        scenario["blood_banks"][0]["inventory"]["O"] = huge_quantity
+        scenario["hospitals"][0]["demand"]["O"] = huge_quantity
+        client = TestClient(create_app(BackendService(
+            qaoa_solver=QAOASolver(QAOAConfig(max_qubits=16)),
+        )))
+
+        with patch("backend.services.build_qubo") as build_qubo:
+            response = client.post("/optimize", json={
+                "scenario": scenario,
+                "method": "qaoa",
+                "qaoa_penalties": {"inventory_penalty_weight": 100,
+                                   "demand_penalty_weight": 100},
+            })
+
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.json()["error"], "qaoa_instance_too_large")
+        self.assertGreater(int(response.json()["detail"].split("has ")[1].split()[0]), 16)
+        build_qubo.assert_not_called()
+
+    def test_benchmark_qaoa_derives_and_reports_safe_penalties_when_omitted(self) -> None:
+        client = TestClient(create_app(BackendService(qaoa_solver=MinimumEnergyQAOA())))
+        response = client.post("/benchmark", json={
+            "scenarios": [tiny_scenario_payload()],
+            "include_qaoa": True,
+        })
+
+        self.assertEqual(response.status_code, 200, response.text)
+        configuration = response.json()["experiment_configuration"]
+        self.assertTrue(configuration["penalties_auto_calculated"])
+        bound = configuration["penalty_objective_upper_bound"]
+        self.assertGreater(configuration["penalty_weights"]["inventory_penalty_weight"], bound)
+        self.assertGreater(configuration["penalty_weights"]["demand_penalty_weight"], bound)
+        qaoa = next(row for row in response.json()["results"] if row["method"] == "qaoa")
+        self.assertEqual(qaoa["status"], "completed")
+        self.assertTrue(qaoa["feasibility"])
 
     def test_real_qaoa_runs_for_optimize_and_emergency_on_tiny_scenario(self) -> None:
         service = BackendService(qaoa_solver=QAOASolver(QAOAConfig(

@@ -248,6 +248,30 @@ def count_scenario_qubo_variables(scenario: Scenario) -> int:
     return total_bits
 
 
+def compute_conservative_objective_bound(
+    scenario: Scenario, objective_config: ObjectiveConfig
+) -> float:
+    """Bound the spread of non-negative objective terms for safe QUBO penalties."""
+    bound = 0.0
+    routes = {(route.source, route.destination): route for route in scenario.routes}
+    for variable in scenario.allocation_variables():
+        route = routes[(variable.source, variable.destination)]
+        unit_cost = (
+            objective_config.transportation_cost_weight * route.transport_cost
+            + objective_config.transportation_time_weight * route.travel_time_minutes
+        )
+        bound += unit_cost * variable.upper_bound
+
+    for hospital in scenario.hospitals:
+        for group, demand in hospital.demand.items():
+            urgency = hospital.urgency[group]
+            unit_penalty = objective_config.total_unmet_weight
+            if urgency.category in {"high", "critical"}:
+                unit_penalty += objective_config.critical_unmet_weight * urgency.priority_weight
+            bound += unit_penalty * demand
+    return float(bound)
+
+
 
 def _add_square(
     linear: list[float],
@@ -292,30 +316,17 @@ def build_qubo(
         raise QUBOInputError("penalty_config: expected a QUBOPenaltyConfig")
     named_secondary = _validate_secondary_penalties(secondary_penalties)
 
-    # All objective coefficients are non-negative, so this is a safe upper
-    # bound on the spread between the cheapest and most expensive bit string.
-    objective_upper_bound = 0.0
+    objective_upper_bound = compute_conservative_objective_bound(scenario, objective_config)
     integer_specs: list[tuple[str, object, int, str, dict[str, object]]] = []
     routes = {(route.source, route.destination): route for route in scenario.routes}
     for variable in scenario.allocation_variables():
-        route = routes[(variable.source, variable.destination)]
-        coefficient = (
-            objective_config.transportation_cost_weight * route.transport_cost
-            + objective_config.transportation_time_weight * route.travel_time_minutes
-        )
         key = (variable.source, variable.destination, variable.blood_group, variable.recipient_group)
-        objective_upper_bound += coefficient * variable.upper_bound
         integer_specs.append(("allocation", key, variable.upper_bound, "allocation shipment quantity", {
             "source": variable.source, "hospital": variable.destination,
             "blood_group": variable.blood_group, "recipient_group": variable.recipient_group,
         }))
     for hospital in scenario.hospitals:
         for group, demand in hospital.demand.items():
-            urgency = hospital.urgency[group]
-            coefficient = objective_config.total_unmet_weight
-            if urgency.category in {"high", "critical"}:
-                coefficient += objective_config.critical_unmet_weight * urgency.priority_weight
-            objective_upper_bound += coefficient * demand
             if demand > 0:
                 key = (hospital.id, group)
                 integer_specs.append(("unmet", key, demand, "unmet demand for hospital/group", {

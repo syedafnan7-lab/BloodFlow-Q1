@@ -51,7 +51,13 @@ from optimization.models import (
     Urgency,
 )
 from optimization.objective import ObjectiveConfig, ObjectiveResult
-from quantum.qubo import QUBOInputError, QUBOPenaltyConfig, build_qubo
+from quantum.qubo import (
+    QUBOInputError,
+    QUBOPenaltyConfig,
+    build_qubo,
+    compute_conservative_objective_bound,
+    count_scenario_qubo_variables,
+)
 try:
     from quantum.qaoa_solver import QAOAConfig, QAOAResourceLimitError, QAOASolver, QAOASolverError
     _QAOA_IMPORT_ERROR: Exception | None = None
@@ -508,6 +514,15 @@ class BackendService:
                                   "qaoa_not_implemented")
         if penalties is None:
             raise APIServiceError(422, "qaoa_penalties are required for QAOA", "missing_qaoa_penalties")
+        max_qubits = getattr(getattr(solver, "config", None), "max_qubits", 16)
+        estimated_qubits = count_scenario_qubo_variables(scenario)
+        if estimated_qubits > max_qubits:
+            raise APIServiceError(
+                422,
+                f"local QAOA limited to {max_qubits} qubits by configuration; "
+                f"this QUBO has {estimated_qubits} binary variables",
+                "qaoa_instance_too_large",
+            )
         try:
             qubo = build_qubo(scenario, weights, penalties, secondary_penalties)
         except QUBOInputError as error:
@@ -638,14 +653,20 @@ class BackendService:
         weights = _objective_weights(request.objective_weights)
         solver = self._solver_for(request.qaoa_config) if request.include_qaoa else self.qaoa_solver
         qaoa_adapter = None
+        penalties = None
+        automatic_penalty_bound = None
         if request.include_qaoa:
             penalties = _qubo_penalties(request.qaoa_penalties)
             if solver is None:
                 raise APIServiceError(501, f"{_qaoa_unavailable_detail()}; QAOA metrics will not be generated",
                                       "qaoa_not_implemented")
             if penalties is None:
-                raise APIServiceError(422, "qaoa_penalties are required when include_qaoa is true",
-                                      "missing_qaoa_penalties")
+                automatic_penalty_bound = max(
+                    (compute_conservative_objective_bound(scenario, weights) for scenario in scenarios),
+                    default=0.0,
+                )
+                automatic_penalty_weight = max(100.0, automatic_penalty_bound * 1.5 + 10.0)
+                penalties = QUBOPenaltyConfig(automatic_penalty_weight, automatic_penalty_weight)
             qaoa_adapter = QAOASolverAdapter(solver, penalties)
         try:
             records = run_benchmark_suite(
@@ -676,7 +697,9 @@ class BackendService:
                 "methods": methods_list,
                 "objective_weights": asdict(weights),
                 "qaoa": asdict(solver.config) if request.include_qaoa and solver is not None else None,
-                "penalty_weights": asdict(penalties) if request.include_qaoa else None,
+                "penalty_weights": asdict(penalties) if request.include_qaoa and penalties is not None else None,
+                "penalties_auto_calculated": automatic_penalty_bound is not None if request.include_qaoa else None,
+                "penalty_objective_upper_bound": automatic_penalty_bound,
                 "exact_max_candidate_states": request.exact_max_candidate_states,
             },
         }

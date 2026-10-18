@@ -50,7 +50,7 @@ The optimization FastAPI API remains unauthenticated and uses only synthetic agg
 
 - API request bodies and collection sizes do not yet have a global size limit. A local caller can submit unusually large scenarios and consume memory or CPU; add request-size limits before any shared deployment.
 - The exact solver's candidate-state request cap is fixed at 50,000 through the API, but normal API traffic still has no rate limit or authentication.
-- QAOA is bounded by the solver's configured local qubit limit, but simulator runtime and memory still depend on the machine and chosen circuit settings.
+- Direct API QAOA checks the estimated binary-variable count against the configured local qubit limit before constructing its dense QUBO matrix. Simulator runtime and memory still depend on the machine and chosen circuit settings; this check does not replace global request-size, collection-size, or workload limits.
 - Result history is held in process memory, limited to recent operations, and disappears when the backend restarts. It is not an audit log or durable record.
 - The frontend may be configured with a different public API URL at build time. Deployments must verify that it points to a trusted backend and uses HTTPS.
 - The project is now connected to its private GitHub repository. The current source tree was scanned for likely credential patterns and local secret/key files before pushing. This scan is not a guarantee about credentials that may have existed in other historical copies; keep secrets out of Git and rotate any credential if one is ever exposed.
