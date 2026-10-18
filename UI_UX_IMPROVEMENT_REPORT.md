@@ -46,3 +46,7 @@ The implementation uses native CSS and existing React/Radix/Lucide components. S
 - Browser review used one narrow viewport. A wide desktop/tablet sweep, keyboard-only traversal, screen-reader testing, and automated browser E2E remain unverified. No lint/type-check script or Playwright E2E suite is configured.
 - There were no main-only commits to port: fetched `origin/main` (`50c3b24`) is an ancestor of current HEAD.
 - The cross-route UI and audit updates were committed locally to the current branch; they were not pushed or deployed. See `BRANCH_CHANGE_SUMMARY.md` for branch and handoff details.
+
+## Follow-up: Copilot and theme port
+
+Arya's `main` (`66806c1`) also had a scenario-aware Copilot, light/dark switch, and urgent alert center. These have now been selectively integrated into this branch while retaining its research routes and QUBO hardening. The Copilot can use the `/chat` API and includes a local synthetic-data fallback. Dark styling was added for this branch's refreshed app shell and dashboard. Verified the Donor Network view in dark mode and asked the sample critical-demand question; it returned scenario figures (38 demand, 11 high/critical, 71 inventory). The feature port is uncommitted and unpushed.

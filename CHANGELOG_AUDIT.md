@@ -187,3 +187,11 @@ During the adversarial quantum integrity audit, the implementation was inspected
 - Fetched `origin/main` at `50c3b24`; it is an ancestor of the current branch, so no main-only changes required porting.
 - Backend suite (159 tests + 17 subtests), frontend suite (7 tests), and production build passed after the cross-route changes.
 - Work remains uncommitted and unpushed. Existing user edits are retained.
+
+## Selective port from Arya's main — 2026-10-18
+
+- Ported the scenario-aware BloodFlow-Q Copilot, `/chat` API endpoint with deterministic synthetic-domain responses, global urgent-alert center, and persistent light/dark theme toggle from `Arya99908/BloodFlow-Q` `main` (`66806c1`).
+- Preserved this branch's Solver Lab, Experiment Reports, Quantum Optimization Lab, dashboard refresh, Skiper attribution, and QUBO hardening. Did not take Arya's unrelated removals or backend rollback.
+- Added dark-theme treatment for the refreshed dashboard/shared shell and regression tests for the chat route and Copilot components. No new dependency was needed.
+- Verification: 160 backend tests + 17 subtests, 17 frontend tests, and production build passed. Browser preview on port 5173 showed the Donor Network page, dark mode, Copilot response based on scenario telemetry (38 demand, 11 high/critical, 71 inventory).
+- This selective port remains uncommitted and unpushed; the pre-existing edit to `docs/PRODUCT_WORKFLOW_AND_INTEROPERABILITY.md` remains untouched.

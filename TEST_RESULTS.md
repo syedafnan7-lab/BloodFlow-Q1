@@ -38,3 +38,11 @@ No test or build failure remains from the implemented changes.
 - The cross-route UI refresh in `frontend/src/App.jsx`, `frontend/src/pages/Dashboard.jsx`, and `frontend/src/styles.css` is included in the local branch commit. The pre-existing edit in `docs/PRODUCT_WORKFLOW_AND_INTEROPERABILITY.md` was preserved and left out.
 - After the cross-route visual and app-shell updates, the full suites were rerun: 159 backend tests + 17 subtests passed, 7 frontend tests passed, and the production build succeeded. All 14 routes were manually opened in the local browser at a narrow mobile viewport; Network filtering was exercised. See `UI_UX_IMPROVEMENT_REPORT.md` for route notes and browser-review limits.
 - Local preview startup commands and exact file/change inventory are in [`BRANCH_CHANGE_SUMMARY.md`](BRANCH_CHANGE_SUMMARY.md).
+
+## Selective feature port — Arya main — 2026-10-18
+
+- Source: `Arya99908/BloodFlow-Q` `main`, commit `66806c1`.
+- Ported the global Copilot and its deterministic `/chat` route, scenario-driven alert center, and persisted light/dark theme toggle. Added the source feature tests and an API route regression test. Dark styling was extended over the existing app shell/dashboard rather than replacing the newer dashboard design.
+- Deliberately did not port Arya's unrelated removal of the research pages/results or revert the QUBO safeguards.
+- Backend: 160 tests + 17 subtests passed. Frontend: 17 tests passed. Production build passed. Local browser on `http://127.0.0.1:5173/` showed Donor Network in dark mode; the Copilot returned values from the selected synthetic scenario.
+- Feature port is uncommitted and unpushed. Pre-existing workflow-document edit remains outside this change.
