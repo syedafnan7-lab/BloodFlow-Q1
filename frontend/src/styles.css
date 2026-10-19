@@ -3503,9 +3503,9 @@ th.num-cell {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
+  background: var(--critical-surface, #fee2e2);
+  color: var(--critical-ink, #b91c1c);
+  border: 1px solid var(--critical-border, #fca5a5);
   padding: 2px 8px;
   border-radius: var(--radius-pill);
   font-size: 11px;
@@ -3566,6 +3566,7 @@ th.num-cell {
   box-shadow: var(--shadow-xs);
   transition: all 0.15s ease;
   width: 100%;
+  color: var(--text-primary);
 }
 
 .route-card-item:hover {
@@ -3574,14 +3575,34 @@ th.num-cell {
 }
 
 .route-card-selected {
-  border-color: var(--accent-blue) !important;
-  background: #f8faff !important;
+  border-color: var(--route-selected-border) !important;
+  background: var(--route-selected-surface) !important;
+  color: var(--text-primary);
   box-shadow: 0 0 0 1px var(--accent-blue);
 }
 
-.route-card-blocked {
-  border-color: #fecdd3;
-  background: #fffafa;
+.route-card-blocked:not(.route-card-selected) {
+  border-color: var(--route-blocked-border);
+  background: var(--route-blocked-surface);
+  color: var(--text-primary);
+}
+
+.route-card-item:is(.route-card-selected, .route-card-blocked) .entry-label,
+.route-card-item:is(.route-card-selected, .route-card-blocked) .endpoint-arrow {
+  color: var(--text-secondary);
+}
+
+.route-card-item:focus-visible {
+  outline: 3px solid var(--accent-blue);
+  outline-offset: 3px;
+}
+
+.route-card-item:disabled {
+  cursor: not-allowed;
+  opacity: 1;
+  border-color: var(--border-strong);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
 }
 
 .route-card-header {
@@ -3654,10 +3675,11 @@ th.num-cell {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #b91c1c;
+  color: var(--critical-ink, #b91c1c);
   font-size: 11px;
   font-weight: 600;
-  background: #fee2e2;
+  background: var(--critical-surface, #fee2e2);
+  border: 1px solid var(--critical-border, #fca5a5);
   padding: 4px 8px;
   border-radius: var(--radius-sm);
 }
@@ -6583,6 +6605,13 @@ select.field-control option { color:#2b2d42; background:#edf2f4; }
   --accent-blue:#285caa;
   --accent-indigo:#2b2d42;
   --accent-violet:#716b91;
+  --route-selected-surface:#fff1f3;
+  --route-selected-border:#b42338;
+  --route-blocked-surface:#fff4f4;
+  --route-blocked-border:#c56878;
+  --critical-surface:#fee2e2;
+  --critical-ink:#8f1d2c;
+  --critical-border:#e8a0a9;
 }
 :root[data-theme="dark"] {
   --bg-canvas:#171a2a;
@@ -6602,6 +6631,13 @@ select.field-control option { color:#2b2d42; background:#edf2f4; }
   --primary-border:#793341;
   --accent-indigo:#2b2d42;
   --accent-violet:#8d99ae;
+  --route-selected-surface:#342238;
+  --route-selected-border:#ff7181;
+  --route-blocked-surface:#2d202d;
+  --route-blocked-border:#be6b7f;
+  --critical-surface:#492430;
+  --critical-ink:#fecdd3;
+  --critical-border:#793341;
 }
 :root[data-theme="dark"] .dashboard-capability-hero { background:radial-gradient(ellipse at 90% 12%,rgba(239,35,60,.2),transparent 36%),linear-gradient(130deg,#2b2d42,#343950 68%,#38465f); }
 :root[data-theme="dark"] .research-snapshot,
@@ -6789,9 +6825,152 @@ select.field-control option { color:#2b2d42; background:#edf2f4; }
   color: #fecdd3 !important;
   border-color: #713047 !important;
 }
+:root[data-theme="dark"] .critical-demand-pill,
+:root[data-theme="dark"] .route-blocked-alert {
+  background: var(--critical-surface);
+  color: var(--critical-ink);
+  border-color: var(--critical-border);
+}
+:root[data-theme="dark"] .route-available {
+  background: #12352f;
+  color: #a7f3d0;
+  border-color: #17604f;
+}
+:root[data-theme="dark"] .urgency-pill.urgency-medium,
+:root[data-theme="dark"] .urgency-pill-medium,
+:root[data-theme="dark"] .urgency-medium {
+  background: #3a2c15;
+  color: #fde68a;
+  border-color: #66501f;
+}
 :root[data-theme="dark"] .status-strip {
   background: var(--bg-surface);
   border-color: var(--border-default);
 }
+:root[data-theme="dark"] .selected-route-inspector .eyebrow {
+  color: #fda4af;
+}
+
+/* Contrast corrections verified against the rendered light and dark themes. */
+:root {
+  --primary: #d90429;
+  --primary-hover: #a51c30;
+}
+:root[data-theme="dark"] {
+  --primary: #d90429;
+  --primary-hover: #a51c30;
+}
+.page-header .eyebrow,
+.eyebrow { color: #8f1d2c; }
+.alert-badge-pill { color: #2b2d42; }
+.alert-badge-pill.badge-critical { color: #fff; background: #d90429; }
+.dashboard-capability-hero .button-primary {
+  border-color: #d90429;
+  background: #d90429;
+}
+.dashboard-capability-hero .button-primary:hover { background: #a51c30; }
+.dashboard-network-art svg text { fill: #a1abc0; }
+.data-table th { color: #526174; }
+:root[data-theme="dark"] .page-header .eyebrow,
+:root[data-theme="dark"] .eyebrow { color: #fda4af; }
+:root[data-theme="dark"] .data-table th { color: var(--text-secondary); }
+:root[data-theme="dark"] .demo-case-selected,
+:root[data-theme="dark"] .demo-mode-switch button.demo-mode-active {
+  border-color: #8ebdff;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+:root[data-theme="dark"] .demo-case-selected .demo-case-index {
+  color: var(--text-primary);
+  background: var(--bg-canvas);
+}
+:root[data-theme="dark"] .workflow-step-title,
+:root[data-theme="dark"] .optimization-journey-number,
+:root[data-theme="dark"] .optimization-journey-step > div > span {
+  color: var(--text-secondary);
+}
+:root[data-theme="dark"] .urgency-pill.urgency-critical,
+:root[data-theme="dark"] .urgency-pill-critical,
+:root[data-theme="dark"] .urgency-critical {
+  color: #fecdd3;
+  background: #492430;
+  border-color: #793341;
+}
+:root[data-theme="dark"] .qlab-feasible,
+:root[data-theme="dark"] .check-pass { color: #a7f3d0; }
+:root[data-theme="dark"] .tag-formulation { color: #bfdbfe; background: #172d49; }
+:root[data-theme="dark"] .topbar-brand > span > span { color: #ff9baa; }
+
+/* Coolors-inspired semantic light palette with a matching dark counterpart. */
+:root {
+  --bg-canvas: #f5f7fb;
+  --bg-surface: #ffffff;
+  --bg-subtle: #eaf0f7;
+  --bg-hover: #e4edf5;
+  --border-subtle: #e0e7ef;
+  --border-default: #ced8e4;
+  --border-strong: #9eafc1;
+  --text-primary: #172033;
+  --text-secondary: #475569;
+  --text-muted: #5e6d81;
+  --text-subtle: #64748b;
+  --primary: #920942;
+  --primary-hover: #700832;
+  --primary-subtle: #fbe8ef;
+  --primary-border: #e6bdcb;
+  --accent-blue: #0b3c65;
+  --accent-indigo: #0b3c65;
+  --accent-violet: #3a7188;
+  --focus-ring: #0b3c65;
+  --link-color: #920942;
+}
+:root[data-theme="dark"] {
+  --bg-canvas: #171a2a;
+  --bg-surface: #202438;
+  --bg-subtle: #292d42;
+  --bg-hover: #2d3249;
+  --border-subtle: #30354b;
+  --border-default: #3c425b;
+  --border-strong: #737e98;
+  --text-primary: #edf2f4;
+  --text-secondary: #ccd2df;
+  --text-muted: #a1abc0;
+  --text-subtle: #a1abc0;
+  --primary: #d90429;
+  --primary-hover: #a51c30;
+  --primary-subtle: #492430;
+  --primary-border: #793341;
+  --accent-blue: #8ebdff;
+  --accent-indigo: #8ebdff;
+  --accent-violet: #9ba8c0;
+  --focus-ring: #a9caff;
+  --link-color: #ff9baa;
+}
+:root[data-theme="light"] .home-hero {
+  border-color: rgba(11, 60, 101, .24);
+  background: radial-gradient(ellipse at 80% 38%, #17476d 0%, #0b3c65 48%, #0b3046 100%);
+}
+.home-destination-card:hover,
+.home-flow-step:hover { border-color: var(--primary); }
+.home-destination-card:focus-visible,
+.home-flow-step:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.home-section-heading .eyebrow { color: var(--primary); }
+.home-flow-step > span:last-of-type { color: var(--text-secondary); }
+.home-disclaimer { color: var(--text-secondary); }
+.page-glide-select .glide-select__label[data-empty] { opacity: 1; color: var(--text-secondary); }
+:root[data-theme="dark"] .home-section-heading .eyebrow,
+:root[data-theme="dark"] .home-flow-step > svg,
+:root[data-theme="dark"] .home-destination-icon,
+:root[data-theme="dark"] .home-disclaimer svg { color: #ff9baa; }
+.bloodflow-dock .dock-item:is([data-active], [data-open]) .dock-face {
+  color: var(--dock-label-ink) !important;
+}
+.bloodflow-dock .dock-item[data-active] .dock-face { background: var(--dock-label); }
+:root[data-theme="light"] .bloodflow-dock {
+  --dock-accent: #0b3c65;
+  --dock-dot: rgba(11, 60, 101, .6);
+}
+.page-content { scroll-padding-bottom: 88px; }
+.app-footer { padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important; }
 
 
