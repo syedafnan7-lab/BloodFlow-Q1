@@ -149,22 +149,6 @@
   box-shadow: inset 0 0 0 1px var(--dock-label), 0 4px 14px color-mix(in srgb, var(--dock-label) 22%, transparent);
 }
 
-.dock-item[data-group-label]::before {
-  content: attr(data-group-label);
-  position: absolute;
-  z-index: 2;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--dock-menu-muted);
-  font-size: 8px;
-  font-weight: 750;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
 .dock-separator { background: var(--dock-separator); }
 
 .dock-tile {
@@ -312,64 +296,44 @@
   line-height: 1;
   white-space: nowrap;
   pointer-events: none;
-  opacity: 0;
-  transition:
-    opacity 0.16s ease,
-    transform 0.16s ease;
+  opacity: 1;
+  z-index: 10;
+  animation: dockLabelIn 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dockLabelIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
 }
 
 .dock--bottom .dock-label {
   bottom: calc(100% + 12px);
   left: 50%;
-  transform: translate(-50%, 4px);
+  transform: translate(-50%, 0);
 }
 
 .dock--top .dock-label {
   top: calc(100% + 12px);
   left: 50%;
-  transform: translate(-50%, -4px);
+  transform: translate(-50%, 0);
 }
 
 .dock--left .dock-label {
   top: 50%;
   left: calc(100% + 12px);
-  transform: translate(-4px, -50%);
+  transform: translate(0, -50%);
 }
 
 .dock--right .dock-label {
   top: 50%;
   right: calc(100% + 12px);
-  transform: translate(4px, -50%);
-}
-
-.dock-item:focus-visible .dock-label {
-  opacity: 1;
-}
-
-.dock--bottom .dock-item:focus-visible .dock-label,
-.dock--top .dock-item:focus-visible .dock-label {
-  transform: translate(-50%, 0);
-}
-
-.dock--left .dock-item:focus-visible .dock-label,
-.dock--right .dock-item:focus-visible .dock-label {
   transform: translate(0, -50%);
-}
-
-@media (hover: hover) {
-  .dock-item:hover .dock-label {
-    opacity: 1;
-  }
-
-  .dock--bottom .dock-item:hover .dock-label,
-  .dock--top .dock-item:hover .dock-label {
-    transform: translate(-50%, 0);
-  }
-
-  .dock--left .dock-item:hover .dock-label,
-  .dock--right .dock-item:hover .dock-label {
-    transform: translate(0, -50%);
-  }
 }
 
 .dock .dock-item[data-hop] .dock-label {

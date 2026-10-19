@@ -24,18 +24,23 @@ function summarize(scenario, savedResults) {
   const demand = hospitals.flatMap((hospital) => Object.entries(hospital.demand || {}).map(([group, units]) => ({
     group, units, urgency: hospital.urgency?.[group]?.category || 'unknown',
   })));
+  const totalDemand = demand.reduce((sum, item) => sum + item.units, 0);
   const latestRun = [...savedResults].reverse().find((entry) => ['/optimize', '/simulate-emergency'].includes(entry.endpoint));
   const latestPayload = latestRun?.result || null;
   const latestMetrics = latestRun?.endpoint === '/simulate-emergency' ? latestPayload?.after_metrics : null;
   const currentUnmet = latestMetrics?.total_unmet_demand ?? latestPayload?.total_unmet_demand ?? null;
   const runStatus = latestPayload?.status || (latestPayload ? (latestMetrics?.feasibility === false ? 'infeasible' : 'completed') : 'not_run');
+  const satisfactionRate = currentUnmet != null && totalDemand > 0
+    ? Math.max(0, Math.round(((totalDemand - currentUnmet) / totalDemand) * 100))
+    : null;
   return {
     banks: banks.length,
     hospitals: hospitals.length,
     totalInventory: banks.reduce((sum, bank) => sum + Object.values(bank.inventory || {}).reduce((subtotal, units) => subtotal + units, 0), 0),
-    totalDemand: demand.reduce((sum, item) => sum + item.units, 0),
+    totalDemand,
     criticalDemand: demand.filter((item) => ['critical', 'high'].includes(item.urgency)).reduce((sum, item) => sum + item.units, 0),
     currentUnmet,
+    satisfactionRate,
     runStatus,
     latestRun,
     latestAllocation: latestRun?.endpoint === '/simulate-emergency'
@@ -162,7 +167,15 @@ export default function Dashboard({ onNavigate, onOptimization, theme = 'light' 
           <MetricCard icon={Boxes} label="Total inventory" value={summary.totalInventory.toLocaleString()} detail="Synthetic units across banks" tone="teal" />
           <MetricCard icon={Building2} label="Total demand" value={summary.totalDemand.toLocaleString()} detail="Units requested in this scenario" tone="violet" />
           <MetricCard icon={TriangleAlert} label="Critical / high priority" value={summary.criticalDemand.toLocaleString()} detail="Demand with high or critical urgency" tone="amber" />
-          <MetricCard icon={CircleHelp} label="Current unmet demand" value={summary.currentUnmet == null ? '—' : summary.currentUnmet.toLocaleString()} detail={summary.currentUnmet == null ? 'Run optimization to calculate' : 'From the latest saved optimization'} tone="slate" />
+          <MetricCard
+            icon={CircleHelp}
+            label="Current unmet demand"
+            value={summary.currentUnmet == null ? '—' : `${summary.currentUnmet.toLocaleString()} units`}
+            detail={summary.currentUnmet == null
+              ? 'Run optimization to calculate'
+              : `${summary.totalDemand - summary.currentUnmet} of ${summary.totalDemand} units fulfilled (${summary.satisfactionRate}%)`}
+            tone={summary.currentUnmet == null ? 'slate' : summary.currentUnmet === 0 ? 'emerald' : 'amber'}
+          />
           <MetricCard
             icon={Activity}
             label="Optimization status"
@@ -197,22 +210,32 @@ export default function Dashboard({ onNavigate, onOptimization, theme = 'light' 
         </section>
         <div className="dashboard-columns">
           <NetworkOverview scenario={data.scenario} />
-          <section className="panel latest-panel">
-            <div className="panel-heading"><div><h2>Latest optimization</h2><p>Most recent run recorded by this API process</p></div><Clock3 size={17} className="muted-icon" /></div>
-            {summary.latestRun ? <>
-              <div className={`run-status status-${summary.runStatus}`}>
-                <span className="status-indicator" />
-                {formatStatusLabel(summary.runStatus)}
-              </div>
-              <div className="latest-method">{summary.latestRun.endpoint === '/simulate-emergency' ? 'Emergency re-optimization' : 'Allocation optimization'}</div>
-              <div className="latest-meta-list">
-                <MetaRow label="Method" value={summary.latestRun.result?.method?.toUpperCase() || 'Not reported'} />
-                <MetaRow label="Unmet demand" value={summary.currentUnmet == null ? 'Not reported' : summary.currentUnmet} unit={summary.currentUnmet != null ? 'units' : ''} />
-                <MetaRow label="Feasibility status" value={summary.runStatus === 'infeasible' ? 'Infeasible candidate' : summary.runStatus === 'not_run' ? 'Not run' : 'Feasible candidate'} tone={summary.runStatus === 'infeasible' ? 'danger' : 'success'} />
-              </div>
-              <button className="text-button" onClick={() => onNavigate('results')}>View results <ArrowUpRight size={15} /></button>
-            </> : <EmptyState title="No optimization recorded" detail="Run the allocator to see its measured result here. No sample values are shown." />}
-          </section>
+          <BorderGlow
+            className="dashboard-latest-glow"
+            backgroundColor="var(--bg-surface)"
+            borderRadius={16}
+            glowRadius={14}
+            glowColor="350 82 62"
+            colors={['#ef233c', '#8d99ae', '#2b2d42']}
+          >
+            <section className="panel latest-panel">
+              <div className="panel-heading"><div><h2>Latest optimization</h2><p>Most recent run recorded by this API process</p></div><Clock3 size={17} className="muted-icon" /></div>
+              {summary.latestRun ? <>
+                <div className={`run-status status-${summary.runStatus}`}>
+                  <span className="status-indicator" />
+                  {formatStatusLabel(summary.runStatus)}
+                </div>
+                <div className="latest-method">{summary.latestRun.endpoint === '/simulate-emergency' ? 'Emergency re-optimization' : 'Allocation optimization'}</div>
+                <div className="latest-meta-list">
+                  <MetaRow label="Method" value={summary.latestRun.result?.method?.toUpperCase() || 'Not reported'} />
+                  <MetaRow label="Unmet demand" value={summary.currentUnmet == null ? 'Not reported' : `${summary.currentUnmet} units`} />
+                  {summary.satisfactionRate != null && <MetaRow label="Fulfillment rate" value={`${summary.satisfactionRate}%`} tone={summary.satisfactionRate === 100 ? 'success' : 'default'} />}
+                  <MetaRow label="Feasibility status" value={summary.runStatus === 'infeasible' ? 'Infeasible candidate' : summary.runStatus === 'not_run' ? 'Not run' : 'Feasible candidate'} tone={summary.runStatus === 'infeasible' ? 'danger' : 'success'} />
+                </div>
+                <button className="text-button" onClick={() => onNavigate('results')}>View results <ArrowUpRight size={15} /></button>
+              </> : <EmptyState title="No optimization recorded" detail="Run the allocator to see its measured result here. No sample values are shown." />}
+            </section>
+          </BorderGlow>
         </div>
         <div className="prototype-note"><CircleHelp size={16} /><span>Research prototype using synthetic scenario data. This dashboard is for logistics experimentation and does not support clinical decisions.</span></div>
       </>}

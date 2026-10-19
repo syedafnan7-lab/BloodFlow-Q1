@@ -36,7 +36,15 @@ function buildGradientVars(colors) {
 }
 
 function isLightColor(color) {
-  const value = color.trim().replace('#', '');
+  if (typeof color !== 'string') return false;
+  const trimmed = color.trim();
+  if (trimmed.includes('--bg-surface') || trimmed.includes('--bg-canvas')) {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.dataset.theme !== 'dark';
+    }
+    return true;
+  }
+  const value = trimmed.replace('#', '');
   if (!/^[\da-f]{3}([\da-f]{3})?$/i.test(value)) return false;
   const hex = value.length === 3 ? value.split('').map(char => char + char).join('') : value;
   const red = parseInt(hex.slice(0, 2), 16);
