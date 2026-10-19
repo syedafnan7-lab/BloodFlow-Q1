@@ -1,6 +1,7 @@
 import { NAV_BY_ID, NAV_GROUP_BY_ID } from '../navigation';
 
 export default function Breadcrumbs({ page, onNavigate }) {
+  if (page === 'home') return null;
   const route = NAV_BY_ID[page];
   const group = route && NAV_GROUP_BY_ID[route.group];
   if (!route || !group) return <nav className="breadcrumbs" aria-label="Breadcrumb"><span>Workspace</span><span className="breadcrumb-slash" aria-hidden="true">/</span><strong aria-current="page">Page not found</strong></nav>;

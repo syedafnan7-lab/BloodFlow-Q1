@@ -467,6 +467,7 @@ export default function Dock({
   const skipRef = useRef(-1);
   const [fit, setFit] = useState(1);
   const [menu, setMenu] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(-1);
   const side = SIDES.includes(position) ? position : 'bottom';
   const vertical = side === 'left' || side === 'right';
   const rawBase = Math.max(16, baseItemSize);
@@ -928,6 +929,7 @@ export default function Dock({
       role="toolbar"
       aria-label="Dock"
       aria-orientation={vertical ? 'vertical' : 'horizontal'}
+      onPointerLeave={() => setHoveredIndex(-1)}
       style={{
         ...tokens,
         '--dock-base': `${base}px`,
@@ -951,12 +953,13 @@ export default function Dock({
             type="button"
             className={`dock-item${item.className ? ` ${item.className}` : ''}`}
             aria-label={item.label}
-            data-group-label={item.groupLabel || undefined}
             aria-current={item.active ? 'page' : undefined}
             data-active={item.active ? '' : undefined}
             aria-haspopup={item.menu?.length ? 'menu' : undefined}
             aria-expanded={item.menu?.length ? openIndex === index : undefined}
             data-open={openIndex === index ? '' : undefined}
+            onPointerEnter={() => setHoveredIndex(index)}
+            onPointerLeave={() => setHoveredIndex(prev => (prev === index ? -1 : prev))}
             onPointerDown={event => {
               skipRef.current = -1;
               const current = menuRef.current;
@@ -974,7 +977,9 @@ export default function Dock({
               endPress();
               openMenu(index, 'pointer');
             }}
-            onClick={() => {
+            onClick={event => {
+              event.currentTarget?.blur();
+              setHoveredIndex(-1);
               if (skipRef.current === index) {
                 skipRef.current = -1;
                 return;
@@ -988,9 +993,15 @@ export default function Dock({
               item.onClick?.();
             }}
             onFocus={event => {
-              if (event.currentTarget.matches(':focus-visible')) actionsRef.current?.focus(index);
+              if (event.currentTarget.matches(':focus-visible')) {
+                actionsRef.current?.focus(index);
+                setHoveredIndex(index);
+              }
             }}
-            onBlur={() => actionsRef.current?.focus(-1)}
+            onBlur={() => {
+              actionsRef.current?.focus(-1);
+              setHoveredIndex(-1);
+            }}
             onKeyDown={event => onItemKeyDown(event, index)}
           >
             <span className="dock-tile">
@@ -1000,7 +1011,7 @@ export default function Dock({
               ) : null}
             </span>
             {showIndicators && item.active ? <span className="dock-dot" aria-hidden="true" /> : null}
-            {showLabels && item.label && !menu ? (
+            {showLabels && item.label && !menu && hoveredIndex === index ? (
               <span className="dock-label" aria-hidden="true">
                 {item.label}
               </span>

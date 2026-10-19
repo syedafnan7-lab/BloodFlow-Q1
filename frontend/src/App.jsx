@@ -4,7 +4,6 @@ import { api } from './services/api';
 import LoadingState from './components/Feedback';
 import AlertCenter from './components/AlertCenter';
 import Dock from './components/Dock';
-import GlideSelect from './components/GlideSelect';
 import SquishSwitch from './components/SquishSwitch';
 import Stepper, { Step } from './components/Stepper';
 import ClickSpark from './components/ClickSpark';
@@ -168,12 +167,31 @@ export default function App() {
     {toast && <div className={`app-toast app-toast-${toast.kind}`} role={toast.kind === 'error' ? 'alert' : 'status'}><span>{toast.message}</span><button onClick={() => setToast(null)} aria-label="Dismiss notification">×</button></div>}
     <a className="skip-link" href="#main-content">Skip to main content</a>
     <div className="main-shell">
-      <header className="topbar"><a className="topbar-brand" href="/" onClick={(e) => { e.preventDefault(); navigate('home'); }}><img src="/bloodflow-q-logo.webp" alt="" /><span>BloodFlow<span>-Q</span></span></a><Breadcrumbs page={page} onNavigate={navigate} /><div className="topbar-right"><GlideSelect ariaLabel="Navigate to page" options={NAV_ITEMS.map(({ id, label, group }) => ({ value: id, label, tag: NAV_GROUPS.find(section => section.id === group)?.label }))} value={page} onChange={navigate} showTags size="md" menuWidth={250} accentColor="var(--primary)" surfaceColor="var(--bg-surface)" highlightColor="var(--bg-hover)" textColor="var(--text-primary)" className="page-glide-select" /><AlertCenter onNavigate={navigate} onOptimization={runQuickOptimization} /><label className="theme-toggle theme-switch"><SquishSwitch checked={theme === 'dark'} onChange={(checked) => setTheme(checked ? 'dark' : 'light')} ariaLabel="Toggle dark theme" trackColor="var(--text-muted)" trackOnColor="var(--primary)" thumbColor="var(--bg-canvas)" thumbOnColor="var(--bg-canvas)" width={58} height={30} stretch={22} /><span>{theme === 'dark' ? 'Dark' : 'Light'}</span></label><span className="environment-pill"><i aria-hidden="true" />Synthetic data</span><span className="topbar-divider" /><div className="user-chip"><span aria-hidden="true">{(researcherName || 'R').slice(0,1).toUpperCase()}</span><strong>{researcherName || 'Researcher'}</strong></div></div></header>
+      <header className="topbar">
+        <a className="topbar-brand" href="/" onClick={(e) => { e.preventDefault(); navigate('home'); }}>
+          <img src="/bloodflow-q-logo.webp" alt="" />
+          <span>BloodFlow<span>-Q</span></span>
+        </a>
+        <Breadcrumbs page={page} onNavigate={navigate} />
+        <div className="topbar-right">
+          <AlertCenter onNavigate={navigate} onOptimization={runQuickOptimization} />
+          <label className="theme-toggle theme-switch">
+            <SquishSwitch checked={theme === 'dark'} onChange={(checked) => setTheme(checked ? 'dark' : 'light')} ariaLabel="Toggle dark theme" trackColor="var(--text-muted)" trackOnColor="var(--primary)" thumbColor="var(--bg-canvas)" thumbOnColor="var(--bg-canvas)" width={58} height={30} stretch={22} />
+            <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
+          </label>
+          <span className="environment-pill"><i aria-hidden="true" />Synthetic data</span>
+          <span className="topbar-divider" />
+          <div className="user-chip">
+            <span aria-hidden="true">{(researcherName || 'R').slice(0,1).toUpperCase()}</span>
+            <strong>{researcherName || 'Researcher'}</strong>
+          </div>
+        </div>
+      </header>
       <main className="page-content" id="main-content"><div key={page} className={`page-container page-enter page-${page}`}><Suspense fallback={<LoadingState label={`Loading ${PAGE_TITLES[page]?.toLowerCase() || 'page'}…`} />}>{renderPage()}</Suspense></div></main>
-      <footer className="app-footer"><span><Activity size={13} /> BloodFlow-Q <b>v2.001</b></span><span>Aggregate logistics model <i /> Synthetic data only <i /> Not for clinical decisions</span><span className="footer-build">Research workspace</span></footer>
+      {page !== 'home' && <footer className="app-footer"><span><Activity size={13} /> BloodFlow-Q <b>v2.001</b></span><span>Aggregate logistics model <i /> Synthetic data only <i /> Not for clinical decisions</span><span className="footer-build">Research workspace</span></footer>}
     </div>
     <Dock className="bloodflow-dock" position="bottom" theme={theme} baseItemSize={32} magnification={39} panelHeight={48} gap={7} autoHide={false} accentColor="var(--primary)" showLabels={true} items={DOCK_ITEMS.map((item) => {
-      if (item.menu) return { ...item, icon:<item.icon size={19}/>, active:NAV_GROUPS.find(group => group.items.some(route => route.id === page))?.id === item.id, menu:item.menu.map(route => ({ ...route, active:page===route.id, onClick:()=>navigate(route.id,{viaDock:true}) })) };
+      if (item.menu) return { ...item, icon:<item.icon size={19}/>, active:page !== 'home' && NAV_GROUPS.find(group => group.items.some(route => route.id === page))?.id === item.id, menu:item.menu.map(route => ({ ...route, active:page===route.id, onClick:()=>navigate(route.id,{viaDock:true}) })) };
       return { ...item, icon:<item.icon size={19}/>, active:page===item.id, onClick:()=>navigate(item.id,{viaDock:true}) };
     })} style={{position:'fixed',bottom:12,zIndex:60}} />
     <NavigationTransition destination={transition} reducedMotion={window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false} />
