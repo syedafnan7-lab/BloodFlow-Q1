@@ -521,6 +521,9 @@ const TiltedCard = ({
               src={imageSrc}
               alt={altText}
               draggable={false}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
               style={{
                 '--tc-depth': -24,
                 top: `-${bleed}px`,

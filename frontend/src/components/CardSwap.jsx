@@ -117,7 +117,14 @@ const ItemCard = ({ item }) => (
       )}
       {item.image && (
         <div className="card-swap-media">
-          <img src={item.image} alt={item.alt ?? item.title ?? ''} draggable={false} />
+          <img
+            src={item.image}
+            alt={item.alt ?? item.title ?? ''}
+            draggable={false}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
         </div>
       )}
     </div>

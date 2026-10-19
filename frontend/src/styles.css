@@ -6237,10 +6237,7 @@ textarea.field-control { min-height: 96px; resize: vertical; }
 .app-footer { justify-content:space-between; gap:14px 24px; min-height:60px; padding:12px clamp(18px,3.5vw,56px); }
 .footer-build { color:var(--text-subtle); font-size:11px; }
 .bloodflow-dock { max-width:calc(100vw - 20px); overflow:visible; }
-.bloodflow-dock .dock-label { color:#2b2d42; }
-.bloodflow-dock .dock-item[data-active] .dock-label { opacity:1; transform:translate(-50%,0); }
 .bloodflow-dock .dock-item[data-active] .dock-face { color:#ef233c; }
-.bloodflow-dock .dock-item:focus-visible .dock-label { opacity:1; }
 .solver-glide-select,.demo-glide-select { width:min(100%,420px); min-width:230px; }
 .solver-glide-select .glide-select__trigger,.demo-glide-select .glide-select__trigger { min-height:46px; border:1px solid var(--border-default); box-shadow:none; }
 .optimization-api-notice,.demo-api-status { display:flex; align-items:center; gap:12px; margin:0 0 18px; }
@@ -6324,11 +6321,10 @@ select.field-control option { color:#2b2d42; background:#edf2f4; }
 .optimization-reveal.reveal-pending { opacity:0; transform:translateY(18px); }
 .optimization-reveal.is-visible { opacity:1; transform:translateY(0); }
 .page-optimization .optimization-reveal.reveal-pending { will-change:opacity,transform; }
-.bloodflow-dock .dock-label { color:var(--dock-label-ink); font-weight:650; text-shadow:0 1px 1px rgba(0,0,0,.12); }
-.bloodflow-dock .dock-item[data-active] .dock-label { opacity:1; transform:translate(-50%,0); }
 .bloodflow-dock .dock-item[data-active] .dock-face { color:#ef233c; }
-.bloodflow-dock .dock-item:focus-visible .dock-label { opacity:1; }
-.bloodflow-dock .dock-item[data-active] .dock-label { background:var(--dock-panel); color:var(--dock-label-ink); border:1px solid var(--dock-panel-edge); }
+.bloodflow-dock .dock-item .dock-label { opacity:0; pointer-events:none; }
+.bloodflow-dock .dock-item:hover .dock-label,
+.bloodflow-dock .dock-item:focus-visible .dock-label { opacity:1; transform:translate(-50%,0); }
 .page-blood-banks .hospitals-kpi-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:17px; }
 .page-blood-banks .hospitals-kpi-strip .stat-item { min-width:0; min-height:88px; padding:14px 15px; }
 .blood-bank-cards { display:grid; gap:11px; }
@@ -6633,8 +6629,31 @@ select.field-control option { color:#2b2d42; background:#edf2f4; }
 :root[data-theme="dark"] .coordination-progress-grid > article,
 :root[data-theme="dark"] .donor-request-card,
 :root[data-theme="dark"] .history-placeholder { color:var(--text-primary); background:var(--bg-surface); }
-.bloodflow-dock { --dock-label:#2b2d42; --dock-label-ink:#edf2f4; }
-:root[data-theme="dark"] .bloodflow-dock { --dock-panel:rgba(11,18,32,.96); --dock-tile:linear-gradient(180deg,#1b2b42,#111c2e); --dock-ink:#edf2f4; --dock-label:#ef233c; --dock-label-ink:#ffffff; --dock-menu:rgba(17,28,46,.98); --dock-menu-ink:#edf2f4; }
+.bloodflow-dock { --dock-label:#2b2d42; --dock-label-ink:#ffffff; }
+:root[data-theme="dark"] .bloodflow-dock {
+  --dock-panel: rgba(17, 28, 46, 0.96);
+  --dock-tile: linear-gradient(180deg, #1b2b42, #111c2e);
+  --dock-ink: #edf2f4;
+  --dock-label: #172033;
+  --dock-label-ink: #f8fafc;
+  --dock-menu: rgba(17, 28, 46, 0.98);
+  --dock-menu-ink: #edf2f4;
+  --dock-menu-edge: rgba(255, 255, 255, 0.15);
+}
+.bloodflow-dock .dock-label {
+  z-index: 50;
+  padding: 6px 11px;
+  border-radius: 8px;
+  border: 1px solid var(--dock-menu-edge);
+  color: var(--dock-label-ink) !important;
+  background: var(--dock-label) !important;
+  box-shadow: 0 8px 22px rgba(5, 8, 18, 0.38);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.bloodflow-dock:has(.dock-item:hover) .dock-item:focus-visible:not(:hover) .dock-label { opacity:0; }
+
 .emergency-form-progress { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:4px 0 20px; }
 .emergency-form-progress > div { display:flex; align-items:center; gap:8px; min-width:0; padding:9px 10px; border:1px solid var(--border-default); border-radius:10px; color:var(--text-muted); background:var(--bg-canvas); font-size:11px; font-weight:650; }
 .emergency-form-progress > div span { display:grid; flex:none; place-items:center; width:23px; height:23px; border:1px solid var(--border-strong); border-radius:50%; font-size:10px; }
@@ -6656,7 +6675,123 @@ select.field-control option { color:#2b2d42; background:#edf2f4; }
 :root[data-theme="dark"] .emergency-review-card dl > div { border-color:var(--border-default); background:var(--bg-surface); }
 :root[data-theme="dark"] .emergency-form-progress > div { background:var(--bg-canvas); }
 @media(prefers-reduced-motion:reduce) { .emergency-form-step,.emergency-review-card { animation:none; } }
-.bloodflow-dock .dock-label { z-index:4; padding:8px 11px; border:1px solid var(--dock-menu-edge); color:var(--dock-menu-ink)!important; background:var(--dock-menu)!important; box-shadow:0 8px 22px rgba(5,8,18,.38); font-size:11px; font-weight:750; }
-.bloodflow-dock:has(.dock-item:hover) .dock-item:focus-visible:not(:hover) .dock-label { opacity:0; }
+
+/* Eliminate nested redundant borders and backgrounds inside BorderGlow */
+.home-destination-glow .home-destination-card,
+.hospital-shelf-glow .hospital-data-shelf,
+.optimization-panel-glow .panel,
+.optimization-comparison-glow .panel,
+.flow-overview-glow .flow-overview,
+.flow-stage-glow .flow-stage-card,
+.blood-bank-glow .blood-bank-card {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Footer bottom clearance for fixed dock */
+.app-footer {
+  padding-bottom: 76px !important;
+}
+
+/* Comprehensive Dark Mode contrast and surface fixes */
+:root[data-theme="dark"] .qlab-intro,
+:root[data-theme="dark"] .qlab-research-note {
+  background: linear-gradient(110deg, var(--bg-surface), var(--bg-subtle)) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="dark"] .qlab-step,
+:root[data-theme="dark"] .qlab-metric,
+:root[data-theme="dark"] .qlab-inner-panel {
+  background: var(--bg-surface) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="dark"] .qlab-run-id,
+:root[data-theme="dark"] .qlab-validation-status {
+  background: var(--bg-subtle) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="dark"] .qlab-hist-track {
+  background: var(--bg-subtle) !important;
+}
+:root[data-theme="dark"] .qlab-hist-row code,
+:root[data-theme="dark"] .qlab-best-bit code {
+  color: var(--text-secondary) !important;
+}
+:root[data-theme="dark"] .research-snapshot {
+  background: linear-gradient(105deg, var(--bg-surface) 0%, var(--bg-subtle) 100%) !important;
+  border-color: var(--border-default) !important;
+}
+:root[data-theme="dark"] .research-intro {
+  background: linear-gradient(110deg, var(--bg-surface), var(--bg-subtle)) !important;
+  border-color: var(--border-default) !important;
+}
+:root[data-theme="dark"] .research-conclusion {
+  background: var(--bg-surface) !important;
+  border-color: var(--border-default) !important;
+}
+:root[data-theme="dark"] .demand-chart-track,
+:root[data-theme="dark"] .runtime-track,
+:root[data-theme="dark"] .research-progress {
+  background: var(--bg-subtle) !important;
+}
+:root[data-theme="dark"] .research-run-table .research-status {
+  color: var(--text-secondary) !important;
+  background: var(--bg-subtle) !important;
+}
+:root[data-theme="dark"] .dashboard-capability-list button {
+  background: rgba(32, 36, 56, 0.76) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="dark"] .dashboard-capability-list button:hover {
+  border-color: var(--border-strong) !important;
+}
+:root[data-theme="dark"] .dashboard-capability-copy h2 {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="dark"] .donor-request-card,
+:root[data-theme="dark"] .demo-summary-grid > div,
+:root[data-theme="dark"] .coordination-progress-grid > article {
+  background: var(--bg-surface) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="dark"] .field-control {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-default) !important;
+}
+:root[data-theme="dark"] .tilted-card__caption {
+  background: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-default) !important;
+}
+:root[data-theme="dark"] .urgency-critical {
+  background: #3b1d2b !important;
+  color: #fecdd3 !important;
+  border-color: #713047 !important;
+}
+:root[data-theme="dark"] .urgency-high {
+  background: #3a2c15 !important;
+  color: #fde68a !important;
+  border-color: #66501f !important;
+}
+:root[data-theme="dark"] .urgency-low {
+  background: #172d49 !important;
+  color: #bfdbfe !important;
+  border-color: #284d76 !important;
+}
+:root[data-theme="dark"] .route-blocked {
+  background: #3b1d2b !important;
+  color: #fecdd3 !important;
+  border-color: #713047 !important;
+}
+:root[data-theme="dark"] .status-strip {
+  background: var(--bg-surface);
+  border-color: var(--border-default);
+}
 
 
