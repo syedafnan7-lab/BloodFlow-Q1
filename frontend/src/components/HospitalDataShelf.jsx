@@ -12,7 +12,7 @@ export default function HospitalDataShelf({ hospitals = [], theme = 'light', onO
   const records = useMemo(() => hospitals.slice(0, 6), [hospitals]);
   if (!records.length) return null;
 
-  return <BorderGlow className="hospital-shelf-glow" backgroundColor={theme === 'dark' ? '#111c2e' : '#ffffff'} borderRadius={18} glowRadius={20} glowColor="350 82 62" colors={['#ef233c', '#8d99ae', '#2b2d42']}>
+  return <BorderGlow className="hospital-shelf-glow" backgroundColor={theme === 'dark' ? '#202438' : '#ffffff'} borderRadius={18} glowRadius={20} glowColor="350 82 62" colors={['#ef233c', '#8d99ae', '#2b2d42']}>
     <section className="panel hospital-data-shelf" aria-labelledby="hospital-shelf-title">
       <div className="panel-heading"><div><span className="eyebrow">SCENARIO RECORDS</span><h2 id="hospital-shelf-title">Hospital data</h2><p>Swipe or drag through the hospitals in this synthetic scenario.</p></div><button className="text-button" onClick={onOpen}>All hospitals <ArrowRight size={14}/></button></div>
       <div className="hospital-swap-layout">
