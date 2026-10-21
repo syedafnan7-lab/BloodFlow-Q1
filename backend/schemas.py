@@ -79,6 +79,10 @@ class QAOAConfigInput(StrictModel):
     optimizer: Literal["COBYLA", "Nelder-Mead", "Powell"] = "COBYLA"
     max_iterations: int = Field(default=40, ge=1, le=500)
     seed: int = Field(default=7, ge=0, le=4_294_967_295)
+    warm_start: bool = False
+    warm_start_epsilon: float = Field(default=0.25, gt=0, lt=0.5, allow_inf_nan=False)
+    normalize_cost: bool = True
+    restarts: int = Field(default=1, ge=1, le=10)
 
 
 class OptimizeRequest(StrictModel):

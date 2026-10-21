@@ -198,7 +198,10 @@ def _qaoa_config(value: QAOAConfigInput | None) -> QAOAConfig | None:
     if QAOAConfig is None:
         return None
     return QAOAConfig(p=value.p, shots=value.shots, optimizer=value.optimizer,
-                      max_iterations=value.max_iterations, seed=value.seed)
+                      max_iterations=value.max_iterations, seed=value.seed,
+                      warm_start=value.warm_start,
+                      warm_start_epsilon=value.warm_start_epsilon,
+                      normalize_cost=value.normalize_cost, restarts=value.restarts)
 
 
 def _allocation_rows(allocation) -> list[dict[str, object]]:
@@ -452,7 +455,11 @@ class BackendService:
             "qaoa_config": {"p": getattr(config, "p", 1), "shots": getattr(config, "shots", 256),
                              "optimizer": getattr(config, "optimizer", "COBYLA"),
                              "max_iterations": getattr(config, "max_iterations", 40),
-                             "seed": getattr(config, "seed", 7)},
+                             "seed": getattr(config, "seed", 7),
+                             "warm_start": getattr(config, "warm_start", False),
+                             "warm_start_epsilon": getattr(config, "warm_start_epsilon", 0.25),
+                             "normalize_cost": getattr(config, "normalize_cost", True),
+                             "restarts": getattr(config, "restarts", 1)},
             "qaoa_penalties": None,
             "note": "QUBO penalty weights must be supplied explicitly for each QAOA run.",
         }
@@ -540,10 +547,7 @@ class BackendService:
             "qaoa_runtime_seconds": sample_value("runtime_seconds"),
             "optimizer_information": sample_value("optimizer_information"),
             "experiment_configuration": {
-                "qaoa": {"p": solver.config.p, "shots": solver.config.shots,
-                         "optimizer": solver.config.optimizer,
-                         "max_iterations": solver.config.max_iterations,
-                         "seed": solver.config.seed},
+                "qaoa": asdict(solver.config),
                 "objective_weights": asdict(weights),
                 "penalty_weights": asdict(penalties),
             },

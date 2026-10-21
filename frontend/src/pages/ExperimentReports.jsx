@@ -6,6 +6,7 @@ import { Tooltip } from '../components/Tooltip';
 import { useResearchStudy } from '../hooks/useResearchStudy';
 import { formatPercent, formatRuntime, summarizeResearchRows } from '../utils/researchMetrics';
 import GlideSelect from '../components/GlideSelect';
+import WarmQAOAComparison from '../components/WarmQAOAComparison';
 
 const METHOD_LABEL = {
   classical_multistart: 'Classical multistart',
@@ -100,6 +101,7 @@ export default function ExperimentReports() {
         </table></div>
         <p className="research-chart-note">Run feasibility is not the same as demand satisfaction. Exact-reference match is based on approximation_gap = 0 where the experiment reported a defined reference comparison.</p>
       </section>
+      <WarmQAOAComparison />
       <footer className="skiper-attribution">Tooltip interaction adapted from <a href="https://skiper-ui.com/v1/skiper101" target="_blank" rel="noreferrer">Skiper UI · Custom Tooltip (skiper101)</a>. Free component, attributed as required; implemented with React and Radix Tooltip.</footer>
         </>;
       })()}

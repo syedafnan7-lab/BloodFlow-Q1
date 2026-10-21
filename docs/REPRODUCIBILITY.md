@@ -55,3 +55,12 @@ Keep the exported JSON and configuration together with the code revision and the
 ## 6. Reporting boundaries
 
 Report measured values exactly as returned, distinguish unavailable values, and retain infeasible QAOA candidates with their validator violations. The exact solver is intended only for tiny benchmark cases. No speedup, quantum advantage, clinical validity, deployment readiness, or patient outcome is established by these experiments.
+# Paired LP warm-start QAOA study
+
+The current paired warm-start comparison can be reproduced from the repository root with:
+
+```powershell
+python -m experiments.run_warm_qaoa_comparison --scenarios 6 --seeds 10 --seed-start 301 --p 1 --shots 64 --max-iterations 8 --run-id warm-qaoa-reproduction
+```
+
+Use an unused `--run-id`; the runner never overwrites an existing result/config pair. It writes raw outcomes under `experiments/results/` and a configuration (including explicit synthetic instances, seeds, budgets, exact references, package versions, and source hashes) under `experiments/configurations/`. The checked-in `frontend/public/warm-qaoa-paired-20261022.json` is a separate UI snapshot of the recorded run, not the canonical result store. See [`EXPERIMENT_RESULTS_WARM_QAOA.md`](EXPERIMENT_RESULTS_WARM_QAOA.md) for methods and the measured summary.

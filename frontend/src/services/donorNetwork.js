@@ -158,7 +158,11 @@ export async function advanceRequestStatus(client, requestId, status) {
 
 export async function getDashboardMetrics(client) {
   const { data, error } = await client.rpc('get_coordination_dashboard');
-  if (error) throw new Error(error.message);
+  if (error) {
+    // Preserve authorization status so the dashboard can distinguish a role
+    // restriction from a transport or query failure without exposing details.
+    throw Object.assign(new Error(error.message), { code: error.code });
+  }
   return data;
 }
 

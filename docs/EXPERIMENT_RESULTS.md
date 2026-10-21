@@ -3,6 +3,8 @@
 **Raw data:** [`20261007-01.json`](../experiments/results/20261007-01.json)  
 **Configuration:** [`20261007-01.json`](../experiments/configurations/20261007-01.json)
 
+The additional paired LP warm-start study is reported separately in [EXPERIMENT_RESULTS_WARM_QAOA.md](EXPERIMENT_RESULTS_WARM_QAOA.md), with its own raw results and configuration artifacts. Historical measurements below are unchanged.
+
 ## Methodology
 
 This report is generated from the raw JSON experiment output. It does not alter source measurements. Each method runs on the same compact, fictional scenario with a shared objective. Greedy is the deterministic baseline; Exact enumerates the bounded allocation states up to its configured limit; QAOA uses the local Qiskit Aer simulator, samples finite-shot bitstrings, decodes them, and runs the shared classical feasibility validator. An infeasible QAOA sample is retained as infeasible and is not repaired. Runtime is measured locally and is environment-dependent.
