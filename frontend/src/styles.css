@@ -4660,7 +4660,21 @@ th.num-cell {
 .warm-study-table { min-width:850px; }
 .warm-study-caveat { display:flex; align-items:flex-start; gap:7px; margin:13px 0 0; color:var(--text-muted); font-size:10px; line-height:1.55; }
 .warm-study-caveat svg { flex:0 0 auto; margin-top:1px; }
+.warm-study-panel { position:relative; border-color:var(--primary-border); box-shadow:0 8px 28px rgba(40,45,66,.08); }
+.warm-study-panel::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; border-radius:inherit; background:var(--primary); }
+.warm-study-panel > * { position:relative; }
+.warm-study-heading h2 { font-size:21px; }
+.warm-study-study-counts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; margin:16px 0 8px; }
+.warm-study-study-counts strong { display:grid; gap:3px; padding:11px 13px; border:1px solid var(--border-default); border-radius:10px; background:var(--bg-subtle); font-size:18px; font-variant-numeric:tabular-nums; }
+.warm-study-study-counts small { color:var(--text-secondary); font-size:10px; font-weight:500; }
+.warm-study-doc-links { display:flex; flex-wrap:wrap; gap:16px; margin:8px 0 14px; font-size:11px; font-weight:650; }
+.warm-study-doc-links a { color:var(--link-color); text-decoration:underline; text-underline-offset:3px; }
+.warm-study-case-quality { display:grid; justify-self:end; gap:4px; text-align:right; }
+.warm-study-case-quality small { color:var(--text-muted); font-size:9px; }
+.warm-study-case-quality strong { color:var(--text-primary); font-size:10px; font-variant-numeric:tabular-nums; }
+.legacy-research-intro { margin-top:26px; }
 @media(max-width:800px) { .warm-study-metrics { grid-template-columns:1fr; }.warm-study-controls span { width:100%; margin-left:0; }.warm-study-heading { flex-wrap:wrap; }.warm-study-case { grid-template-columns:1fr; }.warm-study-case-exact { justify-self:start; } }
+@media(max-width:800px) { .warm-study-study-counts { grid-template-columns:repeat(2,minmax(0,1fr)); }.warm-study-case-quality { justify-self:start; text-align:left; } }
 
 /* Decision-support hierarchy and evidence-grounded Quantum Lab */
 .dashboard-capability-hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .75fr); gap: 26px; padding: clamp(20px, 3vw, 32px); margin: 0 0 21px; border: 1px solid #dce3ef; border-radius: 16px; background: radial-gradient(ellipse at 12% 0%, #f4f0ff 0, transparent 48%), linear-gradient(120deg,#fff,#f8fbff); box-shadow: var(--shadow-xs); }

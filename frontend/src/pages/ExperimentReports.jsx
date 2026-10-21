@@ -33,6 +33,7 @@ export default function ExperimentReports() {
 
   return <>
     <PageHeader eyebrow="REPRODUCIBLE RESEARCH" title="Experiment reports" description="Inspect the saved paired-seed simulator study, including infeasible and skipped outcomes." />
+    <WarmQAOAComparison />
     {error && <ErrorState message={error} />}
     {!study && !error && <LoadingState label="Loading saved experiment artifact…" />}
     {study && <>
@@ -42,9 +43,9 @@ export default function ExperimentReports() {
         const hybrid = summary.find((item) => item.method === 'hybrid_qaoa_local_search');
         const pairedSeedCount = Math.max(...scenarios.map((id) => new Set(rows.filter((row) => row.scenario_id === id && row.seed != null).map((row) => row.seed)).size), 0);
         return <>
-      <section className="research-intro panel">
+      <section className="research-intro panel legacy-research-intro">
         <div className="research-intro-mark"><Microscope size={21} /></div>
-        <div><span className="eyebrow">CONFIRMATORY STUDY · SYNTHETIC INSTANCES</span><h2>Small-instance results favor the classical baseline</h2>
+        <div><span className="eyebrow">LEGACY CONFIRMATORY BENCHMARK · SEPARATE STUDY</span><h2>Small-instance results favor the classical baseline</h2>
           <p>Across {scenarios.length} synthetic scenarios and {pairedSeedCount} paired seeds, classical multistart matched the Exact reference in {classical.exactMatches}/{classical.feasible} feasible trials. Raw QAOA produced infeasible candidates, and hybrid refinement did not meet the preregistered success screen. These local simulator observations do not demonstrate quantum advantage.</p>
         </div>
         <a className="button button-secondary button-small" href="/quantum-value-study.json" download><Download size={14} /> Raw data</a>
@@ -101,7 +102,6 @@ export default function ExperimentReports() {
         </table></div>
         <p className="research-chart-note">Run feasibility is not the same as demand satisfaction. Exact-reference match is based on approximation_gap = 0 where the experiment reported a defined reference comparison.</p>
       </section>
-      <WarmQAOAComparison />
       <footer className="skiper-attribution">Tooltip interaction adapted from <a href="https://skiper-ui.com/v1/skiper101" target="_blank" rel="noreferrer">Skiper UI · Custom Tooltip (skiper101)</a>. Free component, attributed as required; implemented with React and Radix Tooltip.</footer>
         </>;
       })()}

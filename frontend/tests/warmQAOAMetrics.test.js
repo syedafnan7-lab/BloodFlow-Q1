@@ -1,6 +1,34 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { summarizeWarmQAOARuns } from '../src/utils/warmQAOAMetrics.js';
+
+const studyArtifact = JSON.parse(readFileSync(new URL('../public/warm-qaoa-paired-20261022.json', import.meta.url), 'utf8'));
+const comparisonSource = readFileSync(new URL('../src/components/WarmQAOAComparison.jsx', import.meta.url), 'utf8');
+const reportsSource = readFileSync(new URL('../src/pages/ExperimentReports.jsx', import.meta.url), 'utf8');
+
+test('reports prominently connect the paired experiment to its recorded artifact', () => {
+  assert.match(comparisonSource, /Warm-Start QAOA — Paired Experiment/);
+  assert.match(comparisonSource, /fetch|useWarmQAOAStudy/);
+  assert.match(comparisonSource, /study\.summary\.run_count/);
+  assert.match(comparisonSource, /paired_completed_seeds/);
+  assert.equal(studyArtifact.summary.run_count, 120);
+  assert.equal(studyArtifact.summary.completed_runs, 120);
+  assert.equal(studyArtifact.summary.scenario_count, 6);
+  assert.equal(studyArtifact.summary.paired_seed_count, 10);
+  assert.equal(studyArtifact.summary.paired_scenario_summary.reduce((count, scenario) => count + scenario.paired_completed_seeds, 0), 60);
+  assert.match(reportsSource, /<WarmQAOAComparison \/>/);
+  assert.ok(reportsSource.indexOf('<WarmQAOAComparison />') < reportsSource.indexOf('LEGACY CONFIRMATORY BENCHMARK'));
+});
+
+test('the legacy benchmark retains its original method labels and separate-study label', () => {
+  assert.match(reportsSource, /qaoa: 'Raw QAOA'/);
+  assert.match(reportsSource, /hybrid_qaoa_local_search: 'Hybrid refinement'/);
+  assert.match(reportsSource, /LEGACY CONFIRMATORY BENCHMARK · SEPARATE STUDY/);
+  assert.match(comparisonSource, /\/warm-qaoa-paired-20261022\.json/);
+  assert.match(comparisonSource, /warm-qaoa-study-report\.md/);
+  assert.match(comparisonSource, /warm-qaoa-reproducibility\.md/);
+});
 
 test('feasible shot rate retains infeasible shots in its denominator', () => {
   const summary = summarizeWarmQAOARuns([
