@@ -55,9 +55,9 @@ export default function DemoMode() {
   const allocations = output?.after_allocation || output?.allocation || [];
   const actualScenario = output?.modified_scenario || output?.scenario || null;
   const comparableRuns = useMemo(() => {
-    if (mode === 'precomputed') return storedRuns.filter((run) => run.scenario_id === 'normal');
-    return ['greedy', 'milp', 'exact', 'qaoa-standard', 'qaoa-warm'].map((solver) => liveRuns[`normal:${solver}`]).filter(Boolean);
-  }, [liveRuns, mode, storedRuns]);
+    if (mode === 'precomputed') return storedRuns.filter((run) => run.scenario_id === scenarioId);
+    return ['greedy', 'milp', 'exact', 'qaoa-standard', 'qaoa-warm'].map((solver) => liveRuns[`${scenarioId}:${solver}`]).filter(Boolean);
+  }, [liveRuns, mode, storedRuns, scenarioId]);
 
   const setWeight = (key, value) => setWeights((current) => ({ ...current, [key]: Number(value) }));
   const setQaoaValue = (key, value) => setQaoa((current) => ({ ...current, [key]: ['optimizer', 'warm_start', 'normalize_cost'].includes(key) ? value : Number(value) }));
@@ -231,7 +231,7 @@ export default function DemoMode() {
           </>}
         </section>
       </div>
-      <section className="panel demo-comparison"><div className="panel-heading"><div><h2>Classical and QAOA comparison</h2><p>{mode === 'precomputed' ? 'Historical measured runs for the same compact normal scenario.' : 'Live results collected from this page session for the same compact normal scenario.'}</p></div></div>
+      <section className="panel demo-comparison"><div className="panel-heading"><div><h2>Classical and QAOA comparison</h2><p>{mode === 'precomputed' ? `Historical measured runs for ${scenarioId.replaceAll('_', ' ')}.` : `Live results collected in this page session for ${scenarioId.replaceAll('_', ' ')}.`} Comparisons only include runs from this same scenario.</p></div></div>
         {comparableRuns.length ? (
           <div className="table-scroll" role="region" aria-label="Solver comparison" tabIndex={0}>
             <table className="data-table">
@@ -268,7 +268,7 @@ export default function DemoMode() {
         ) : (
           <EmptyState
             title="No same-scenario method comparison yet"
-            detail="Run Greedy, MILP, Exact, Standard QAOA and LP warm-start QAOA live on the normal scenario, or select the precomputed comparison."
+            detail={`Run Greedy, MILP, Exact, Standard QAOA and LP warm-start QAOA on ${scenarioId.replaceAll('_', ' ')}, or select a saved comparison for that same scenario.`}
           />
         )}
       </section>
