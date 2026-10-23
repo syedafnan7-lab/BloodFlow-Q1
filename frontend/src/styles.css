@@ -4673,8 +4673,193 @@ th.num-cell {
 .warm-study-case-quality small { color:var(--text-muted); font-size:9px; }
 .warm-study-case-quality strong { color:var(--text-primary); font-size:10px; font-variant-numeric:tabular-nums; }
 .legacy-research-intro { margin-top:26px; }
+.reports-study-selector { display:grid; grid-template-columns:minmax(130px,.35fr) minmax(240px,.75fr) minmax(260px,1.4fr) auto; align-items:center; gap:12px; margin:14px 0 18px; padding:13px 16px; color:var(--text-primary); }
+.reports-study-selector label { color:var(--text-secondary); font-size:11px; font-weight:700; }
+.reports-study-selector .field-control { min-width:0; }
+.reports-study-selector > span { color:var(--text-muted); font-size:10px; }
+.reports-study-selector > a { color:var(--link-color); font-size:10px; font-weight:650; white-space:nowrap; }
+.warm-study-export { display:flex; flex-wrap:wrap; gap:7px; }
+.warm-study-export .button { white-space:nowrap; }
+.warm-study-findings { margin:12px 0; padding:12px 15px; border-left:3px solid var(--primary); border-radius:7px; background:var(--bg-subtle); color:var(--text-primary); }
+.warm-study-findings strong { font-size:11px; }
+.warm-study-findings p { margin:4px 0; color:var(--text-secondary); font-size:11px; line-height:1.5; }
+.warm-study-findings small { color:var(--text-muted); font-size:9px; }
+.warm-study-case { width:100%; text-align:left; color:var(--text-primary); font:inherit; cursor:pointer; transition:border-color 160ms ease, background-color 160ms ease; }
+.warm-study-case:hover,.warm-study-case:focus-visible,.warm-study-case.is-selected { border-color:var(--primary); background:var(--bg-hover); }
+.warm-study-case:focus-visible,.warm-run-explorer button:focus-visible,.reports-study-selector :focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+.warm-study-ci { position:relative; display:block; height:19px; margin-top:3px; border-bottom:1px solid var(--border-default); }
+.warm-study-ci-zero { position:absolute; left:16.666%; top:1px; bottom:0; border-left:1px dashed var(--text-muted); }
+.warm-study-ci-range { position:absolute; top:8px; height:3px; border-radius:5px; background:#167d76; }
+.warm-study-ci-range.crosses-zero { background:#a56b18; }
+.warm-study-ci b { position:absolute; top:5px; width:9px; height:9px; margin-left:-4px; border:2px solid var(--bg-surface); border-radius:50%; background:var(--primary); }
+.warm-study-ci small { position:absolute; right:0; bottom:-15px; left:0; display:flex; justify-content:space-between; color:var(--text-muted); font-size:8px; }
+.warm-run-explorer { margin-top:16px; padding:14px; }
+.warm-run-explorer .warm-study-cases-title { margin-bottom:8px; }
+.warm-run-explorer .warm-study-cases-title > div { display:grid; gap:3px; }
+.warm-run-explorer .warm-study-cases-title h3 { font-size:12px; }
+.warm-study-table tr.is-selected { background:var(--bg-hover); }
+.warm-study-table .text-button { min-width:34px; padding:3px 6px; border:1px solid var(--border-default); border-radius:5px; color:var(--text-primary); background:var(--bg-surface); cursor:pointer; }
+.warm-run-details { display:grid; gap:9px; margin-top:12px; padding:11px; border:1px solid var(--border-default); border-radius:8px; background:var(--bg-subtle); color:var(--text-primary); font-size:10px; }
+.warm-run-details > div { display:flex; flex-wrap:wrap; gap:6px 15px; color:var(--text-secondary); }
+.warm-run-details > div b { color:var(--text-primary); }
+.warm-study-methods { margin-top:12px; color:var(--text-secondary); font-size:10px; line-height:1.6; }
+.warm-study-methods summary { width:max-content; color:var(--text-primary); font-weight:650; cursor:pointer; }
+.warm-study-methods p { max-width:1000px; }
+.warm-study-methods a { color:var(--link-color); }
+.round2-panel { display:grid; gap:15px; margin:14px 0 22px; padding:20px; color:var(--text-primary); }
+.round2-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+.round2-heading h2 { margin:4px 0 6px; font-size:20px; }
+.round2-heading p { max-width:850px; margin:0; color:var(--text-secondary); font-size:11px; line-height:1.55; }
+.round2-meta { display:flex; flex-wrap:wrap; gap:7px 20px; color:var(--text-muted); font-size:10px; }
+.round2-meta b { color:var(--text-secondary); }
+.round2-controls { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
+.round2-controls label { display:grid; gap:5px; min-width:180px; color:var(--text-secondary); font-size:10px; font-weight:650; }
+.round2-summary-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.round2-summary-grid article { min-width:0; padding:12px; border:1px solid var(--border-default); border-radius:9px; background:var(--bg-subtle); }
+.round2-summary-grid h3 { margin:0 0 9px; font-size:11px; }
+.round2-primary { font-size:20px; font-weight:750; font-variant-numeric:tabular-nums; }
+.round2-primary small { display:block; color:var(--text-muted); font-size:9px; font-weight:500; }
+.round2-meter { height:5px; margin:8px 0; overflow:hidden; border-radius:6px; background:var(--bg-hover); }
+.round2-meter i { display:block; height:100%; border-radius:inherit; background:var(--primary); }
+.round2-summary-grid article:nth-child(2) .round2-meter i { background:#167d76; }
+.round2-summary-grid article:nth-child(3) .round2-meter i { background:#7960b8; }
+.round2-summary-grid p { margin:0; color:var(--text-muted); font-size:9px; }
+.round2-scenarios .warm-study-cases-title { margin:0 0 7px; }
+.round2-scenarios .table-scroll { max-width:100%; overflow:auto; }
+.round2-scenarios .data-table { min-width:700px; }
+.round2-scenarios .data-table tr.is-selected { background:var(--bg-hover); }
+.round2-scenarios .text-button { padding:0; color:var(--link-color); background:transparent; border:0; text-align:left; cursor:pointer; text-transform:capitalize; }
+.round2-run-detail { display:flex; flex-wrap:wrap; align-items:center; gap:7px 15px; padding:12px; border:1px solid var(--border-default); border-radius:8px; background:var(--bg-subtle); color:var(--text-secondary); font-size:10px; }
+.round2-run-detail strong { width:100%; color:var(--text-primary); }
+.round2-run-detail details { width:100%; }
+.round2-run-detail summary,.round2-limitations summary { display:flex; align-items:center; gap:5px; color:var(--text-primary); font-weight:650; cursor:pointer; }
+.round2-run-detail pre { max-height:260px; overflow:auto; padding:9px; border-radius:6px; background:var(--bg-hover); font-size:9px; }
+.round2-limitations { color:var(--text-secondary); font-size:10px; line-height:1.55; }
+.round2-limitations p { max-width:1000px; }
+.round2-limitations a { color:var(--link-color); }
 @media(max-width:800px) { .warm-study-metrics { grid-template-columns:1fr; }.warm-study-controls span { width:100%; margin-left:0; }.warm-study-heading { flex-wrap:wrap; }.warm-study-case { grid-template-columns:1fr; }.warm-study-case-exact { justify-self:start; } }
 @media(max-width:800px) { .warm-study-study-counts { grid-template-columns:repeat(2,minmax(0,1fr)); }.warm-study-case-quality { justify-self:start; text-align:left; } }
+@media(max-width:900px) { .reports-study-selector { grid-template-columns:1fr 2fr; }.reports-study-selector>span { grid-column:2; }.reports-study-selector>a { grid-column:2; } }
+@media(max-width:640px) { .reports-study-selector { grid-template-columns:1fr; gap:7px; }.reports-study-selector>span,.reports-study-selector>a { grid-column:1; }.warm-study-export { width:100%; }.warm-study-export .button { flex:1; justify-content:center; }.warm-run-explorer .warm-study-cases-title { align-items:flex-start; flex-direction:column; }.warm-study-case-bars { grid-template-columns:72px minmax(30px,1fr) 38px; }.warm-study-findings { margin-top:9px; } }
+@media(max-width:700px) { .round2-heading { flex-wrap:wrap; }.round2-summary-grid { grid-template-columns:1fr; }.round2-controls { align-items:stretch; flex-direction:column; }.round2-controls label { min-width:0; } }
+
+/* Interactive schematic supply-to-hospital network */
+.vascular-workspace { --network-available:#197965; --network-blocked:#bd344b; --network-warning:#9c6414; --network-unknown:#7e8798; --network-hospital:#4269b2; display:grid; gap:14px; padding:18px; color:var(--text-primary); }
+:root[data-theme="dark"] .vascular-workspace { --network-available:#5dd6b2; --network-blocked:#ff8296; --network-warning:#f2c168; --network-unknown:#b3bfd0; --network-hospital:#91b3ff; }
+.vascular-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+.vascular-heading h2 { margin:4px 0 5px; font-size:20px; letter-spacing:-.025em; }
+.vascular-heading p { margin:0; color:var(--text-secondary); font-size:11px; line-height:1.55; }
+.vascular-network-totals { display:flex; gap:8px; flex-wrap:wrap; }
+.vascular-network-totals span { display:grid; gap:2px; min-width:88px; padding:8px 10px; border:1px solid var(--border-default); border-radius:8px; color:var(--text-muted); font-size:9px; }
+.vascular-network-totals strong { color:var(--text-primary); font-size:15px; font-variant-numeric:tabular-nums; }
+.vascular-controls { display:flex; align-items:end; gap:11px; flex-wrap:wrap; padding:12px; border:1px solid var(--border-default); border-radius:10px; background:var(--bg-subtle); }
+.vascular-search-wrap { position:relative; display:grid; gap:5px; flex:1 1 280px; min-width:220px; }
+.vascular-search-wrap label { display:flex; align-items:center; gap:6px; color:var(--text-secondary); font-size:10px; font-weight:650; }
+.vascular-search-input { display:flex; align-items:center; border:1px solid var(--border-default); border-radius:8px; background:var(--bg-surface); }
+.vascular-search-input:focus-within { outline:2px solid color-mix(in srgb,var(--primary) 35%,transparent); border-color:var(--primary); }
+.vascular-search-input input { flex:1; min-width:0; height:38px; padding:0 10px; border:0; outline:0; color:var(--text-primary); background:transparent; font:inherit; font-size:11px; }
+.vascular-search-input input::placeholder { color:var(--text-muted); }
+.vascular-search-input input::-webkit-search-cancel-button { display:none; }
+.vascular-search-input button { display:grid; place-items:center; width:34px; height:34px; margin-right:2px; border:0; border-radius:6px; color:var(--text-muted); background:transparent; cursor:pointer; }
+.vascular-search-input button:disabled { opacity:.4; cursor:default; }
+.vascular-select-label { display:grid; gap:5px; min-width:155px; color:var(--text-secondary); font-size:10px; font-weight:650; }
+.vascular-select-label select { min-height:38px; padding:0 28px 0 10px; font-size:11px; }
+.vascular-clear { height:38px; }
+.vascular-search-results { position:absolute; z-index:10; top:100%; right:0; left:0; display:grid; gap:2px; max-height:240px; overflow:auto; margin:5px 0 0; padding:5px; border:1px solid var(--border-strong); border-radius:9px; background:var(--bg-surface); box-shadow:var(--shadow-md); list-style:none; }
+.vascular-search-results button { display:grid; grid-template-columns:24px minmax(0,1fr) auto; align-items:center; gap:7px; width:100%; padding:8px 7px; border:0; border-radius:6px; text-align:left; color:var(--text-primary); background:transparent; cursor:pointer; }
+.vascular-search-results button:hover,.vascular-search-results button:focus-visible { outline:0; background:var(--bg-hover); }
+.vascular-search-results button>span { display:grid; place-items:center; width:22px; height:22px; border-radius:6px; color:var(--primary); background:var(--bg-subtle); }
+.vascular-search-results b { overflow:hidden; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.vascular-search-results small,.vascular-search-empty { color:var(--text-muted); font-size:9px; }
+.vascular-search-empty { padding:9px; }
+.vascular-layout { display:grid; grid-template-columns:minmax(0,1.75fr) minmax(255px,.75fr); gap:12px; align-items:stretch; }
+.vascular-canvas-wrap { min-width:0; overflow:hidden; border:1px solid var(--border-default); border-radius:11px; background:var(--bg-subtle); }
+.vascular-canvas-topline { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:42px; padding:6px 10px; border-bottom:1px solid var(--border-default); color:var(--text-muted); font-size:9px; }
+.vascular-canvas-topline>span { display:flex; align-items:center; gap:6px; }
+.vascular-schematic-dot { width:7px; height:7px; border-radius:50%; background:#858ba0; }
+.vascular-zoom-tools { display:flex; align-items:center; gap:4px; }
+.vascular-zoom-tools button { display:flex; align-items:center; justify-content:center; gap:4px; min-width:28px; height:27px; padding:0 6px; border:1px solid var(--border-default); border-radius:6px; color:var(--text-secondary); background:var(--bg-surface); cursor:pointer; }
+.vascular-zoom-tools button:hover:not(:disabled) { color:var(--text-primary); border-color:var(--primary); }
+.vascular-zoom-tools button:disabled { opacity:.45; cursor:default; }
+.vascular-zoom-tools>span { min-width:37px; text-align:center; font-variant-numeric:tabular-nums; }
+.vascular-svg-scroll { max-height:500px; overflow:auto; overscroll-behavior:contain; }
+.vascular-svg { display:block; width:100%; min-width:660px; height:auto; aspect-ratio:1000/580; touch-action:none; user-select:none; }
+.vascular-grid-point { fill:var(--text-muted); opacity:.24; }
+.vascular-pan-surface { cursor:grab; }
+.vascular-pan-surface:active { cursor:grabbing; }
+.vascular-column-label { fill:var(--text-muted); font-size:12px; font-weight:750; letter-spacing:2px; }
+.vascular-spine { fill:none; stroke:var(--border-default); stroke-width:2; stroke-dasharray:3 9; opacity:.85; }
+.vascular-spine-branch { fill:none; stroke:var(--border-default); stroke-width:1.5; stroke-dasharray:2 8; opacity:.7; }
+.vascular-route-group { cursor:pointer; outline:none; }
+.vascular-route-hit { fill:none; stroke:transparent; stroke-width:22; pointer-events:stroke; }
+.vascular-route-line { fill:none; stroke-width:5; stroke-linecap:round; opacity:.78; transition:stroke-width .16s ease,opacity .16s ease; }
+.vascular-route-group.status-available .vascular-route-line { stroke:var(--network-available); }
+.vascular-route-group.status-blocked .vascular-route-line { stroke:var(--network-blocked); stroke-dasharray:10 8; }
+.vascular-route-group.status-delayed .vascular-route-line,.vascular-route-group.status-in-transit .vascular-route-line { stroke:var(--network-warning); stroke-dasharray:3 7; }
+.vascular-route-group.status-unknown .vascular-route-line { stroke:var(--network-unknown); stroke-dasharray:2 8; }
+.vascular-route-group.is-selected .vascular-route-line,.vascular-route-group:focus-visible .vascular-route-line { stroke-width:9; opacity:1; }
+.vascular-route-group.is-dimmed { opacity:.13; }
+.vascular-route-group.is-selected .vascular-route-hit,.vascular-route-group:focus-visible .vascular-route-hit { stroke:color-mix(in srgb,var(--primary) 15%,transparent); }
+.vascular-arrow.available { fill:var(--network-available); }.vascular-arrow.blocked { fill:var(--network-blocked); }.vascular-arrow.unknown { fill:var(--network-unknown); }.vascular-arrow.warning { fill:var(--network-warning); }
+.vascular-node { cursor:pointer; outline:none; transition:opacity .16s ease; }
+.vascular-node-halo { fill:transparent; stroke:transparent; stroke-width:2; }
+.vascular-node-body { fill:var(--bg-surface); stroke:var(--network-available); stroke-width:3; }
+.vascular-node.status-hospital .vascular-node-body { stroke:var(--network-hospital); }
+.vascular-node.is-selected .vascular-node-halo,.vascular-node:focus-visible .vascular-node-halo { fill:color-mix(in srgb,var(--primary) 12%,transparent); stroke:var(--primary); }
+.vascular-node-body { filter:drop-shadow(0 2px 4px rgba(30,41,59,.17)); }
+.vascular-glyph { fill:none; stroke:var(--network-available); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.vascular-node.status-hospital .vascular-glyph { stroke:var(--network-hospital); }
+.vascular-node-name { fill:var(--text-primary); font-size:15px; font-weight:700; }
+.vascular-node-subtitle { fill:var(--text-muted); font-size:10px; }
+.vascular-inspector { min-width:0; padding:13px; border:1px solid var(--border-default); border-radius:11px; background:var(--bg-surface); }
+.vascular-inspector-header { display:flex; align-items:center; gap:9px; padding-bottom:11px; border-bottom:1px solid var(--border-default); }
+.vascular-detail-icon { display:grid; place-items:center; flex:0 0 auto; width:34px; height:34px; border-radius:9px; color:var(--network-available); background:color-mix(in srgb,var(--network-available) 12%,var(--bg-surface)); }
+.vascular-detail-icon.hospital { color:var(--network-hospital); background:color-mix(in srgb,var(--network-hospital) 12%,var(--bg-surface)); }
+.vascular-detail-icon.route { color:var(--primary); background:var(--bg-subtle); }
+.vascular-inspector-header .eyebrow { font-size:8px; }
+.vascular-inspector-header h3 { margin:2px 0 0; font-size:14px; }
+.vascular-detail-list { display:grid; gap:8px; margin:12px 0; }
+.vascular-detail-list>div { display:grid; grid-template-columns:minmax(85px,.8fr) minmax(0,1.2fr); gap:8px; font-size:9px; }
+.vascular-detail-list dt { color:var(--text-muted); }
+.vascular-detail-list dd { margin:0; color:var(--text-primary); text-align:right; font-weight:600; overflow-wrap:anywhere; }
+.vascular-connected { padding-top:10px; border-top:1px solid var(--border-default); }
+.vascular-connected h4 { display:flex; justify-content:space-between; margin:0 0 7px; font-size:10px; }
+.vascular-connected h4 span { color:var(--text-muted); }
+.vascular-connected>button { display:grid; gap:3px; width:100%; margin-top:4px; padding:7px; border:1px solid var(--border-default); border-radius:7px; color:var(--text-secondary); text-align:left; background:var(--bg-subtle); cursor:pointer; }
+.vascular-connected>button:hover,.vascular-connected>button:focus-visible { outline:2px solid var(--primary); outline-offset:1px; }
+.vascular-connected>button>span { display:flex; align-items:center; gap:3px; font-size:9px; }
+.vascular-connected>p { color:var(--text-muted); font-size:9px; }
+.route-status-text { font-size:9px; font-weight:700; }.route-status-text.available { color:var(--network-available); }.route-status-text.blocked { color:var(--network-blocked); }.route-status-text.delayed,.route-status-text.in-transit { color:var(--network-warning); }.route-status-text.unknown { color:var(--network-unknown); }
+.vascular-route-endpoint { display:flex; align-items:center; gap:6px; margin:10px 0; color:var(--text-primary); font-size:11px; font-weight:700; }
+.vascular-route-note { padding:8px; border-radius:7px; color:var(--text-muted); background:var(--bg-subtle); font-size:9px; line-height:1.5; }
+.vascular-inspector-empty,.vascular-empty { display:grid; place-items:center; gap:9px; min-height:200px; padding:20px 15px; color:var(--text-muted); text-align:center; }
+.vascular-inspector-empty strong,.vascular-empty strong { color:var(--text-primary); font-size:12px; }
+.vascular-inspector-empty p,.vascular-empty span { max-width:260px; margin:0; font-size:10px; line-height:1.5; }
+.vascular-inspector-empty>span { font-size:9px; }
+.vascular-legend { display:flex; flex-wrap:wrap; gap:8px 16px; padding:10px; border-top:1px solid var(--border-default); color:var(--text-secondary); font-size:9px; }
+.vascular-legend>span { display:flex; align-items:center; gap:6px; }
+.status-line { display:inline-block; width:21px; height:0; border-top:3px solid var(--network-available); }
+.status-line.blocked { border-color:var(--network-blocked); border-top-style:dashed; }.status-line.unknown { border-color:var(--network-unknown); border-top-style:dotted; }.status-line.warning { border-color:var(--network-warning); border-top-style:dotted; }
+.status-shape { display:inline-block; width:10px; height:10px; border:2px solid var(--network-available); border-radius:50%; }.status-shape.hospital { border-color:var(--network-hospital); border-radius:3px; }
+.vascular-data-note { display:flex; align-items:flex-start; gap:7px; padding:8px 10px; border-radius:7px; color:var(--text-secondary); background:var(--bg-hover); font-size:9px; line-height:1.5; }
+.vascular-data-note svg { flex:0 0 auto; }
+.vascular-accessible-list { padding:0 2px; color:var(--text-secondary); font-size:10px; }
+.vascular-accessible-list summary { width:max-content; color:var(--text-primary); font-weight:650; cursor:pointer; }
+.vascular-accessible-columns { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+.vascular-accessible-columns h3 { color:var(--text-primary); font-size:11px; }
+.vascular-accessible-columns ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
+.vascular-accessible-columns button { display:grid; gap:2px; width:100%; padding:7px; border:1px solid var(--border-default); border-radius:7px; color:var(--text-primary); text-align:left; background:var(--bg-surface); cursor:pointer; }
+.vascular-accessible-columns button:hover,.vascular-accessible-columns button:focus-visible { outline:2px solid var(--primary); outline-offset:1px; }
+.vascular-accessible-columns small { color:var(--text-muted); font-size:9px; }
+.network-data-provenance { display:grid; grid-template-columns:32px minmax(0,1fr) auto; align-items:center; gap:9px; padding:11px 13px; border:1px solid var(--border-default); border-radius:9px; color:var(--text-secondary); background:var(--bg-subtle); }
+.network-provenance-mark { display:grid; place-items:center; width:30px; height:30px; border-radius:8px; color:var(--primary); background:var(--bg-surface); }
+.network-data-provenance p { margin:0; font-size:9px; line-height:1.5; }.network-data-provenance p strong { color:var(--text-primary); }
+.network-status-counts { display:flex; flex-wrap:wrap; gap:6px; }.network-status-counts span { display:flex; align-items:center; gap:4px; padding:5px 7px; border:1px solid var(--border-default); border-radius:12px; color:var(--text-muted); font-size:8px; white-space:nowrap; }
+@media(max-width:960px) { .vascular-layout { grid-template-columns:minmax(0,1.35fr) minmax(235px,.8fr); }.vascular-network-totals { display:none; } }
+@media(max-width:720px) { .vascular-layout { grid-template-columns:1fr; }.vascular-inspector { min-height:130px; }.vascular-heading { flex-wrap:wrap; }.vascular-network-totals { display:flex; }.network-data-provenance { grid-template-columns:32px 1fr; }.network-status-counts { grid-column:2; } }
+@media(max-width:520px) { .vascular-workspace { padding:12px; }.vascular-heading h2 { font-size:18px; }.vascular-controls { align-items:stretch; flex-direction:column; }.vascular-search-wrap { min-width:0; }.vascular-search-results button { grid-template-columns:22px minmax(0,1fr); }.vascular-search-results small { grid-column:2; }.vascular-svg { min-width:620px; }.vascular-accessible-columns { grid-template-columns:1fr; }.vascular-network-totals { width:100%; }.vascular-network-totals span { flex:1; } }
+@media(prefers-reduced-motion:reduce) { .vascular-route-line,.vascular-node { transition:none; } }
+@media(prefers-reduced-motion:reduce) { .warm-study-case { transition:none; } }
 
 /* Decision-support hierarchy and evidence-grounded Quantum Lab */
 .dashboard-capability-hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .75fr); gap: 26px; padding: clamp(20px, 3vw, 32px); margin: 0 0 21px; border: 1px solid #dce3ef; border-radius: 16px; background: radial-gradient(ellipse at 12% 0%, #f4f0ff 0, transparent 48%), linear-gradient(120deg,#fff,#f8fbff); box-shadow: var(--shadow-xs); }
@@ -7059,6 +7244,16 @@ select.field-control option { color:#2b2d42; background:#edf2f4; }
   --dock-dot: rgba(11, 60, 101, .6);
 }
 .page-content { scroll-padding-bottom: 88px; }
+.ecg-background { position:fixed; inset:90px 0 60px 0; z-index:0; pointer-events:none; overflow:hidden; opacity:.2; }
+.ecg-background svg { width:100%; height:100%; }
+.ecg-trace { fill:none; stroke:#0b3c65; stroke-width:1.3; vector-effect:non-scaling-stroke; stroke-dasharray:1000; animation:ecg-draw 4s linear infinite; }
+.ecg-marker { fill:#c52233; filter:drop-shadow(0 0 5px #fb6376); offset-path:path('M0 158 H130 Q150 158 164 142 Q180 128 194 158 H268 L290 174 L315 66 L340 216 L361 142 L382 158 H520 Q540 158 554 142 Q570 128 584 158 H658 L680 174 L705 66 L730 216 L751 142 L772 158 H910 Q930 158 944 142 Q960 128 974 158 H1200'); animation:ecg-marker-move 4s linear infinite; }
+.ecg-halo { opacity:0; offset-path:path('M0 158 H130 Q150 158 164 142 Q180 128 194 158 H268 L290 174 L315 66 L340 216 L361 142 L382 158 H520 Q540 158 554 142 Q570 128 584 158 H658 L680 174 L705 66 L730 216 L751 142 L772 158 H910 Q930 158 944 142 Q960 128 974 158 H1200'); animation:ecg-pulse 4s linear infinite; }
+@keyframes ecg-draw { to { stroke-dashoffset:-1000; } }
+@keyframes ecg-marker-move { to { offset-distance:100%; } }
+@keyframes ecg-pulse { 0%,20%,35%,100% { offset-distance:32%; opacity:0; r:18px } 26% { opacity:.45; r:30px } 30% { opacity:.8; r:48px } }
+:root[data-theme="dark"] .ecg-background { display:none; }
+@media(prefers-reduced-motion:reduce) { .ecg-trace,.ecg-marker,.ecg-halo { animation:none!important; } .ecg-trace { stroke-dasharray:none; } .ecg-marker,.ecg-halo { display:none; } }
 
 
 .demo-warm-start-toggle { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; min-height:56px; border:1px solid var(--border-default); border-radius:12px; background:var(--bg-surface); color:var(--text-primary); cursor:pointer; }

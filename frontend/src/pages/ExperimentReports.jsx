@@ -7,6 +7,9 @@ import { useResearchStudy } from '../hooks/useResearchStudy';
 import { formatPercent, formatRuntime, summarizeResearchRows } from '../utils/researchMetrics';
 import GlideSelect from '../components/GlideSelect';
 import WarmQAOAComparison from '../components/WarmQAOAComparison';
+import { useWarmQAOAStudy } from '../hooks/useWarmQAOAStudy';
+import { useRound2Study } from '../hooks/useRound2Study';
+import Round2BenchmarkComparison from '../components/Round2BenchmarkComparison';
 
 const METHOD_LABEL = {
   classical_multistart: 'Classical multistart',
@@ -16,6 +19,9 @@ const METHOD_LABEL = {
 
 export default function ExperimentReports() {
   const { study, error } = useResearchStudy();
+  const { study: warmStudy, error: warmError } = useWarmQAOAStudy();
+  const { study: round2Study, error: round2Error } = useRound2Study();
+  const [studyId, setStudyId] = useState('warm-start');
   const [scenarioId, setScenarioId] = useState('multi_facility_tradeoff');
   const [seed, setSeed] = useState('301');
   const scenarios = Object.keys(study?.configuration?.scenario_sizes || {});
@@ -32,8 +38,20 @@ export default function ExperimentReports() {
   const qaoa = config.qaoa || {};
 
   return <>
-    <PageHeader eyebrow="REPRODUCIBLE RESEARCH" title="Experiment reports" description="Inspect the saved paired-seed simulator study, including infeasible and skipped outcomes." />
-    <WarmQAOAComparison />
+    <PageHeader eyebrow="BLOODFLOW-Q / EXPERIMENT REPORTS" title="Experiment Reports" description="Explore reproducible solver experiments, measured outcomes and comparisons across synthetic allocation scenarios." />
+    <section className="reports-study-selector panel" aria-label="Select experiment study">
+      <label htmlFor="reports-study">Study</label>
+      <select id="reports-study" className="field-control" value={studyId} onChange={(event) => setStudyId(event.target.value)}>
+        <option value="warm-start">LP warm-start QAOA · paired study</option>
+        <option value="round2">Round 2 solver benchmark · 2026-10-07</option>
+        <option value="confirmatory">Confirmatory benchmark · legacy study</option>
+      </select>
+      <span>{studyId === 'warm-start' ? warmStudy ? `${warmStudy.summary.run_count} method-runs · ${warmStudy.summary.paired_scenario_summary.reduce((count, item) => count + item.paired_completed_seeds, 0)} completed matched pairs · ${warmStudy.summary.scenario_count} synthetic scenarios · ${warmStudy.configuration.environment?.backend || 'local simulator'}` : warmError ? `Warm-start artifact unavailable: ${warmError}` : 'Loading warm-start artifact metadata…' : studyId === 'round2' ? round2Study ? `${round2Study.results.length} recorded method-runs · ${Object.keys(round2Study.configuration.scenarios).length} synthetic scenarios · 3 methods · local Aer simulator` : round2Error ? `Round 2 artifact unavailable: ${round2Error}` : 'Loading Round 2 artifact metadata…' : `${scenarios.length} synthetic scenarios · classical, raw QAOA and hybrid refinement · local Aer simulator`}</span>
+      <a href={studyId === 'warm-start' ? '/research/warm-qaoa-reproducibility.md' : studyId === 'round2' ? '/research/round2-benchmark-reproducibility.md' : '/research/quantum-value-reproducibility.md'} target="_blank" rel="noreferrer">Reproducibility guide</a>
+    </section>
+    {studyId === 'warm-start' && <WarmQAOAComparison study={warmStudy} error={warmError} />}
+    {studyId === 'round2' && <Round2BenchmarkComparison study={round2Study} error={round2Error} />}
+    {studyId === 'confirmatory' && <>
     {error && <ErrorState message={error} />}
     {!study && !error && <LoadingState label="Loading saved experiment artifact…" />}
     {study && <>
@@ -105,6 +123,7 @@ export default function ExperimentReports() {
       <footer className="skiper-attribution">Tooltip interaction adapted from <a href="https://skiper-ui.com/v1/skiper101" target="_blank" rel="noreferrer">Skiper UI · Custom Tooltip (skiper101)</a>. Free component, attributed as required; implemented with React and Radix Tooltip.</footer>
         </>;
       })()}
+    </>}
     </>}
   </>;
 }

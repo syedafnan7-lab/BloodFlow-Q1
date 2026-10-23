@@ -4,6 +4,11 @@ import { readFile } from 'node:fs/promises';
 import { summarizeResearchRows, safeRate, formatRuntime, formatPercent } from '../src/utils/researchMetrics.js';
 
 const artifact = JSON.parse(await readFile(new URL('../../experiments/results/quantum-value-confirmatory-seed301-20261015.json', import.meta.url), 'utf8'));
+const servedArtifact = JSON.parse(await readFile(new URL('../public/quantum-value-study.json', import.meta.url), 'utf8'));
+
+test('served legacy confirmatory study remains byte-for-byte equivalent in parsed data to its canonical artifact', () => {
+  assert.deepEqual(servedArtifact, artifact);
+});
 
 test('saved study summary matches raw confirmatory artifact denominators', () => {
   const summary = Object.fromEntries(summarizeResearchRows(artifact.results).map((item) => [item.method, item]));

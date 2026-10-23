@@ -2,14 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { summarizeWarmQAOARuns } from '../src/utils/warmQAOAMetrics.js';
+import { readFileSync as readSync } from 'node:fs';
 
 const studyArtifact = JSON.parse(readFileSync(new URL('../public/warm-qaoa-paired-20261022.json', import.meta.url), 'utf8'));
 const comparisonSource = readFileSync(new URL('../src/components/WarmQAOAComparison.jsx', import.meta.url), 'utf8');
 const reportsSource = readFileSync(new URL('../src/pages/ExperimentReports.jsx', import.meta.url), 'utf8');
+const canonicalWarmArtifact = JSON.parse(readSync(new URL('../../experiments/results/warm-qaoa-paired-20261022.json', import.meta.url), 'utf8'));
+const canonicalWarmConfig = JSON.parse(readSync(new URL('../../experiments/configurations/warm-qaoa-paired-20261022.json', import.meta.url), 'utf8'));
+const publicWarmConfig = JSON.parse(readSync(new URL('../public/warm-qaoa-paired-20261022-configuration.json', import.meta.url), 'utf8'));
 
 test('reports prominently connect the paired experiment to its recorded artifact', () => {
-  assert.match(comparisonSource, /Warm-Start QAOA — Paired Experiment/);
-  assert.match(comparisonSource, /fetch|useWarmQAOAStudy/);
+  assert.match(comparisonSource, /LP warm-start QAOA/);
+  assert.match(reportsSource, /useWarmQAOAStudy/);
   assert.match(comparisonSource, /study\.summary\.run_count/);
   assert.match(comparisonSource, /paired_completed_seeds/);
   assert.equal(studyArtifact.summary.run_count, 120);
@@ -17,8 +21,8 @@ test('reports prominently connect the paired experiment to its recorded artifact
   assert.equal(studyArtifact.summary.scenario_count, 6);
   assert.equal(studyArtifact.summary.paired_seed_count, 10);
   assert.equal(studyArtifact.summary.paired_scenario_summary.reduce((count, scenario) => count + scenario.paired_completed_seeds, 0), 60);
-  assert.match(reportsSource, /<WarmQAOAComparison \/>/);
-  assert.ok(reportsSource.indexOf('<WarmQAOAComparison />') < reportsSource.indexOf('LEGACY CONFIRMATORY BENCHMARK'));
+  assert.match(reportsSource, /<WarmQAOAComparison study=\{warmStudy\} error=\{warmError\} \/>/);
+  assert.ok(reportsSource.indexOf('studyId === \'warm-start\' && <WarmQAOAComparison') < reportsSource.indexOf('LEGACY CONFIRMATORY BENCHMARK'));
 });
 
 test('the legacy benchmark retains its original method labels and separate-study label', () => {
@@ -28,6 +32,31 @@ test('the legacy benchmark retains its original method labels and separate-study
   assert.match(comparisonSource, /\/warm-qaoa-paired-20261022\.json/);
   assert.match(comparisonSource, /warm-qaoa-study-report\.md/);
   assert.match(comparisonSource, /warm-qaoa-reproducibility\.md/);
+});
+
+test('study switcher keeps the two persisted research studies distinct and links their guides', () => {
+  assert.match(reportsSource, /value="warm-start"/);
+  assert.match(reportsSource, /value="round2"/);
+  assert.match(reportsSource, /value="confirmatory"/);
+  assert.match(reportsSource, /warm-qaoa-reproducibility\.md/);
+  assert.match(reportsSource, /quantum-value-reproducibility\.md/);
+  assert.match(reportsSource, /round2-benchmark-reproducibility\.md/);
+  assert.match(reportsSource, /studyId === 'warm-start'/);
+  assert.match(reportsSource, /studyId === 'confirmatory'/);
+  assert.match(reportsSource, /useWarmQAOAStudy/);
+  assert.deepEqual(publicWarmConfig, canonicalWarmConfig);
+  assert.deepEqual(studyArtifact, canonicalWarmArtifact);
+});
+
+test('warm study comparison exposes actual paired uncertainty, filters, run inspection and filtered CSV export', () => {
+  assert.match(comparisonSource, /paired_difference_bootstrap_95_percentile_ci/);
+  assert.match(comparisonSource, /warm-measure/);
+  assert.match(comparisonSource, /aria-pressed/);
+  assert.match(comparisonSource, /setSelectedSeed/);
+  assert.match(comparisonSource, /downloadCsv\(runs, selected\)/);
+  assert.match(comparisonSource, /seed_preprocessing_seconds/);
+  assert.match(comparisonSource, /Methods, provenance & limitations/);
+  assert.equal(studyArtifact.summary.paired_scenario_summary.filter((item) => item.paired_difference_bootstrap_95_percentile_ci[0] > 0).length, 5);
 });
 
 test('feasible shot rate retains infeasible shots in its denominator', () => {
