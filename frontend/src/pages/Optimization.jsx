@@ -1,10 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { solverPresentation } from '../utils/solverPresentation';
+import QAOAVariantSelect from '../components/QAOAVariantSelect';
+import { qaoaVariantConfig, qaoaConfigLabel } from '../utils/qaoaVariants';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Activity, CheckCircle2, Play, RotateCcw, TriangleAlert } from 'lucide-react';
 import { api } from '../services/api';
 import { useApi } from '../hooks/useApi';
 import { EmptyState, ErrorState, LoadingState } from '../components/Feedback';
 import PageHeader from '../components/PageHeader';
 import { StatItem, MetaRow, StatusBadge } from '../components/DataField';
+import OptimizationJourney from '../components/OptimizationJourney';
+import GlideSelect from '../components/GlideSelect';
+import BorderGlow from '../components/BorderGlow';
 import {
   calculateObjectiveUpperBound,
   countScenarioQubits,
@@ -14,18 +20,27 @@ import {
 export default function Optimization({ initialRun, initialLoading, initialError, onNavigate }) {
   const { data: scenario, loading: scenarioLoading, error: scenarioError, reload: reloadScenario } = useApi(api.getScenario, []);
   const [method, setMethod] = useState('greedy');
+  const [qaoaVariant, setQaoaVariant] = useState('standard');
   const [inventoryPenalty, setInventoryPenalty] = useState('');
   const [demandPenalty, setDemandPenalty] = useState('');
-  const [localResult, setLocalResult] = useState(null);
+  const [localResult, setLocalResult] = useState(initialRun ?? null);
   const [localLoading, setLocalLoading] = useState(false);
-  const [localError, setLocalError] = useState('');
+  const [localError, setLocalError] = useState(initialError || '');
   const [comparison, setComparison] = useState(null);
   const [compareLoading, setCompareLoading] = useState(false);
   const [compareError, setCompareError] = useState('');
   const [includeQAOA, setIncludeQAOA] = useState(false);
-  const result = localResult || initialRun;
+  const mutationGeneration = useRef(0);
+  useEffect(() => () => { mutationGeneration.current += 1; }, []);
+  const result = localResult;
   const loading = localLoading || initialLoading;
-  const error = localError || initialError;
+  const error = localError;
+
+  // A global Quick Optimization must replace any older page-local run.
+  useEffect(() => {
+    mutationGeneration.current += 1; setLocalLoading(false); setCompareLoading(false);
+    setLocalResult(initialRun ?? null); setLocalError(initialError || ''); setComparison(null);
+  }, [initialRun, initialLoading, initialError]);
 
   const candidateStates = useMemo(() => estimateCandidateStates(scenario), [scenario]);
   const isExactDisabled = candidateStates > 50000;
@@ -36,6 +51,23 @@ export default function Optimization({ initialRun, initialLoading, initialError,
     if (isExactDisabled && method === 'exact') setMethod('greedy');
   }, [isExactDisabled, method]);
 
+  useEffect(() => {
+    const targets = document.querySelectorAll('.page-optimization .optimization-reveal');
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach((node) => { node.classList.remove('reveal-pending'); node.classList.add('is-visible'); });
+      return undefined;
+    }
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (entry.isIntersecting) { entry.target.classList.remove('reveal-pending'); entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
+    }), { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+    targets.forEach((node) => {
+      const rect = node.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) node.classList.add('is-visible');
+      else { node.classList.remove('is-visible'); node.classList.add('reveal-pending'); observer.observe(node); }
+    });
+    return () => observer.disconnect();
+  }, [scenarioLoading, scenarioError, scenario, comparison, result]);
+
   const qaoaInstanceTooLarge = method === 'qaoa' && (
     /local QAOA limited to .* qubits/i.test(error) ||
     /qaoa_instance_too_large/i.test(error) ||
@@ -44,6 +76,8 @@ export default function Optimization({ initialRun, initialLoading, initialError,
 
   const submit = async (event) => {
     event.preventDefault();
+    const generation = ++mutationGeneration.current;
+    setCompareLoading(false);
     setLocalError(''); setLocalLoading(true); setLocalResult(null); setComparison(null);
     try {
       if (method === 'exact' && isExactDisabled) {
@@ -51,6 +85,7 @@ export default function Optimization({ initialRun, initialLoading, initialError,
       }
       const request = { method };
       if (method === 'qaoa') {
+        request.qaoa_config = qaoaVariantConfig(qaoaVariant);
         if (!inventoryPenalty || !demandPenalty) throw new Error('Enter both explicit QUBO penalty weights before running QAOA.');
         const inv = Number(inventoryPenalty);
         const dem = Number(demandPenalty);
@@ -62,19 +97,23 @@ export default function Optimization({ initialRun, initialLoading, initialError,
           demand_penalty_weight: dem,
         };
       }
-      setLocalResult(await api.optimize(request));
+      const next = await api.optimize(request);
+      if (generation === mutationGeneration.current) setLocalResult(next);
     } catch (issue) {
-      setLocalError(issue.message || 'Optimization could not be completed.');
+      if (generation === mutationGeneration.current) setLocalError(issue.message || 'Optimization could not be completed.');
     } finally {
-      setLocalLoading(false);
+      if (generation === mutationGeneration.current) setLocalLoading(false);
     }
   };
 
   const runComparison = async () => {
+    const generation = ++mutationGeneration.current;
+    setLocalLoading(false);
     setCompareError(''); setCompareLoading(true); setComparison(null);
     try {
       const request = { include_qaoa: includeQAOA, include_milp: true };
       if (includeQAOA) {
+        request.qaoa_config = qaoaVariantConfig(qaoaVariant);
         if (!inventoryPenalty || !demandPenalty) throw new Error('Enter both QUBO penalty weights before including QAOA in the comparison.');
         const inv = Number(inventoryPenalty);
         const dem = Number(demandPenalty);
@@ -87,34 +126,27 @@ export default function Optimization({ initialRun, initialLoading, initialError,
         };
       }
       const response = await api.benchmark(request);
-      setComparison(response.results || []);
+      if (generation === mutationGeneration.current) setComparison((response.results || []).map(row => ({ ...row, method_label: row.method === 'qaoa' ? (row.status === 'not_requested' ? 'QAOA' : qaoaConfigLabel(response.experiment_configuration?.qaoa)) : row.method?.toUpperCase() })));
     } catch (issue) {
-      setCompareError(issue.message || 'The benchmark comparison could not be completed.');
+      if (generation === mutationGeneration.current) setCompareError(issue.message || 'The benchmark comparison could not be completed.');
     } finally {
-      setCompareLoading(false);
+      if (generation === mutationGeneration.current) setCompareLoading(false);
     }
   };
 
   return <>
-    <PageHeader eyebrow="SOLVER WORKSPACE" title="Optimization" description="Inspect the active scenario, run an allocator, and compare methods when results are available." />
+    <div className="optimization-reveal"><PageHeader eyebrow="SOLVER WORKSPACE" title="Optimization" description="Inspect the active scenario, run an allocator, and compare methods when results are available." /></div>
     {scenarioLoading && <LoadingState label="Loading current scenario…" />}
-    {!scenarioLoading && scenarioError && <ErrorState message={scenarioError} onRetry={reloadScenario} />}
+    {!scenarioLoading && scenarioError && <div className="notice notice-info optimization-api-notice" role="status"><Activity size={16} /><span><strong>Backend not connected.</strong> Your solver settings are ready, but runs need the BloodFlow-Q API. Start it and use Retry when available.</span><button type="button" className="button button-secondary button-small" onClick={reloadScenario}>Retry</button></div>}
     {!scenarioLoading && !scenarioError && scenario?.synthetic === true && <ScenarioPreview scenario={scenario} variableCount={result?.qubo_variable_count} />}
     {!scenarioLoading && !scenarioError && scenario?.synthetic !== true && scenario && <div className="notice notice-error">The backend scenario is not marked synthetic. Optimization is disabled.</div>}
 
-    <div className="optimization-layout">
-      <section className="panel form-panel">
-        <div className="panel-heading"><div><h2>Configure a run</h2><p>Uses scenario <strong>{scenario?.id || '—'}</strong> returned by the backend.</p></div></div>
+    <div className="optimization-layout optimization-reveal">
+      <BorderGlow className="optimization-panel-glow" backgroundColor="var(--bg-surface)" borderRadius={16} glowRadius={12} glowColor="350 82 62" colors={['#ef233c','#8d99ae','#2b2d42']}><section className="panel form-panel">
+        <div className="panel-heading"><div><h2>Configure a run</h2><p>Active scenario <strong>{scenario?.id || 'Waiting for API'}</strong></p></div></div>
         <form onSubmit={submit} className="form-stack">
-          <label className="field-label" htmlFor="solver-method">Solver method</label>
-          <select id="solver-method" className="field-control" value={method} onChange={(event) => setMethod(event.target.value)}>
-            <option value="greedy">Greedy baseline</option>
-            <option value="milp">MILP (HiGHS classical optimal)</option>
-            <option value="exact" disabled={isExactDisabled}>
-              {isExactDisabled ? 'Exact (tiny instances only — unavailable for this scenario)' : 'Exact (tiny instances only)'}
-            </option>
-            <option value="qaoa">QAOA (local simulator; small instances)</option>
-          </select>
+          <label className="field-label" id="solver-method-label">Solver method</label>
+          <GlideSelect ariaLabel="Solver method" options={[{value:'greedy',label:'Greedy baseline'},{value:'milp',label:'MILP · HiGHS classical optimal'},{value:'exact',label:isExactDisabled ? 'Exact · unavailable for this scenario' : 'Exact · tiny instances only'},{value:'qaoa',label:'QAOA · local simulator'}]} value={method} onChange={setMethod} showTags={false} accentColor="#ef233c" surfaceColor="var(--bg-surface)" highlightColor="var(--bg-hover)" textColor="var(--text-primary)" className="solver-glide-select" />
           {isExactDisabled && method === 'exact' && (
             <div className="notice notice-info" role="note">
               <TriangleAlert size={16} />
@@ -123,6 +155,7 @@ export default function Optimization({ initialRun, initialLoading, initialError,
           )}
           {method === 'qaoa' && (
             <div className="qaoa-config-box">
+              <QAOAVariantSelect id="optimization-qaoa-variant" value={qaoaVariant} onChange={setQaoaVariant} disabled={loading} />
               <div className="notice notice-info">
                 <TriangleAlert size={16} />
                 <span>QUBO penalty weights must be explicit and strictly exceed this scenario’s objective bound (&gt; {objectiveBound}). Insufficient values will be rejected.</span>
@@ -169,21 +202,21 @@ export default function Optimization({ initialRun, initialLoading, initialError,
               />
             </div>
           )}
-          <button className="button button-primary button-wide run-optimization-button" type="submit" disabled={loading || scenarioLoading || !scenario || scenario?.synthetic !== true}><Play size={16} fill="currentColor" />{loading ? 'OPTIMIZING…' : 'RUN OPTIMIZATION'}</button>
+          <button className="button button-primary button-wide run-optimization-button" type="submit" disabled={loading || (scenario && scenario.synthetic !== true)}><Play size={16} fill="currentColor" />{loading ? 'OPTIMIZING…' : 'RUN OPTIMIZATION'}</button>
         </form>
         <div className="optimization-note"><CheckCircle2 size={16} /><span>Returned candidates are classically validated. An infeasible QAOA sample stays visible and is never silently repaired.</span></div>
-      </section>
-      <section className="panel result-panel">
+      </section></BorderGlow>
+      <BorderGlow className="optimization-panel-glow" backgroundColor="var(--bg-surface)" borderRadius={16} glowRadius={12} glowColor="350 82 62" colors={['#ef233c','#8d99ae','#2b2d42']}><section className="panel result-panel">
         <div className="panel-heading"><div><h2>Run output</h2><p>Only values returned by the backend are shown.</p></div><RotateCcw size={16} className="muted-icon" /></div>
         {loading && <LoadingState label="The solver is working…" />}
         {!loading && error && <ErrorState message={error} />}
         {!loading && qaoaInstanceTooLarge && <div className="notice notice-info" role="note"><div><strong>The full scenario exceeds the local simulator limit.</strong><p>Use the compact, deterministic scenario in Demo mode to run the same real QUBO → QAOA → decoder → validator pipeline. The full-scenario request above was not replaced with a demo result.</p><button type="button" className="button button-secondary button-small" onClick={() => onNavigate?.('demo')}>Open compact QAOA demo</button></div></div>}
         {!loading && !error && result && <OptimizationResult result={result} scenario={scenario} />}
-        {!loading && !error && !result && <div className="result-placeholder"><Play size={22} /><strong>No result yet</strong><span>Choose a solver and start a run. Values unavailable before a run are shown as such.</span></div>}
-      </section>
+        {!loading && !error && !result && <div className="result-placeholder"><Play size={22} /><strong>No result yet</strong><span>{scenarioError ? 'Connect the backend to run this solver. Settings stay editable while it is offline.' : 'Choose a solver and start a run. Values unavailable before a run are shown as such.'}</span></div>}
+      </section></BorderGlow>
     </div>
 
-    <section className="panel comparison-panel">
+    <BorderGlow className="optimization-comparison-glow optimization-reveal" backgroundColor="var(--bg-surface)" borderRadius={16} glowRadius={12} glowColor="350 82 62" colors={['#ef233c','#8d99ae','#2b2d42']}><section className="panel comparison-panel">
       <div className="panel-heading">
         <div>
           <h2>Method comparison</h2>
@@ -216,6 +249,7 @@ export default function Optimization({ initialRun, initialLoading, initialError,
 
         {includeQAOA && (
           <div className="qaoa-comparison-params">
+            <QAOAVariantSelect id="comparison-qaoa-variant" value={qaoaVariant} onChange={setQaoaVariant} disabled={compareLoading} />
             <div className="qaoa-params-grid">
               <div className="form-field">
                 <label className="field-label" htmlFor="comp-inv-penalty">
@@ -255,18 +289,20 @@ export default function Optimization({ initialRun, initialLoading, initialError,
         )}
       </div>
 
-      {compareLoading && <LoadingState label="Running benchmark solvers (Greedy, MILP, Exact, QAOA)…" />}
+      {compareLoading && <LoadingState label={includeQAOA ? 'Running selected solvers (Greedy, MILP, Exact, QAOA)…' : 'Running selected solvers (Greedy, MILP, Exact)…'} />}
       {!compareLoading && compareError && <ErrorState message={compareError} />}
       {!compareLoading && !compareError && comparison && (
-        <BenchmarkTable records={comparison} includeQAOA={includeQAOA} onNavigate={onNavigate} />
+        <BenchmarkTable scenario={scenario} records={comparison} onNavigate={onNavigate} />
       )}
       {!comparison && !compareLoading && !compareError && (
         <div className="comparison-placeholder">
           <Activity size={20} />
-          <span>Click "RUN COMPARISON" above to benchmark all solvers against this scenario.</span>
+          <span>Click "RUN COMPARISON" above to benchmark the selected methods against this scenario.</span>
         </div>
       )}
-    </section>
+    </section></BorderGlow>
+
+    <OptimizationJourney scenario={scenario} method={method} result={result} />
   </>;
 }
 
@@ -278,7 +314,7 @@ function ScenarioPreview({ scenario, variableCount }) {
   const demandTotal = hospitals.reduce((sum, hospital) => sum + Object.values(hospital.demand || {}).reduce((hospitalSum, units) => hospitalSum + units, 0), 0);
 
   return (
-    <section className="panel scenario-preview">
+    <section className="panel scenario-preview optimization-reveal">
       <div className="panel-heading">
         <div>
           <h2>Active scenario baseline</h2>
@@ -374,6 +410,7 @@ function ScenarioPreview({ scenario, variableCount }) {
 
 function OptimizationResult({ result, scenario }) {
   const qaoa = result.method === 'qaoa';
+  const solverLabel = qaoa ? qaoaConfigLabel(result.experiment_configuration?.qaoa) : result.method?.toUpperCase();
   const missingMethodValue = qaoa ? 'Unavailable' : 'Not applicable';
   const banks = Object.fromEntries((scenario?.blood_banks || []).map((bank) => [bank.id, bank.name]));
   const hospitals = Object.fromEntries((scenario?.hospitals || []).map((hospital) => [hospital.id, hospital.name]));
@@ -384,13 +421,13 @@ function OptimizationResult({ result, scenario }) {
       <div className="result-status-header">
         <StatusBadge
           status={result.feasibility === false ? 'infeasible' : result.status}
-          label={`${result.method?.toUpperCase()} · ${result.feasibility === false ? 'INFEASIBLE' : 'FEASIBLE'}`}
+          label={`${solverLabel} · ${result.feasibility === false ? 'INFEASIBLE' : 'FEASIBLE'}`}
         />
-        <span className="result-timestamp">Method: <strong>{result.method}</strong></span>
+        <span className="result-timestamp">Method: <strong>{solverLabel}</strong></span>
       </div>
 
       <div className="result-kpi-grid">
-        <StatItem label="Solver method" value={result.method?.toUpperCase()} />
+        <StatItem label="Solver method" value={solverLabel} />
         <StatItem
           label="Objective value"
           value={result.total_objective != null ? Number(result.total_objective).toFixed(2) : '—'}
@@ -413,10 +450,12 @@ function OptimizationResult({ result, scenario }) {
         />
         <StatItem
           label="Transport cost"
+          unit="synthetic points"
           value={result.transport_cost != null ? Number(result.transport_cost).toFixed(2) : '—'}
         />
       </div>
 
+      <div className="notice notice-warning" role="note">This is a weighted-cost policy. A lower objective can leave more demand unmet, including critical demand. Feasible means modeled constraints hold—not clinical approval. Use Demo mode to compare it with an explicit service-first policy.</div>
       <div className="panel solver-metadata-panel">
         <div className="metadata-panel-heading">Solver diagnostic parameters</div>
         <div className="metadata-row-grid">
@@ -507,7 +546,7 @@ function OptimizationResult({ result, scenario }) {
   );
 }
 
-function BenchmarkTable({ records, includeQAOA, onNavigate }) {
+function BenchmarkTable({ scenario, records, onNavigate }) {
   const qaoaRecord = records.find((record) => record.method === 'qaoa');
   const exactRecord = records.find((record) => record.method === 'exact');
   const isAnySkipped = qaoaRecord?.status === 'skipped_too_large' || exactRecord?.status === 'skipped_too_large';
@@ -531,17 +570,18 @@ function BenchmarkTable({ records, includeQAOA, onNavigate }) {
           </thead>
           <tbody>
             {records.map((record) => {
-              const status = record.method === 'qaoa' && !includeQAOA && record.status === 'not_requested' ? 'Not run' : record.status;
+              const presentation = solverPresentation(record);
+              const status = presentation.status;
               return (
                 <tr key={record.method}>
-                  <td><strong>{record.method?.toUpperCase()}</strong></td>
-                  <td><StatusBadge status={status} label={status?.replaceAll('_', ' ')} /></td>
+                  <td><strong>{record.method_label || record.method?.toUpperCase()}</strong></td>
+                  <td><StatusBadge status={status} label={presentation.label} />{presentation.explanation && <p className="solver-status-detail">{presentation.explanation}</p>}</td>
                   <td className="text-right num-cell">{record.objective_value != null ? Number(record.objective_value).toFixed(2) : '—'}</td>
                   <td className="text-right num-cell">{record.critical_unmet_demand ?? '—'}</td>
                   <td className="text-right num-cell">{record.total_unmet_demand ?? '—'}</td>
                   <td className="text-right num-cell">{record.transport_cost != null ? Number(record.transport_cost).toFixed(2) : '—'}</td>
                   <td>{record.feasibility == null ? '—' : record.feasibility ? 'Yes' : 'No'}</td>
-                  <td className="text-right num-cell">{record.runtime_seconds == null ? '—' : `${Number(record.runtime_seconds).toFixed(4)} s`}</td>
+                  <td className="text-right num-cell">{presentation.runtime}</td>
                   <td className="text-right num-cell">{record.approximation_gap == null ? '—' : `${(record.approximation_gap * 100).toFixed(2)}%`}</td>
                 </tr>
               );
@@ -554,21 +594,22 @@ function BenchmarkTable({ records, includeQAOA, onNavigate }) {
         <div className="notice notice-info benchmark-skip-notice" role="note">
           <TriangleAlert size={18} />
           <div>
-            <strong>Why were Exact or QAOA skipped on this scenario?</strong>
+            <strong>What ran in this comparison?</strong>
             <p>
-              This full 7-node operational scenario models <strong>222 binary variables (qubits)</strong> and over <strong>10<sup>66</sup> candidate states</strong>.
+              This scenario contains <strong>{(scenario?.blood_banks?.length || 0) + (scenario?.hospitals?.length || 0)} facilities</strong> and its QUBO encoding needs <strong>{countScenarioQubits(scenario)} bits</strong>. Encoding size does not establish classical hardness; LP/MILP solve the original allocation model.
             </p>
             <ul>
               {exactRecord?.status === 'skipped_too_large' && (
                 <li>
-                  <strong>Exact solver (Classical):</strong> Exceeded the 50,000 candidate-state safety limit. Exhaustive brute-force evaluation of 222 binary variables is computationally intractable.
+                  <strong>Exact solver (Classical):</strong> {exactRecord.detail || 'The candidate-state count exceeds the configured safety limit (default: 50,000).'} The number of candidates is the product of each shipment variable’s (upper bound + 1); it grows multiplicatively. Search was refused before enumeration. This is not a QUBO bitstring count. Use MILP for this scenario.
                 </li>
               )}
               {qaoaRecord?.status === 'skipped_too_large' && (
                 <li>
-                  <strong>QAOA (Quantum Aer Simulator):</strong> Exceeded the 16-qubit simulator memory limit (222 qubits &gt; 16 max). Statevector memory scales exponentially (2<sup>n</sup>), making 222 qubits physically impossible to simulate classically.
+                  <strong>QAOA (Quantum Aer Simulator):</strong> Exceeded the 16-qubit local statevector guard. This is a simulator limit, not evidence that classical allocation is hard.
                 </li>
               )}
+              {qaoaRecord && qaoaRecord.status !== 'skipped_too_large' && !solverPresentation(qaoaRecord).measured && <li><strong>QAOA:</strong> {solverPresentation(qaoaRecord).explanation}</li>}
             </ul>
             <div className="benchmark-notice-action">
               <span>Both solvers run live on compact scenarios:</span>
